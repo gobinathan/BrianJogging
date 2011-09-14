@@ -83,10 +83,10 @@ pre {
   background: transparent url(header-a.jpg) left bottom repeat; /* LTR */
 }
 td#home {
-  background: transparent url(logo-background.jpg) left top repeat; /* LTR */
+/*  background: transparent url(logo-background.jpg) left top repeat;*/ /* LTR */
 }
 td#home a:link img, td#home a:visited img {
-  background: transparent url(logo-active.jpg) repeat; /* LTR */
+  /*background: transparent url(logo-active.jpg) repeat;*/ /* LTR */
   width: 144px;
   height: 63px;
 }
@@ -102,7 +102,7 @@ td#home a:hover img {
   color: #000;
 }
 #primary-menu .primary-links {
-  background: transparent url(header-b.jpg) left top no-repeat; /* LTR */
+  /*background: transparent url(header-b.jpg) left top no-repeat; LTR */
   font-size: 0.79em;
 }
 #primary-menu .primary-links h1, #primary-menu .primary-links h2, #primary-menu .primary-links h3 {
@@ -238,8 +238,8 @@ ul.links li {
   font-weight: normal;
 }
 #site-info {
-  background-color: #bdd3ea;
-  background-image: url(header-c.png);
+  /*background-color: #bdd3ea;
+  background-image: url(header-c.png);*/
   font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, Verdana, sans-serif;
 }
 .site-name {
