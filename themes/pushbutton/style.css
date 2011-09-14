@@ -259,7 +259,7 @@ ul.links li {
 #main {
   /* padding in px not ex because IE messes up 100% width tables otherwise */
   padding: 30px 35px 50px 35px;
-  background: transparent url(background.png) center center no-repeat;
+  /*background: transparent url(background.png) center center no-repeat;*/
   /* fix background overlapping text in IE (aka Peekaboo Bug) */
   position: relative;
 }

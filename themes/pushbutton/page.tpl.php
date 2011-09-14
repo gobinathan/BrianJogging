@@ -51,12 +51,6 @@
 
 <table id="content" border="0" cellpadding="15" cellspacing="0" width="100%">
   <tr>
-    <?php if ($left != ""): ?>
-    <td id="sidebar-left">
-      <?php print $left ?>
-    </td>
-    <?php endif; ?>
-
     <td valign="top">
       <?php if ($mission != ""): ?>
       <div id="mission"><?php print $mission ?></div>
@@ -64,7 +58,7 @@
 
       <div id="main">
         <?php if ($title != ""): ?>
-          <?php print $breadcrumb ?>
+          <?php //print $breadcrumb ?>
           <h1 class="title"><?php print $title ?></h1>
 
           <?php if ($tabs != ""): ?>
