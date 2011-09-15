@@ -16,20 +16,257 @@ function brainjogging_menu() {
 }
 
 function brainjogging_perm() {
-  return array(
-    'access brainjogging reports' =>  array(
-      'title' => t('Access BrainJogging Reports'),
-      'description' => t('Aloow users to access the brain jogging repots'),
-    ),
-    'access brainjogging reports_1' =>  array(
-      'title' => t('Access BrainJogging Reports 1'),
-      'description' => t('Aloow users to access the brain jogging repots'),
-    ),
-  );
+  //return array(
+  //  'access brainjogging reports' =>  array(
+  //    'title' => t('Access BrainJogging Reports'),
+  //    'description' => t('Aloow users to access the brain jogging repots'),
+  //  ),
+  //  'access brainjogging reports_1' =>  array(
+  //    'title' => t('Access BrainJogging Reports 1'),
+  //    'description' => t('Aloow users to access the brain jogging repots'),
+  //  ),
+  //);
 }
 
 function brainjogging_form_alter(&$form, &$form_state, $form_id){
-  if($form_id == 'user_register_form'){
+  if($form_id == 'user_register'){
+    drupal_add_js(drupal_get_path('module', 'brainjogging') .'/js/bj_users.js');
+    $teachers = array();
+    $teacher_res = db_query ("SELECT u.uid, u.name
+                        FROM users u, role r, users_roles ur
+                        WHERE u.uid = ur.uid
+                        AND ur.rid = r.rid
+                        AND r.name = 'teacher'");
+    while($teacher_obj = db_fetch_object($teacher_res)){
+      $teachers[$teacher_obj->uid] = $teacher_obj->name;
+    }
     
+    $options = $form['roles']['#options'];
+    unset($options[2]);
+    unset($options[5]);
+    
+    $form['roles'] = array(
+      '#type' => 'select',
+      '#title' => t('Roles'),
+      '#options' => $options,
+      '#description' => t('Select the type of user you are creating.'),
+      '#required' => TRUE,
+      '#weight' => 6,
+    );
+    
+    $form['fnmae'] = array(
+      '#type' => 'textfield',
+      '#title' => t('First Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#required' => TRUE,
+      '#weight' => 0,
+    );
+    
+    $form['lname'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Last Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#required' => TRUE,
+      '#weight' => 1,
+    );
+    
+    $form['name']['#weight'] = 2;
+    $form['mail']['#weight'] = 3;
+    $form['pass']['#weight'] = 4;
+    $form['status']['#weight'] = 5;
+    
+    $form['teacher'] = array(
+      '#type' => 'select',
+      '#title' => t('Teachers'),
+      '#options' => $teachers,
+      '#description' => t('Select teacher for this client.'),
+      '#required' => TRUE,
+      '#weight' => 7,
+    );
+    
+    $form['parent_fnmae'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parent First Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#required' => TRUE,
+      '#weight' => 8,
+    );
+    
+    $form['parent_lname'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parent Last Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#required' => TRUE,
+      '#weight' => 9,
+    );
+    
+    $form['parent_mail'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parent E-Mail Address'),
+      '#maxlength' => 64,
+      '#description' => 'A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.',
+      '#required' => true,
+      '#weight' => 10,
+    );
+    
+    $form['school_name'] = array(
+      '#type' => 'textfield',
+      '#title' => t('School Name'),
+      '#size' => 25,
+      '#maxlength' => 60,
+      '#required' => TRUE,
+      '#weight' => 11,
+    );
+    
+    $form['phone'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Phone'),
+      '#size' => 20,
+      '#maxlength' => 10,
+      '#required' => TRUE,
+      '#description' => 'Phone number with area code, without white space and special charecters',
+      '#weight' => 12,
+    );
+    
+    $form['address'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Address'),
+      '#required' => TRUE,
+      '#weight' => 13,
+    );
+    
+    $form['reason'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Reason for BrainJogging'),
+      '#weight' => 14,
+    );
+    
+    $form['notify']['#weight'] = 15;
+    $form['submit']['#weight'] = 16;
+    
+  }
+  if($form_id = 'user_profile_form'){
+    drupal_add_js(drupal_get_path('module', 'brainjogging') .'/js/bj_users.js');
+    unset($form['timezone']);
+    $teachers = array();
+    $teacher_res = db_query ("SELECT u.uid, u.name
+                        FROM users u, role r, users_roles ur
+                        WHERE u.uid = ur.uid
+                        AND ur.rid = r.rid
+                        AND r.name = 'teacher'");
+    while($teacher_obj = db_fetch_object($teacher_res)){
+      $teachers[$teacher_obj->uid] = $teacher_obj->name;
+    }
+    
+    $options = $form['account']['roles']['#options'];
+    unset($options[2]);
+    unset($options[5]);
+    
+    $form['account']['roles'] = array(
+      '#type' => 'select',
+      '#title' => t('Roles'),
+      '#options' => $options,
+      '#description' => t('Select the type of user you are creating.'),
+      '#required' => TRUE,
+      '#weight' => 6,
+    );
+    
+    $form['account']['fnmae'] = array(
+      '#type' => 'textfield',
+      '#title' => t('First Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#required' => TRUE,
+      '#weight' => 0,
+    );
+    
+    $form['account']['lname'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Last Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#required' => TRUE,
+      '#weight' => 1,
+    );
+    
+    $form['account']['name']['#weight'] = 2;
+    $form['account']['mail']['#weight'] = 3;
+    $form['account']['pass']['#weight'] = 4;
+    $form['account']['status']['#weight'] = 5;
+    
+    $form['account']['teacher'] = array(
+      '#type' => 'select',
+      '#title' => t('Teachers'),
+      '#options' => $teachers,
+      '#description' => t('Select teacher for this client.'),
+      '#required' => TRUE,
+      '#weight' => 7,
+    );
+    
+    $form['account']['parent_fnmae'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parent First Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#required' => TRUE,
+      '#weight' => 8,
+    );
+    
+    $form['account']['parent_lname'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parent Last Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#required' => TRUE,
+      '#weight' => 9,
+    );
+    
+    $form['account']['parent_mail'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parent E-Mail Address'),
+      '#maxlength' => 64,
+      '#description' => 'A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.',
+      '#required' => true,
+      '#weight' => 10,
+    );
+    
+    $form['account']['school_name'] = array(
+      '#type' => 'textfield',
+      '#title' => t('School Name'),
+      '#size' => 25,
+      '#maxlength' => 60,
+      '#required' => TRUE,
+      '#weight' => 11,
+    );
+    
+    $form['account']['phone'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Phone'),
+      '#size' => 20,
+      '#maxlength' => 10,
+      '#required' => TRUE,
+      '#description' => 'Phone number with area code, without white space and special charecters',
+      '#weight' => 12,
+    );
+    
+    $form['account']['address'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Address'),
+      '#required' => TRUE,
+      '#weight' => 13,
+    );
+    
+    $form['account']['reason'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Reason for BrainJogging'),
+      '#weight' => 14,
+    );
+    
+    $form['account']['submit']['#weight'] = 16;
+    //var_dump($form);
   }
 }
