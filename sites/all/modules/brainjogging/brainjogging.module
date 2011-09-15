@@ -16,20 +16,21 @@ function brainjogging_menu() {
 }
 
 function brainjogging_perm() {
-  return array(
-    'access brainjogging reports' =>  array(
-      'title' => t('Access BrainJogging Reports'),
-      'description' => t('Aloow users to access the brain jogging repots'),
-    ),
-    'access brainjogging reports_1' =>  array(
-      'title' => t('Access BrainJogging Reports 1'),
-      'description' => t('Aloow users to access the brain jogging repots'),
-    ),
-  );
+  //return array(
+  //  'access brainjogging reports' =>  array(
+  //    'title' => t('Access BrainJogging Reports'),
+  //    'description' => t('Aloow users to access the brain jogging repots'),
+  //  ),
+  //  'access brainjogging reports_1' =>  array(
+  //    'title' => t('Access BrainJogging Reports 1'),
+  //    'description' => t('Aloow users to access the brain jogging repots'),
+  //  ),
+  //);
 }
 
 function brainjogging_form_alter(&$form, &$form_state, $form_id){
-  if($form_id == 'user_register_form'){
+  if($form_id == 'user_register'){
+     
     
   }
 }

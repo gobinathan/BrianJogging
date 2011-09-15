@@ -59,10 +59,10 @@
       <div id="main">
         <?php if ($title != ""): ?>
           <?php //print $breadcrumb ?>
-          <h1 class="title"><?php print $title ?></h1>
+          <h1 class="title" ><?php print $title ?></h1>
 
           <?php if ($tabs != ""): ?>
-            <div class="tabs"><?php print $tabs ?></div>
+            <div class="tabs" style="margin-top:10px;clear:both;"><?php print $tabs ?></div>
           <?php endif; ?>
 
         <?php endif; ?>
