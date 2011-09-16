@@ -91,7 +91,7 @@ td#home a:link img, td#home a:visited img {
   height: 63px;
 }
 td#home a:hover img {
-  background: transparent url(logo-hover.jpg) repeat; /* LTR */
+  /*background: transparent url(logo-hover.jpg) repeat;*/ /* LTR */
   width: 144px;
   height: 63px;
 }
@@ -141,16 +141,19 @@ ul.links li {
 }
 .tabs ul.primary {
   border-collapse: collapse;
-  padding: 0 0 3px 10px; /* LTR */
+  padding: 0 0 24px 10px; /* LTR */
   white-space: nowrap;
   list-style: none;
   margin: 0;
   height: auto;
   line-height: normal;
   border-bottom: 2px solid #369;
+  
+  
 }
 .tabs ul.primary li {
   display: inline;
+  float:right;
 }
 .tabs ul.primary li a {
   padding: 3px 10px;
@@ -268,6 +271,7 @@ ul.links li {
 }
 #help {
   font-size: 0.9em;
+   margin-top: 2em;
   margin-bottom: 1em;
 }
 .breadcrumb {
