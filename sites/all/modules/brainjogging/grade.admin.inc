@@ -82,16 +82,14 @@ function bj_grade_create_form_validate(){
  
 }
 
-function bj_grade_create_form_submit(){
-
-  $res=mysql_query("INSERT INTO bj_grade VALUES('','$_POST[Name]','$_POST[Description]')");
+function bj_grade_create_form_submit(&$form, &$form_state){
+   
+  $res=db_query("INSERT INTO bj_grade VALUES('','".$form_state['values']['Name']."','".$form_state['values']['Description']."')");
   if($res){
     drupal_set_message(t('Your form has been saved.'));
   }
-  else{
-    echo mysql_error();
-  }
  
+  
 }
 
 function bj_greade_delete(){
