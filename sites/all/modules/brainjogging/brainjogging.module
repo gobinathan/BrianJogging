@@ -24,6 +24,13 @@ function brainjogging_menu() {
     'type' => MENU_LOCAL_TASK,
     'file' => 'grade.admin.inc',
   );
+  $items['admin/brainjogging/grade/edit/%'] = array(
+    'title' => 'Add Grade',
+    'page arguments' => array('create'),
+    'access arguments' => array('administer grades'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'grade.admin.inc',
+  );
   $items['brainjogging'] = array(
     'title' => 'Blogs',
     'page callback' => 'blog_page_last',

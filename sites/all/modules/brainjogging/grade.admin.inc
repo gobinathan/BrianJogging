@@ -6,10 +6,10 @@ function bj_grade_admin($args){
       bj_grade_list();
       break;
     case 'create':
-      bj_greade_create();
+      $output = drupal_get_form('bj_grade_create_form');
       break;
     case 'edit':
-      bj_greade_create();
+      $output = drupal_get_form('bj_grade_create_form');
       break;
     case 'delete':
       bj_greade_delete();
@@ -18,14 +18,24 @@ function bj_grade_admin($args){
 }
 
 function bj_grade_list(){
+  echo "List view comes here";
   //TODO
   //Create listview of user grades from bj_grades table
 }
 
-function bj_greade_create(){
+function bj_grade_create_form(){
   //TODO
-  //Create form to add user grades and insert the form values into bj_grades table
-  //the same form also used to edit the grade values
+  //Create form to add user grades 
+}
+
+function bj_grade_create_form_validate(){
+  //TODO
+  //Validator for bj_grade_create_form
+}
+
+function bj_grade_create_form_submit(){
+  //TODO
+  //submit function for bj_grade_create_form
 }
 
 function bj_greade_delete(){
