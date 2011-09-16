@@ -76,7 +76,7 @@
         <?php endif; ?>
 
       <!-- start main content -->
-      <?php print $content; ?>
+      <?php print $content; print $left?>
       <?php print $feed_icons; ?>
       <!-- end main content -->
 
