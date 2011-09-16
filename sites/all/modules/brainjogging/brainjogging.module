@@ -41,6 +41,11 @@ function brainjogging_menu() {
   return $items;
 }
 
+//remove anonymous registeration
+function brainjogging_menu_alter(&$items) {
+  unset($items['user/register']);
+}
+
 function brainjogging_perm() {
   return array("administer grades","administer learning disablities");
   //return array(
