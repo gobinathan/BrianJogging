@@ -31,6 +31,12 @@ function brainjogging_menu() {
     'access arguments' => array('administer grades'),
     'file' => 'grade.admin.inc',
   );
+  $items['admin/brainjogging/grade/delete/%'] = array(
+    'title' => 'Delete Grade',
+    'page arguments' => array('delete'),
+    'access arguments' => array('administer grades'),
+    'file' => 'grade.admin.inc',
+  );
   $items['brainjogging'] = array(
     'title' => 'Blogs',
     'page callback' => 'blog_page_last',
