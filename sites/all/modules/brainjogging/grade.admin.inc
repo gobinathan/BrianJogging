@@ -20,10 +20,12 @@ function bj_grade_admin($args){
 }
 
 function bj_grade_list(){
-  $grade_res = db_query("SELECT * FROM bj_grade");
+  $limit = 20;
+  $sql_count = db_rewrite_sql("SELECT COUNT(gid) FROM {bj_grade}");
+  $grade_res = pager_query("SELECT * FROM bj_grade", $limit, 0, $sql_count);
   
   $header = array(
-	  t('Grade'), 
+    array('data' => t('Grade')),
 	  array('data' => t('Description')),
 		t('Action')
   );
@@ -46,6 +48,7 @@ function bj_grade_list(){
 	}
   
 	$output = theme('table', $header, $rows);
+  $output .= theme('pager', NULL, $limit, 0);
 	return $output;
 }
 
