@@ -4,7 +4,7 @@ function bj_grade_admin($args){
   
   switch($args){
     case 'list':
-      bj_grade_list();
+      return bj_grade_list();
       break;
     case 'create':
       return  drupal_get_form('bj_grade_create_form');
@@ -13,42 +13,51 @@ function bj_grade_admin($args){
       return drupal_get_form('bj_grade_create_form');
       break;
     case 'delete':
-      bj_greade_delete();
+      return drupal_get_form('bj_greade_delete_confirm');
       break;
     
   }
 }
 
 function bj_grade_list(){
+  $grade_res = db_query("SELECT * FROM bj_grade");
   
-  echo "List view comes here";
-   $res=mysql_query("select * from bj_grade");
-   $grades=array();
-   while($grade=mysql_fetch_array($res))
-   {
-    array_push($grades,$grade);
-   }
+  $header = array(
+	  t('Grade'), 
+	  array('data' => t('Description')),
+		t('Action')
+  );
   
-  foreach($grades as $key=>$grade)
-  {
-    $key+=1;
-    echo "<br>".$key."&nbsp;".$grade['name']."&nbsp;".$grade['description']."<a href=/admin/brainjogging/grade/edit/".$grade['gid'].">Edit</a>";
-    
-    
-    
-  }
+	while($grade_object = db_fetch_object($grade_res)) {
+		$rows[] = array($grade_object->name,
+										$grade_object->description,
+                    l(t('Edit'), 'admin/brainjogging/grade/edit/' . $grade_object->gid) . '|'. l(t('Delete'), 'admin/brainjogging/grade/delete/' . $grade_object->gid),
+                   );
+	}
   
+	if(!$rows) {
+		$rows[] = array(
+		  array(
+		    'data'    => t('There are currently no grades.'),
+			  'colspan' => 3, 
+			  'align'   => 'center'
+			)
+    );
+	}
   
-  
+	$output = theme('table', $header, $rows);
+	return $output;
 }
 
 function bj_grade_create_form(){
   
+  $save = 'add';
   if(arg(3)=='edit' && arg(4)){
-  $grade_obj = db_fetch_object(db_query("SELECT * FROM {bj_grade} WHERE gid = ".arg(4)));
+    $grade_obj = db_fetch_object(db_query("SELECT * FROM {bj_grade} WHERE gid = ".arg(4)));
+    $save = 'edit';
   }
   
-  $form['Name'] = array(
+  $form['name'] = array(
     '#type' => 'textfield',
     '#title' => t('Name'),
     '#size' => 25,
@@ -57,21 +66,19 @@ function bj_grade_create_form(){
     '#required' => TRUE,
     '#weight' => 0,
   );
-  $form['Description'] = array(
+  $form['description'] = array(
     '#type' => 'textarea',
     '#title' => t('Description'),
     '#required' => TRUE,
     '#default_value' => $grade_obj->description, 
-    '#weight' => 15,
+    '#weight' => 1,
   );
-    $form['submit'] = array(
+  $form['submit'] = array(
     '#type' => 'submit',
     '#title' => t('Save'),
-    '#value'=>t('Save'),
-    '#weight' => 16,
+    '#value'=> $save,
+    '#weight' => 2,
   );
-    
-    
     
   return $form;
 }
@@ -82,17 +89,53 @@ function bj_grade_create_form_validate(){
  
 }
 
-function bj_grade_create_form_submit(&$form, &$form_state){
-   
-  $res=db_query("INSERT INTO bj_grade VALUES('','".$form_state['values']['Name']."','".$form_state['values']['Description']."')");
-  if($res){
-    drupal_set_message(t('Your form has been saved.'));
+
+
+function bj_grade_create_form_submit(&$form,&$form_state){
+  if(($form_state['values']['submit'])=='save'){
+    db_query("INSERT INTO {bj_grade} (name,description) VALUES('".$form_state['values']['name']."','".$form_state['values']['description']."')");
   }
- 
-  
+   if(($form_state['values']['submit'])=='edit'){
+    db_query("UPDATE {bj_grade}  SET name='".$form_state['values']['name']."', description='".$form_state['values']['description']."' WHERE gid=".arg(4));
+  }
+  drupal_set_message(t('Grade added successfuly'));
+  $form_state['redirect'] = 'admin/brainjogging/grade';
+  return;
 }
 
-function bj_greade_delete(){
-  //TODO
-  //Delete a grade
+function bj_greade_delete_confirm(){
+  if(arg(3)=='delete' && arg(4)){
+    $grade_obj = db_fetch_object(db_query("SELECT * FROM {bj_grade} WHERE gid = ".arg(4)));
+  }
+  
+  $form = array();
+  $form = array(
+		'gid' => array(
+			'#type' => 'value', 
+			'#value' => $grade_obj->gid,
+		)
+	);
+  
+  $output = confirm_form(
+	  $form,
+		t(
+		  'Are you sure you want to delete this \'%title\' grade?',
+		  array('%title' => $grade_obj->name)
+    ),
+    isset($_GET['destination']) ? $_GET['destination'] : "admin/brainjogging/grade"
+  );
+  
+	return $output;
+
+}
+
+function bj_greade_delete_confirm_submit($form, &$form_state){
+  if ($form_state['values']['confirm']) {
+    if(isset($form_state['values']['gid'])) {
+      db_query("DELETE FROM {bj_grade} WHERE gid = ".$form_state['values']['gid']);
+			drupal_set_message(t('The grade has been deleted successfully.'));
+  	}
+  }
+  $form_state['redirect'] = 'admin/brainjogging/grade';
+  return;
 }
