@@ -4,6 +4,7 @@
  * Implements hook_menu().
  */
 function brainjogging_menu() {
+  
   $items['admin/brainjogging/grade'] = array(
     'title' => 'User Grades',
     'description' => 'List, add, and edit user grades.',
@@ -25,10 +26,9 @@ function brainjogging_menu() {
     'file' => 'grade.admin.inc',
   );
   $items['admin/brainjogging/grade/edit/%'] = array(
-    'title' => 'Add Grade',
-    'page arguments' => array('create'),
+    'title' => 'Update Grade',
+    'page arguments' => array('edit'),
     'access arguments' => array('administer grades'),
-    'type' => MENU_LOCAL_TASK,
     'file' => 'grade.admin.inc',
   );
   $items['brainjogging'] = array(
