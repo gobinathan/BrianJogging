@@ -43,8 +43,43 @@ function brainjogging_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_SUGGESTED_ITEM,
   );
-
-  return $items;
+  //learning disablity
+  
+   $items['admin/brainjogging/learning_disability'] = array(
+    'title' => 'User Learing Disability',
+    'description' => 'List, add, and edit user learning disability.',
+    'page callback' => 'bj_learning_disability_admin',
+    'page arguments' => array('list'),
+    'access arguments' => array('administer learning disablities'),
+    'file' => 'learning_disability.admin.inc',
+  );
+  $items['admin/brainjogging/learning_disability/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  $items['admin/brainjogging/learning_disability/create'] = array(
+    'title' => 'Add Learning Disability',
+    'page arguments' => array('create'),
+    'access arguments' => array('administer learning disablities'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'learning_disability.admin.inc',
+  );
+  $items['admin/brainjogging/learning_disability/edit/%'] = array(
+    'title' => 'Update Learning Disability',
+    'page arguments' => array('edit'),
+    'access arguments' => array('administer learning disablities'),
+    'file' => 'learning_disability.admin.inc',
+  );
+  $items['admin/brainjogging/learning_disability/delete/%'] = array(
+    'title' => 'Delete Learning Disability',
+    'page arguments' => array('delete'),
+    'access arguments' => array('administer learning disablities'),
+    'file' => 'learning_disability.admin.inc',
+  );
+  //learing disablity end
+  
+    return $items;
 }
 
 //remove anonymous registeration

@@ -20,7 +20,7 @@ function bj_grade_admin($args){
 }
 
 function bj_grade_list(){
-  $limit = 20;
+  $limit = 5;
   $sql_count = db_rewrite_sql("SELECT COUNT(gid) FROM {bj_grade}");
   $grade_res = pager_query("SELECT * FROM bj_grade", $limit, 0, $sql_count);
   
@@ -72,7 +72,6 @@ function bj_grade_create_form(){
   $form['description'] = array(
     '#type' => 'textarea',
     '#title' => t('Description'),
-    '#required' => TRUE,
     '#default_value' => $grade_obj->description, 
     '#weight' => 1,
   );
