@@ -430,6 +430,58 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
         '#title' => t('First Name'),
         '#value' => $user_obj->first_name,
       );
+       $account->content['user_info']['last_name'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('Last Name'),
+        '#value' => $user_obj->last_name,
+      );
+     if(end(array_keys($account->roles))==6 ||end(array_keys($account->roles))==7){
+       $account->content['user_info']['parent_first_name'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('parent_first_name'),
+        '#value' => $user_obj->parent_first_name,
+      );
+       $account->content['user_info']['parent_last_name'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('Parent Last Name'),
+        '#value' => $user_obj->parent_last_name,
+      );
+       
+       
+        $account->content['user_info']['parent_email_address'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('Parent Email Address'),
+        '#value' => $user_obj->parent_email_address,
+        
+      );
+           $account->content['user_info']['reason_for_bj'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('Reson for Brain Jogging'),
+        '#value' => $user_obj->reason_for_bj,
+      );
+       
+       
+       
+       
+       }
+        $account->content['user_info']['schoolname'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('Schoolname'),
+        '#value' => $user_obj->schoolname,
+        );
+         $account->content['user_info']['phone'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('Phone'),
+        '#value' => $user_obj->phone,
+      );
+           $account->content['user_info']['address'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('address'),
+        '#value' => $user_obj->address,
+      );
+       
+      
+    
       break;
     case 'load':
       $user_obj = db_fetch_object(db_query("SELECT * FROM {bj_user_details} WHERE uid = ".$account->uid));
@@ -471,11 +523,25 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
         unset($edit['fnmae']);unset($edit['lname']);unset($edit['parent_fnmae']);unset($edit['parent_lname']);
         unset($edit['parent_mail']);unset($edit['school_name']);unset($edit['phone']);unset($edit['address']);unset($edit['reason']);
         
-        db_query("INSERT INTO {bj_user_grades} (uid,gid) VALUES (".$edit['uid'].",".$edit['grade'].")");
-        unset($edit['grade']);
         
-        db_query("INSERT INTO {bj_user_disabilities} (uid,did) VALUES (".$edit['uid'].",".$edit['learning_disablity'].")");
-        unset($edit['learning_disablity']);
+      
+        if(current($edit['roles'])==6 || current($edit['roles'])==7 ){        
+          db_query("INSERT INTO {bj_user_teachers} (uid,tid) VALUES (".$edit['uid'].",".$edit['teacher'].")");
+          unset($edit['teacher']);
+          
+          db_query("INSERT INTO {bj_user_grades} (uid,gid) VALUES (".$edit['uid'].",".$edit['grade'].")");
+          unset($edit['grade']);
+          
+          db_query("INSERT INTO {bj_user_disabilities} (uid,did) VALUES (".$edit['uid'].",".$edit['learning_disablity'].")");
+          unset($edit['learning_disablity']);
+        }
+        else{
+          unset($edit['teacher']);
+          unset($edit['grade']);
+          unset($edit['learning_disablity']);
+          
+        }
+
         
       }
       break;
@@ -492,8 +558,10 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
                address = '".mysql_real_escape_string($edit['address'])."',
                reason_for_bj = '".mysql_real_escape_string($edit['reason'])."'
                WHERE uid =". $account->uid);
+     if(current($edit['roles'])==6 || current($edit['roles'])==7 ){
       db_query("UPDATE {bj_user_grades} SET gid = ".$edit['grade']." WHERE uid = ".$account->uid);
       db_query("UPDATE {bj_user_disabilities} SET did = ".$edit['learning_disablity']." WHERE uid = ".$account->uid);
+     }
     }
     break;
   case 'delete':
