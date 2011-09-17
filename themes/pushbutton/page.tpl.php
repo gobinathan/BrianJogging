@@ -37,15 +37,17 @@
 
 <table id="secondary-menu" summary="Navigation elements." border="0" cellpadding="0" cellspacing="0" width="100%">
   <tr>
-    <td class="secondary-links" width="75%"  align="center" valign="middle">
-      <?php print theme('links', $secondary_links, array('class' => 'links', 'id' => 'subnavlist')) ?>
+    <td width="100%"  align="right" valign="middle" style="padding-right:15px">
+      <?php
+        global $user;
+        if($user->uid){
+          echo 'Welcome '.$user->name.', <a href="/logout"> Logout </a>';
+        }
+        else{
+          echo '<a href="/user/login"> User Login </a>';
+        }
+      ?>
     </td>
-    <td width="25%" align="center" valign="middle">
-      <?php print $search_box ?>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2"><div><?php print $header ?></div></td>
   </tr>
 </table>
 

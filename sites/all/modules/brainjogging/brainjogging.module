@@ -102,19 +102,32 @@ function brainjogging_perm() {
 }
 
 function brainjogging_form_alter(&$form, &$form_state, $form_id){
+  drupal_add_js(drupal_get_path('module', 'brainjogging') .'/js/bj_users.js');
+  
+  $grades = array();
+  $grade_res = db_query("SELECT * FROM {bj_grade}");
+  while($grade_obj = db_fetch_object($grade_res)){
+    $grades[$grade_obj->gid] = $grade_obj->name;
+  }
+  
+  $lds = array();
+  $ld_res = db_query("SELECT * FROM {bj_learning_disability}");
+  while($ld_obj = db_fetch_object($ld_res)){
+    $lds[$ld_obj->did] = $ld_obj->name;
+  }
+  
+  $teachers = array();
+  $teacher_res = db_query ("SELECT u.uid, u.name
+                      FROM users u, role r, users_roles ur
+                      WHERE u.uid = ur.uid
+                      AND ur.rid = r.rid
+                      AND r.name = 'teacher'");
+  
+  while($teacher_obj = db_fetch_object($teacher_res)){
+    $teachers[$teacher_obj->uid] = $teacher_obj->name;
+  }
+
   if($form_id == 'user_register'){
-    drupal_add_js(drupal_get_path('module', 'brainjogging') .'/js/bj_users.js');
-    
-    $teachers = array();
-    $teacher_res = db_query ("SELECT u.uid, u.name
-                        FROM users u, role r, users_roles ur
-                        WHERE u.uid = ur.uid
-                        AND ur.rid = r.rid
-                        AND r.name = 'teacher'");
-    
-    while($teacher_obj = db_fetch_object($teacher_res)){
-      $teachers[$teacher_obj->uid] = $teacher_obj->name;
-    }
     
     $options = $form['roles']['#options'];
     unset($options[2]);
@@ -192,7 +205,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     $form['grade'] = array(
       '#type' => 'select',
       '#title' => t('Grade'),
-      '#options' => array(1,2,3),
+      '#options' => $grades,
       '#description' => t('Grade at current.'),
       '#required' => TRUE,
       '#weight' => 11,
@@ -201,7 +214,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     $form['learning_disablity'] = array(
       '#type' => 'select',
       '#title' => t('Learning Disablity'),
-      '#options' => array(1,2,3),
+      '#options' => $lds,
       '#description' => t('Learning Disabiltiy.'),
       '#required' => TRUE,
       '#weight' => 12,
@@ -242,12 +255,9 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     $form['notify']['#weight'] = 17;
     $form['submit']['#weight'] = 18;
     
-    $form['#validate'][] = 'bj_user_details_validator';
-    $form['#submit'][] = 'bj_user_details_submit';
   }
   
   if($form_id == 'user_profile_form'){
-    drupal_add_js(drupal_get_path('module', 'brainjogging') .'/js/bj_users.js');
     
     //Load the user object 
     $user =user_load(arg(1));
@@ -256,17 +266,6 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     $form['account']['name'] = array('#type' => 'value', '#value' => $user->name);
     
     unset($form['timezone']);
-    
-    //Get the teacher users
-    $teachers = array();
-    $teacher_res = db_query ("SELECT u.uid, u.name
-                        FROM users u, role r, users_roles ur
-                        WHERE u.uid = ur.uid
-                        AND ur.rid = r.rid
-                        AND r.name = 'teacher'");
-    while($teacher_obj = db_fetch_object($teacher_res)){
-      $teachers[$teacher_obj->uid] = $teacher_obj->name;
-    }
     
     $options = $form['account']['roles']['#options'];
     unset($options[2]);
@@ -348,6 +347,26 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       '#weight' => 10,
     );
     
+    $form['account']['grade'] = array(
+      '#type' => 'select',
+      '#title' => t('Grade'),
+      '#options' => $grades,
+      '#default_value' => $user->grade,
+      '#description' => t('Grade at current.'),
+      '#required' => TRUE,
+      '#weight' => 11,
+    );
+    
+    $form['account']['learning_disablity'] = array(
+      '#type' => 'select',
+      '#title' => t('Learning Disablity'),
+      '#options' => $lds,
+      '#default_value' => $user->learning_disability,
+      '#description' => t('Learning Disabiltiy.'),
+      '#required' => TRUE,
+      '#weight' => 12,
+    );
+    
     $form['account']['school_name'] = array(
       '#type' => 'textfield',
       '#title' => t('School Name'),
@@ -355,7 +374,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       '#maxlength' => 60,
       '#default_value' => $user->school_name,
       '#required' => TRUE,
-      '#weight' => 11,
+      '#weight' => 13,
     );
     
     $form['account']['phone'] = array(
@@ -366,7 +385,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       '#required' => TRUE,
       '#default_value' => $user->phone,
       '#description' => 'Phone number with area code, without white space and special charecters',
-      '#weight' => 12,
+      '#weight' => 14,
     );
     
     $form['account']['address'] = array(
@@ -374,17 +393,17 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       '#title' => t('Address'),
       '#default_value' => $user->address,
       '#required' => TRUE,
-      '#weight' => 13,
+      '#weight' => 15,
     );
     
     $form['account']['reason'] = array(
       '#type' => 'textarea',
       '#default_value' => $user->reason,
       '#title' => t('Reason for BrainJogging'),
-      '#weight' => 14,
+      '#weight' => 16,
     );
     
-    $form['account']['submit']['#weight'] = 16;
+    $form['account']['submit']['#weight'] = 17;
     //var_dump($form);
   }
 }
@@ -395,6 +414,23 @@ function bj_user_details_validator(&$form, &$form_state){
 
 function brainjogging_user($op, &$edit, &$account, $category = NULL) {
   switch($op){
+    case 'view':
+      $user_obj = db_fetch_object(db_query("SELECT * FROM {bj_user_details} WHERE uid = ".$account->uid));
+      if (!isset($account->content['user_info'])) {
+        $account->content['user_info'] = array();
+      }
+      $account->content['user_info'] += array(
+        '#type' => 'user_profile_category',
+        '#attributes' => array('class' => 'user-member'),
+        '#weight' => 5,
+        '#title' => t('User Details'),
+      );
+      $account->content['user_info']['fname'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('First Name'),
+        '#value' => $user_obj->first_name,
+      );
+      break;
     case 'load':
       $user_obj = db_fetch_object(db_query("SELECT * FROM {bj_user_details} WHERE uid = ".$account->uid));
       $account->fname = $user_obj->first_name;
@@ -406,6 +442,12 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
       $account->phone = $user_obj->phone;
       $account->address = $user_obj->address;
       $account->reason = $user_obj->reason_for_bj;
+      //add the grade
+      $grade = db_result(db_query("SELECT gid FROM {bj_user_grades} WHERE uid = ".$account->uid));
+      $account->grade = $grade;
+      //add the Learning Disabilty
+      $ld = db_result(db_query("SELECT did FROM {bj_user_disabilities} WHERE uid = ".$account->uid));
+      $account->learning_disability = $ld;
       break;
     case 'insert':
       if($edit['uid']){
@@ -428,6 +470,13 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
               ");
         unset($edit['fnmae']);unset($edit['lname']);unset($edit['parent_fnmae']);unset($edit['parent_lname']);
         unset($edit['parent_mail']);unset($edit['school_name']);unset($edit['phone']);unset($edit['address']);unset($edit['reason']);
+        
+        db_query("INSERT INTO {bj_user_grades} (uid,gid) VALUES (".$edit['uid'].",".$edit['grade'].")");
+        unset($edit['grade']);
+        
+        db_query("INSERT INTO {bj_user_disabilities} (uid,did) VALUES (".$edit['uid'].",".$edit['learning_disablity'].")");
+        unset($edit['learning_disablity']);
+        
       }
       break;
   case 'after_update':
@@ -443,10 +492,14 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
                address = '".mysql_real_escape_string($edit['address'])."',
                reason_for_bj = '".mysql_real_escape_string($edit['reason'])."'
                WHERE uid =". $account->uid);
+      db_query("UPDATE {bj_user_grades} SET gid = ".$edit['grade']." WHERE uid = ".$account->uid);
+      db_query("UPDATE {bj_user_disabilities} SET did = ".$edit['learning_disablity']." WHERE uid = ".$account->uid);
     }
     break;
   case 'delete':
     db_query("DELETE FROM {bj_user_details} WHERE uid = ".$account->uid);
+    db_query("DELETE FROM {bj_user_grades} WHERE uid = ".$account->uid);
+    db_query("DELETE FROM {bj_user_disabilities} WHERE uid = ".$account->uid);
     break;
   }
 }
