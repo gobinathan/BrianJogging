@@ -88,7 +88,6 @@ function bj_grade_create_form(){
 function bj_grade_create_form_validate(){
   //TODO
   //Validator for bj_grade_create_form
- 
 }
 
 
