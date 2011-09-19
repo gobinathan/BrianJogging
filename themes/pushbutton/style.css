@@ -83,15 +83,15 @@ pre {
   background: transparent url(header-a.jpg) left bottom repeat; /* LTR */
 }
 td#home {
-  background: transparent url(logo-background.jpg) left top repeat; /* LTR */
+/*  background: transparent url(logo-background.jpg) left top repeat;*/ /* LTR */
 }
 td#home a:link img, td#home a:visited img {
-  background: transparent url(logo-active.jpg) repeat; /* LTR */
+  /*background: transparent url(logo-active.jpg) repeat;*/ /* LTR */
   width: 144px;
   height: 63px;
 }
 td#home a:hover img {
-  background: transparent url(logo-hover.jpg) repeat; /* LTR */
+  /*background: transparent url(logo-hover.jpg) repeat;*/ /* LTR */
   width: 144px;
   height: 63px;
 }
@@ -102,7 +102,7 @@ td#home a:hover img {
   color: #000;
 }
 #primary-menu .primary-links {
-  background: transparent url(header-b.jpg) left top no-repeat; /* LTR */
+  /*background: transparent url(header-b.jpg) left top no-repeat; LTR */
   font-size: 0.79em;
 }
 #primary-menu .primary-links h1, #primary-menu .primary-links h2, #primary-menu .primary-links h3 {
@@ -141,16 +141,19 @@ ul.links li {
 }
 .tabs ul.primary {
   border-collapse: collapse;
-  padding: 0 0 3px 10px; /* LTR */
+  padding: 0 0 24px 10px; /* LTR */
   white-space: nowrap;
   list-style: none;
   margin: 0;
   height: auto;
   line-height: normal;
   border-bottom: 2px solid #369;
+  
+  
 }
 .tabs ul.primary li {
   display: inline;
+  float:right;
 }
 .tabs ul.primary li a {
   padding: 3px 10px;
@@ -238,8 +241,8 @@ ul.links li {
   font-weight: normal;
 }
 #site-info {
-  background-color: #bdd3ea;
-  background-image: url(header-c.png);
+  /*background-color: #bdd3ea;
+  background-image: url(header-c.png);*/
   font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, Verdana, sans-serif;
 }
 .site-name {
@@ -259,7 +262,7 @@ ul.links li {
 #main {
   /* padding in px not ex because IE messes up 100% width tables otherwise */
   padding: 30px 35px 50px 35px;
-  background: transparent url(background.png) center center no-repeat;
+  /*background: transparent url(background.png) center center no-repeat;*/
   /* fix background overlapping text in IE (aka Peekaboo Bug) */
   position: relative;
 }
@@ -268,6 +271,7 @@ ul.links li {
 }
 #help {
   font-size: 0.9em;
+   margin-top: 2em;
   margin-bottom: 1em;
 }
 .breadcrumb {

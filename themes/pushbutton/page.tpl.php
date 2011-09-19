@@ -37,26 +37,22 @@
 
 <table id="secondary-menu" summary="Navigation elements." border="0" cellpadding="0" cellspacing="0" width="100%">
   <tr>
-    <td class="secondary-links" width="75%"  align="center" valign="middle">
-      <?php print theme('links', $secondary_links, array('class' => 'links', 'id' => 'subnavlist')) ?>
+    <td width="100%"  align="right" valign="middle" style="padding-right:15px">
+      <?php
+        global $user;
+        if($user->uid){
+          echo 'Welcome '.$user->name.', <a href="/logout"> Logout </a>';
+        }
+        else{
+          echo '<a href="/user/login"> User Login </a>';
+        }
+      ?>
     </td>
-    <td width="25%" align="center" valign="middle">
-      <?php print $search_box ?>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2"><div><?php print $header ?></div></td>
   </tr>
 </table>
 
 <table id="content" border="0" cellpadding="15" cellspacing="0" width="100%">
   <tr>
-    <?php if ($left != ""): ?>
-    <td id="sidebar-left">
-      <?php print $left ?>
-    </td>
-    <?php endif; ?>
-
     <td valign="top">
       <?php if ($mission != ""): ?>
       <div id="mission"><?php print $mission ?></div>
@@ -64,11 +60,11 @@
 
       <div id="main">
         <?php if ($title != ""): ?>
-          <?php print $breadcrumb ?>
-          <h1 class="title"><?php print $title ?></h1>
+          <?php //print $breadcrumb ?>
+          <h1 class="title" ><?php print $title ?></h1>
 
           <?php if ($tabs != ""): ?>
-            <div class="tabs"><?php print $tabs ?></div>
+            <div class="tabs" style="margin-top:10px;clear:both;"><?php print $tabs ?></div>
           <?php endif; ?>
 
         <?php endif; ?>
@@ -82,7 +78,7 @@
         <?php endif; ?>
 
       <!-- start main content -->
-      <?php print $content; ?>
+      <?php print $content; print $left?>
       <?php print $feed_icons; ?>
       <!-- end main content -->
 

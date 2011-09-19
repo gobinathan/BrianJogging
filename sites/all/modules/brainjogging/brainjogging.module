@@ -1,0 +1,571 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function brainjogging_menu() {
+  
+  $items['admin/brainjogging/grade'] = array(
+    'title' => 'User Grades',
+    'description' => 'List, add, and edit user grades.',
+    'page callback' => 'bj_grade_admin',
+    'page arguments' => array('list'),
+    'access arguments' => array('administer grades'),
+    'file' => 'grade.admin.inc',
+  );
+  $items['admin/brainjogging/grade/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  $items['admin/brainjogging/grade/create'] = array(
+    'title' => 'Add Grade',
+    'page arguments' => array('create'),
+    'access arguments' => array('administer grades'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'grade.admin.inc',
+  );
+  $items['admin/brainjogging/grade/edit/%'] = array(
+    'title' => 'Update Grade',
+    'page arguments' => array('edit'),
+    'access arguments' => array('administer grades'),
+    'file' => 'grade.admin.inc',
+  );
+  $items['admin/brainjogging/grade/delete/%'] = array(
+    'title' => 'Delete Grade',
+    'page arguments' => array('delete'),
+    'access arguments' => array('administer grades'),
+    'file' => 'grade.admin.inc',
+  );
+  $items['brainjogging'] = array(
+    'title' => 'Blogs',
+    'page callback' => 'blog_page_last',
+    'access arguments' => array('access content'),
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+  //learning disablity
+  
+   $items['admin/brainjogging/learning_disability'] = array(
+    'title' => 'User Learing Disability',
+    'description' => 'List, add, and edit user learning disability.',
+    'page callback' => 'bj_learning_disability_admin',
+    'page arguments' => array('list'),
+    'access arguments' => array('administer learning disablities'),
+    'file' => 'learning_disability.admin.inc',
+  );
+  $items['admin/brainjogging/learning_disability/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  $items['admin/brainjogging/learning_disability/create'] = array(
+    'title' => 'Add Learning Disability',
+    'page arguments' => array('create'),
+    'access arguments' => array('administer learning disablities'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'learning_disability.admin.inc',
+  );
+  $items['admin/brainjogging/learning_disability/edit/%'] = array(
+    'title' => 'Update Learning Disability',
+    'page arguments' => array('edit'),
+    'access arguments' => array('administer learning disablities'),
+    'file' => 'learning_disability.admin.inc',
+  );
+  $items['admin/brainjogging/learning_disability/delete/%'] = array(
+    'title' => 'Delete Learning Disability',
+    'page arguments' => array('delete'),
+    'access arguments' => array('administer learning disablities'),
+    'file' => 'learning_disability.admin.inc',
+  );
+  //learing disablity end
+  
+    return $items;
+}
+
+//remove anonymous registeration
+function brainjogging_menu_alter(&$items) {
+  unset($items['user/register']);
+}
+
+function brainjogging_perm() {
+  return array("administer grades","administer learning disablities");
+  //return array(
+  //  'access brainjogging reports' =>  array(
+  //    'title' => t('Access BrainJogging Reports'),
+  //    'description' => t('Aloow users to access the brain jogging repots'),
+  //  ),
+  //  'access brainjogging reports_1' =>  array(
+  //    'title' => t('Access BrainJogging Reports 1'),
+  //    'description' => t('Aloow users to access the brain jogging repots'),
+  //  ),
+  //);
+}
+
+function brainjogging_form_alter(&$form, &$form_state, $form_id){
+  drupal_add_js(drupal_get_path('module', 'brainjogging') .'/js/bj_users.js');
+  
+  $grades = array();
+  $grade_res = db_query("SELECT * FROM {bj_grade}");
+  while($grade_obj = db_fetch_object($grade_res)){
+    $grades[$grade_obj->gid] = $grade_obj->name;
+  }
+  
+  $lds = array();
+  $ld_res = db_query("SELECT * FROM {bj_learning_disability}");
+  while($ld_obj = db_fetch_object($ld_res)){
+    $lds[$ld_obj->did] = $ld_obj->name;
+  }
+  
+  $teachers = array();
+  $teacher_res = db_query ("SELECT u.uid, u.name
+                      FROM users u, role r, users_roles ur
+                      WHERE u.uid = ur.uid
+                      AND ur.rid = r.rid
+                      AND r.name = 'teacher'");
+  
+  while($teacher_obj = db_fetch_object($teacher_res)){
+    $teachers[$teacher_obj->uid] = $teacher_obj->name;
+  }
+
+  if($form_id == 'user_register'){
+    
+    $options = $form['roles']['#options'];
+    unset($options[2]);
+    unset($options[5]);
+    
+    $form['roles'] = array(
+      '#type' => 'select',
+      '#title' => t('Roles'),
+      '#options' => $options,
+      '#multiple' => TRUE,
+      '#description' => t('Select the type of user you are creating.'),
+      '#required' => TRUE,
+      '#weight' => 6,
+    );
+    
+    $form['fnmae'] = array(
+      '#type' => 'textfield',
+      '#title' => t('First Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#required' => TRUE,
+      '#weight' => 0,
+    );
+    
+    $form['lname'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Last Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#required' => TRUE,
+      '#weight' => 1,
+    );
+    
+    $form['name']['#weight'] = 2;
+    $form['mail']['#weight'] = 3;
+    $form['pass']['#weight'] = 4;
+    $form['status']['#weight'] = 5;
+    
+    $form['teacher'] = array(
+      '#type' => 'select',
+      '#title' => t('Teachers'),
+      '#options' => $teachers,
+      '#description' => t('Select teacher for this client.'),
+      '#weight' => 7,
+    );
+    
+    $form['parent_fnmae'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parent First Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#weight' => 8,
+    );
+    
+    $form['parent_lname'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parent Last Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#weight' => 9,
+    );
+    
+    $form['parent_mail'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parent E-Mail Address'),
+      '#maxlength' => 64,
+      '#description' => 'A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.',
+      '#weight' => 10,
+    );
+    
+    $form['grade'] = array(
+      '#type' => 'select',
+      '#title' => t('Grade'),
+      '#options' => $grades,
+      '#description' => t('Grade at current.'),
+      '#weight' => 11,
+    );
+    
+    $form['learning_disablity'] = array(
+      '#type' => 'select',
+      '#title' => t('Learning Disablity'),
+      '#options' => $lds,
+      '#description' => t('Learning Disabiltiy.'),
+      '#weight' => 12,
+    );
+    
+    $form['school_name'] = array(
+      '#type' => 'textfield',
+      '#title' => t('School Name'),
+      '#size' => 25,
+      '#maxlength' => 60,
+      '#required' => TRUE,
+      '#weight' => 13,
+    );
+    
+    $form['phone'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Phone'),
+      '#size' => 20,
+      '#maxlength' => 10,
+      '#required' => TRUE,
+      '#description' => 'Phone number with area code, without white space and special charecters',
+      '#weight' => 14,
+    );
+    
+    $form['address'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Address'),
+      '#required' => TRUE,
+      '#weight' => 15,
+    );
+    
+    $form['reason'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Reason for BrainJogging'),
+      '#weight' => 16,
+    );
+    
+    $form['notify']['#weight'] = 17;
+    $form['submit']['#weight'] = 18;
+    
+  }
+  
+  if($form_id == 'user_profile_form'){
+    
+    //Load the user object 
+    $user =user_load(arg(1));
+    //make Username field hidden
+    unset($form['account']['name']);
+    $form['account']['name'] = array('#type' => 'value', '#value' => $user->name);
+    
+    unset($form['timezone']);
+    
+    $options = $form['account']['roles']['#options'];
+    unset($options[2]);
+    unset($options[5]);
+    
+    $form['account']['roles'] = array(
+      '#type' => 'select',
+      '#title' => t('Roles'),
+      '#options' => $options,
+      '#multiple' => TRUE,
+      '#default_value' => array_keys($user->roles),
+      '#description' => t('Select the type of user you are creating.'),
+      '#required' => TRUE,
+      '#weight' => 6,
+    );
+    
+    $form['account']['fnmae'] = array(
+      '#type' => 'textfield',
+      '#title' => t('First Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#default_value' => $user->fname,
+      '#required' => TRUE,
+      '#weight' => 0,
+    );
+    
+    $form['account']['lname'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Last Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#default_value' => $user->lname,
+      '#required' => TRUE,
+      '#weight' => 1,
+    );
+    
+    $form['account']['name']['#weight'] = 2;
+    $form['account']['mail']['#weight'] = 3;
+    $form['account']['pass']['#weight'] = 4;
+    $form['account']['status']['#weight'] = 5;
+    
+    $form['account']['teacher'] = array(
+      '#type' => 'select',
+      '#title' => t('Teachers'),
+      '#options' => $teachers,
+      '#default_value' => $user->teacher,
+      '#description' => t('Select teacher for this client.'),
+      '#weight' => 7,
+    );
+    
+    $form['account']['parent_fnmae'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parent First Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#default_value' => $user->parent_fnmae,
+      '#weight' => 8,
+    );
+    
+    $form['account']['parent_lname'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parent Last Name'),
+      '#size' => 25,
+      '#maxlength' => 30,
+      '#default_value' => $user->parent_lname,
+      '#weight' => 9,
+    );
+    
+    $form['account']['parent_mail'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parent E-Mail Address'),
+      '#maxlength' => 64,
+      '#default_value' => $user->parent_mail,
+      '#description' => 'A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.',
+      '#weight' => 10,
+    );
+    
+    $form['account']['grade'] = array(
+      '#type' => 'select',
+      '#title' => t('Grade'),
+      '#options' => $grades,
+      '#default_value' => $user->grade,
+      '#description' => t('Grade at current.'),
+      '#weight' => 11,
+    );
+    
+    $form['account']['learning_disablity'] = array(
+      '#type' => 'select',
+      '#title' => t('Learning Disablity'),
+      '#options' => $lds,
+      '#default_value' => $user->learning_disability,
+      '#description' => t('Learning Disabiltiy.'),
+      '#weight' => 12,
+    );
+    
+    $form['account']['school_name'] = array(
+      '#type' => 'textfield',
+      '#title' => t('School Name'),
+      '#size' => 25,
+      '#maxlength' => 60,
+      '#default_value' => $user->school_name,
+      '#required' => TRUE,
+      '#weight' => 13,
+    );
+    
+    $form['account']['phone'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Phone'),
+      '#size' => 20,
+      '#maxlength' => 10,
+      '#required' => TRUE,
+      '#default_value' => $user->phone,
+      '#description' => 'Phone number with area code, without white space and special charecters',
+      '#weight' => 14,
+    );
+    
+    $form['account']['address'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Address'),
+      '#default_value' => $user->address,
+      '#required' => TRUE,
+      '#weight' => 15,
+    );
+    
+    $form['account']['reason'] = array(
+      '#type' => 'textarea',
+      '#default_value' => $user->reason,
+      '#title' => t('Reason for BrainJogging'),
+      '#weight' => 16,
+    );
+    
+    $form['account']['submit']['#weight'] = 17;
+    $form['#validate'][] = 'bj_user_details_validator';
+    //var_dump($form);
+  }
+}
+
+function bj_user_details_validator(&$form, &$form_state){
+  if(in_array($form_state['values']['roles'],array(3,4,5))){
+    if(in_array($form_state['values']['teacher'],array(NULL,'',0))) {
+      form_set_error('teacher', t('The Teacher must be mandatory for clients.'));
+    }
+    if(in_array($form_state['values']['parent_fnmae'],array(NULL,'',0))) {
+      form_set_error('parent_fnmae', t('The parent firstname must be mandatory for clients.'));
+    }
+    if(in_array($form_state['values']['parent_lnmae'],array(NULL,'',0))) {
+      form_set_error('parent_lnmae', t('The parent lastname must be mandatory for clients.'));
+    }
+    if(in_array($form_state['values']['parent_mail'],array(NULL,'',0))) {
+      form_set_error('parent_mail', t('The Teacher must be mandatory for clients.'));
+    }
+    if(in_array($form_state['values']['grade'],array(NULL,'',0))) {
+      form_set_error('grade', t('The grade must be mandatory for clients.'));
+    }
+    if(in_array($form_state['values']['learning_disablity'],array(NULL,'',0))) {
+      form_set_error('learning_disablity', t('The learning disablity must be mandatory for clients.'));
+    }
+  }
+}
+
+function brainjogging_user($op, &$edit, &$account, $category = NULL) {
+  switch($op){
+    case 'view':
+      $user_obj = db_fetch_object(db_query("SELECT * FROM {bj_user_details} WHERE uid = ".$account->uid));
+      if (!isset($account->content['user_info'])) {
+        $account->content['user_info'] = array();
+      }
+      $account->content['user_info'] += array(
+        '#type' => 'user_profile_category',
+        '#attributes' => array('class' => 'user-member'),
+        '#weight' => 5,
+        '#title' => t('User Details'),
+      );
+      $account->content['user_info']['fname'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('First Name'),
+        '#value' => $user_obj->first_name,
+      );
+       $account->content['user_info']['last_name'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('Last Name'),
+        '#value' => $user_obj->last_name,
+      );
+      if(end(array_keys($account->roles))==6 ||end(array_keys($account->roles))==7){
+        $account->content['user_info']['parent_first_name'] = array(
+          '#type' => 'user_profile_item',
+          '#title' => t('parent_first_name'),
+          '#value' => $user_obj->parent_first_name,
+        );
+         $account->content['user_info']['parent_last_name'] = array(
+          '#type' => 'user_profile_item',
+          '#title' => t('Parent Last Name'),
+          '#value' => $user_obj->parent_last_name,
+        );
+         
+        $account->content['user_info']['parent_email_address'] = array(
+          '#type' => 'user_profile_item',
+          '#title' => t('Parent Email Address'),
+          '#value' => $user_obj->parent_email_address,
+          
+        );
+        $account->content['user_info']['reason_for_bj'] = array(
+          '#type' => 'user_profile_item',
+          '#title' => t('Reson for Brain Jogging'),
+          '#value' => $user_obj->reason_for_bj,
+        ); 
+      }
+      $account->content['user_info']['schoolname'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('Schoolname'),
+        '#value' => $user_obj->schoolname,
+      );
+      $account->content['user_info']['phone'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('Phone'),
+        '#value' => $user_obj->phone,
+      );
+      $account->content['user_info']['address'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('address'),
+        '#value' => $user_obj->address,
+      );
+       
+      
+    
+      break;
+    case 'load':
+      $user_obj = db_fetch_object(db_query("SELECT * FROM {bj_user_details} WHERE uid = ".$account->uid));
+      $account->fname = $user_obj->first_name;
+      $account->lname = $user_obj->last_name;
+      $account->parent_fnmae = $user_obj->parent_first_name;
+      $account->parent_lname = $user_obj->parent_last_name;
+      $account->parent_mail = $user_obj->parent_email_address;
+      $account->school_name = $user_obj->schoolname;
+      $account->phone = $user_obj->phone;
+      $account->address = $user_obj->address;
+      $account->reason = $user_obj->reason_for_bj;
+      //add the grade
+      $grade = db_result(db_query("SELECT gid FROM {bj_user_grades} WHERE uid = ".$account->uid));
+      $account->grade = $grade;
+      //add the Learning Disabilty
+      $ld = db_result(db_query("SELECT did FROM {bj_user_disabilities} WHERE uid = ".$account->uid));
+      $account->learning_disability = $ld;
+      break;
+    case 'insert':
+      if($edit['uid']){
+        db_query("INSERT INTO {bj_user_details}
+                 (
+                  uid, first_name, last_name,
+                  parent_first_name, parent_last_name,
+                  parent_email_address, schoolname,
+                  phone, address, reason_for_bj
+                 )
+                VALUES
+                 (
+                  ".$edit['uid'].",
+                  '".mysql_real_escape_string($edit['fnmae'])."','".mysql_real_escape_string($edit['lname'])."',
+                  '".mysql_real_escape_string($edit['parent_fnmae'])."',
+                  '".mysql_real_escape_string($edit['parent_lname'])."','".mysql_real_escape_string($edit['parent_mail'])."',
+                  '".mysql_real_escape_string($edit['school_name'])."','".$edit['phone']."',
+                  '".mysql_real_escape_string($edit['address'])."','".mysql_real_escape_string($edit['reason'])."'
+                 )
+              ");
+        unset($edit['fnmae']);unset($edit['lname']);unset($edit['parent_fnmae']);unset($edit['parent_lname']);
+        unset($edit['parent_mail']);unset($edit['school_name']);unset($edit['phone']);unset($edit['address']);unset($edit['reason']);
+        
+        if(in_array($edit['roles'],array(6,7)) ){        
+          db_query("INSERT INTO {bj_user_teachers} (uid,tid) VALUES (".$edit['uid'].",".$edit['teacher'].")");
+          unset($edit['teacher']);
+          
+          db_query("INSERT INTO {bj_user_grades} (uid,gid) VALUES (".$edit['uid'].",".$edit['grade'].")");
+          unset($edit['grade']);
+          
+          db_query("INSERT INTO {bj_user_disabilities} (uid,did) VALUES (".$edit['uid'].",".$edit['learning_disablity'].")");
+          unset($edit['learning_disablity']);
+        }
+        else{
+          unset($edit['teacher']);
+          unset($edit['grade']);
+          unset($edit['learning_disablity']);
+        }
+      }
+      break;
+  case 'after_update':
+    if($account->uid){
+      db_query("UPDATE {bj_user_details} SET
+               first_name = '".mysql_real_escape_string($edit['fnmae'])."',
+               last_name = '".mysql_real_escape_string($edit['lname'])."',
+               parent_first_name = '".mysql_real_escape_string($edit['parent_fnmae'])."',
+               parent_last_name = '".mysql_real_escape_string($edit['parent_lname'])."',
+               parent_email_address = '".mysql_real_escape_string($edit['parent_mail'])."',
+               schoolname = '".mysql_real_escape_string($edit['school_name'])."',
+               phone = ".$edit['phone'].",
+               address = '".mysql_real_escape_string($edit['address'])."',
+               reason_for_bj = '".mysql_real_escape_string($edit['reason'])."'
+               WHERE uid =". $account->uid);
+      if(in_array($edit['roles'],array(6,7)) ){ 
+        db_query("UPDATE {bj_user_grades} SET gid = ".$edit['grade']." WHERE uid = ".$account->uid);
+        db_query("UPDATE {bj_user_disabilities} SET did = ".$edit['learning_disablity']." WHERE uid = ".$account->uid);
+      }
+    }
+    break;
+  case 'delete':
+    db_query("DELETE FROM {bj_user_details} WHERE uid = ".$account->uid);
+    db_query("DELETE FROM {bj_user_grades} WHERE uid = ".$account->uid);
+    db_query("DELETE FROM {bj_user_disabilities} WHERE uid = ".$account->uid);
+    break;
+  }
+}
