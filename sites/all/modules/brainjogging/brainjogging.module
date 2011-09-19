@@ -470,12 +470,17 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
               ");
         unset($edit['fnmae']);unset($edit['lname']);unset($edit['parent_fnmae']);unset($edit['parent_lname']);
         unset($edit['parent_mail']);unset($edit['school_name']);unset($edit['phone']);unset($edit['address']);unset($edit['reason']);
-        
-        db_query("INSERT INTO {bj_user_grades} (uid,gid) VALUES (".$edit['uid'].",".$edit['grade'].")");
-        unset($edit['grade']);
-        
-        db_query("INSERT INTO {bj_user_disabilities} (uid,did) VALUES (".$edit['uid'].",".$edit['learning_disablity'].")");
-        unset($edit['learning_disablity']);
+        var_dump($edit);exit;
+        if($edit['fnmae']){        
+          db_query("INSERT INTO {bj_user_teachers} (uid,tid) VALUES (".$edit['uid'].",".$edit['teacher'].")");
+          unset($edit['teacher']);
+          
+          db_query("INSERT INTO {bj_user_grades} (uid,gid) VALUES (".$edit['uid'].",".$edit['grade'].")");
+          unset($edit['grade']);
+          
+          db_query("INSERT INTO {bj_user_disabilities} (uid,did) VALUES (".$edit['uid'].",".$edit['learning_disablity'].")");
+          unset($edit['learning_disablity']);
+        }
         
       }
       break;
