@@ -541,10 +541,12 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
           $user['fname'] = $edit['parent_fname'];
           $user['lname'] = $edit['parent_lname'];
           $user['phone'] = $edit['phone'];
+          $user['address'] = $edit['address'];
           $parent = user_save('',$user);
+          db_query("INSERT INTO {bj_user_parents} (uid,pid) VALUES (".$edit['uid'].",".$parent->uid.") ");
         }
         
-        db_query("INSERT INTO {bj_user_parents} (uid,pid) VALUES (".$edit['uid'].",".$parent->uid.") ");
+        
         unset($edit['fname']);unset($edit['lname']);unset($edit['parent_fname']);unset($edit['parent_lname']);
         unset($edit['parent_mail']);unset($edit['school_name']);unset($edit['phone']);unset($edit['address']);unset($edit['reason']);
         

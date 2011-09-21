@@ -7,7 +7,7 @@ $(document).ready(function() {
 
 function toggle_parent_fields(){
 	$('#edit-teacher-wrapper').children('label').children('span').remove();
-	$('#edit-parent-fnmae-wrapper').children('label').children('span').remove();
+	$('#edit-parent-fname-wrapper').children('label').children('span').remove();
 	$('#edit-parent-lname-wrapper').children('label').children('span').remove();
 	$('#edit-parent-mail-wrapper').children('label').children('span').remove();
 	$('#edit-parent-mail-wrapper').children('label').children('span').remove();
@@ -16,7 +16,7 @@ function toggle_parent_fields(){
 	
 	if($("#edit-roles option:selected").text() == 'teacher' || $("#edit-roles option:selected").text() == 'site administrator'){
 		$('#edit-teacher-wrapper').hide();
-		$('#edit-parent-fnmae-wrapper').hide();
+		$('#edit-parent-fname-wrapper').hide();
 		$('#edit-parent-lname-wrapper').hide();
 		$('#edit-parent-mail-wrapper').hide();
 		$('#edit-reason-wrapper').hide();
@@ -27,8 +27,8 @@ function toggle_parent_fields(){
 		$('#edit-teacher-wrapper').show();
 		$('#edit-teacher-wrapper').children('label').append('<span title="This field is required." class="form-required">*</span>');
 		
-		$('#edit-parent-fnmae-wrapper').show();
-		$('#edit-parent-fnmae-wrapper').children('label').append('<span title="This field is required." class="form-required">*</span>');
+		$('#edit-parent-fname-wrapper').show();
+		$('#edit-parent-fname-wrapper').children('label').append('<span title="This field is required." class="form-required">*</span>');
 		
 		$('#edit-parent-lname-wrapper').show();
 		$('#edit-parent-lname-wrapper').children('label').append('<span title="This field is required." class="form-required">*</span>');
