@@ -632,6 +632,9 @@ ul.menu li{
 .site-name a{
   display:none !important;
 }
+.item-list ul li {
+  list-style:none;
+}
 #logon{
   float:left;
 }
