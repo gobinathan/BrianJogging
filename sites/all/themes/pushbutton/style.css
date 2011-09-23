@@ -519,7 +519,7 @@ div.admin-panel .body {
 ** Module specific styles
 */
 .content .active {
-  color: #369;
+  color: #fff;
 }
 #aggregator .feed-source {
   background-color: #eee;
@@ -635,6 +635,7 @@ ul.menu li{
 #logon{
   float:left;
 }
-.item-list ul li{
-  display:none;
+
+#secondary-menu tbody td {
+  color:#fff;
 }
