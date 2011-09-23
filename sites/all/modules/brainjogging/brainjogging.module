@@ -89,7 +89,7 @@ function brainjogging_menu_alter(&$items) {
 }
 
 function bj_user_edit_access($account){
-  if(array_key_exists(7,$account->roles)){
+  if(array_key_exists(7,$GLOBALS['user']->roles)){
     return FALSE;
   }
   return (($GLOBALS['user']->uid == $account->uid) || user_access('administer users')) && $account->uid > 0;
@@ -97,19 +97,16 @@ function bj_user_edit_access($account){
 
 function brainjogging_perm() {
   return array("administer grades","administer learning disablities");
-  //return array(
-  //  'access brainjogging reports' =>  array(
-  //    'title' => t('Access BrainJogging Reports'),
-  //    'description' => t('Aloow users to access the brain jogging repots'),
-  //  ),
-  //  'access brainjogging reports_1' =>  array(
-  //    'title' => t('Access BrainJogging Reports 1'),
-  //    'description' => t('Aloow users to access the brain jogging repots'),
-  //  ),
-  //);
 }
 
 function brainjogging_form_alter(&$form, &$form_state, $form_id){
+  global $user;
+  
+  if($form_id == 'user_filter_form'){
+    unset($form['filters']['filter']['#options']['permission']);
+    unset($form['filters']['status']['permission']);
+  }
+  
   drupal_add_js(drupal_get_path('module', 'brainjogging') .'/js/bj_users.js');
   
   $grades = array();
@@ -137,9 +134,15 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
 
   if($form_id == 'user_register'){
     
-    $options = $form['roles']['#options'];
-    unset($options[2]);
-    unset($options[5]);
+    if($user->uid){
+      $options = $form['roles']['#options'];
+      unset($options[2]);
+      unset($options[5]);
+    }
+    else{
+      $options = array('6' => 'Independent client','7' => 'Dependent client');
+    }
+    
     
     $form['roles'] = array(
       '#type' => 'select',
@@ -172,14 +175,15 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     $form['mail']['#weight'] = 3;
     $form['pass']['#weight'] = 4;
     $form['status']['#weight'] = 5;
-    
-    $form['teacher'] = array(
-      '#type' => 'select',
-      '#title' => t('Teachers'),
-      '#options' => $teachers,
-      '#description' => t('Select teacher for this client.'),
-      '#weight' => 7,
-    );
+    if($user->uid){
+      $form['teacher'] = array(
+        '#type' => 'select',
+        '#title' => t('Teachers'),
+        '#options' => $teachers,
+        '#description' => t('Select teacher for this client.'),
+        '#weight' => 7,
+      );
+    }
     
     $form['parent_fname'] = array(
       '#type' => 'textfield',
@@ -204,14 +208,15 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       '#description' => 'A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.',
       '#weight' => 10,
     );
-    
-    $form['grade'] = array(
-      '#type' => 'select',
-      '#title' => t('Grade'),
-      '#options' => $grades,
-      '#description' => t('Grade at current.'),
-      '#weight' => 11,
-    );
+    if($user->uid){ 
+      $form['grade'] = array(
+        '#type' => 'select',
+        '#title' => t('Grade'),
+        '#options' => $grades,
+        '#description' => t('Grade at current.'),
+        '#weight' => 11,
+      );
+    }
     
     $form['learning_disablity'] = array(
       '#type' => 'select',
@@ -411,8 +416,9 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
 }
 
 function bj_user_details_validator(&$form, &$form_state){
+  global $user;
   if(!in_array($form_state['values']['roles'],array(3,4,5))){
-    if(in_array($form_state['values']['teacher'],array(NULL,'',0))) {
+    if($user->uid && in_array($form_state['values']['teacher'],array(NULL,'',0))) {
       form_set_error('teacher', t('The Teacher must be mandatory for clients.'));
     }
     if(!(boolean)($form_state['values']['parent_fname'])) {
@@ -424,7 +430,7 @@ function bj_user_details_validator(&$form, &$form_state){
     if(!(boolean)($form_state['values']['parent_mail'])) {
       form_set_error('parent_mail', t('The Teacher must be mandatory for clients.'));
     }
-    if(!(boolean)($form_state['values']['grade'])) {
+    if($user->uid && !(boolean)($form_state['values']['grade'])) {
       form_set_error('grade', t('The grade must be mandatory for clients.'));
     }
     if(!(boolean)($form_state['values']['learning_disablity'])) {
