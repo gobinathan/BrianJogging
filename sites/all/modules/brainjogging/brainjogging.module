@@ -100,7 +100,6 @@ function brainjogging_perm() {
 }
 
 function brainjogging_form_alter(&$form, &$form_state, $form_id){
-  global $user;
   
   if($form_id == 'user_filter_form'){
     unset($form['filters']['filter']['#options']['permission']);
@@ -133,7 +132,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
   }
 
   if($form_id == 'user_register'){
-    
+    global $user;
     if($user->uid){
       $options = $form['roles']['#options'];
       unset($options[2]);
