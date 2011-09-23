@@ -85,6 +85,14 @@ function brainjogging_menu() {
 //remove anonymous registeration
 function brainjogging_menu_alter(&$items) {
   unset($items['user/register']);
+  $items['user/%user_category/edit']['access callback'] = 'bj_user_edit_access';
+}
+
+function bj_user_edit_access($account){
+  if(array_key_exists(7,$account->roles)){
+    return FALSE;
+  }
+  return (($GLOBALS['user']->uid == $account->uid) || user_access('administer users')) && $account->uid > 0;
 }
 
 function brainjogging_perm() {
