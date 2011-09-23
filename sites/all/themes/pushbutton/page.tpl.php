@@ -37,7 +37,9 @@
 
 <table id="secondary-menu" summary="Navigation elements." border="0" cellpadding="0" cellspacing="0" width="100%">
   <tr>
-    <td width="100%"  align="right" valign="middle" style="padding-right:15px">
+    <td width="70%"  align="right" valign="middle" style="padding-right:15px">
+       <?php print $header;?></td>
+     <td width="50%"  align="right" valign="middle" style="padding-right:15px">
       <?php
         global $user;
         if($user->uid){
