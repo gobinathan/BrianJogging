@@ -583,17 +583,19 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
       break;
   case 'after_update':
     if($account->uid){
-      db_query("UPDATE {bj_user_details} SET
+      $query = "UPDATE {bj_user_details} SET
                first_name = '".mysql_real_escape_string($edit['fname'])."',
                last_name = '".mysql_real_escape_string($edit['lname'])."',
-               parent_first_name = '".mysql_real_escape_string($edit['parent_fname'])."',
-               parent_last_name = '".mysql_real_escape_string($edit['parent_lname'])."',
-               parent_email_address = '".mysql_real_escape_string($edit['parent_mail'])."',
-               schoolname = '".mysql_real_escape_string($edit['school_name'])."',
                phone = ".$edit['phone'].",
-               address = '".mysql_real_escape_string($edit['address'])."',
-               reason_for_bj = '".mysql_real_escape_string($edit['reason'])."'
-               WHERE uid =". $account->uid);
+               address = '".mysql_real_escape_string($edit['address'])."',";
+      $edit['parent_fname'] ? $query.= "parent_first_name = '".mysql_real_escape_string($edit['parent_fname'])."'," : '';
+      $edit['parent_lname'] ? $query.= "parent_first_name = '".mysql_real_escape_string($edit['parent_lname'])."'," : '';
+      $edit['parent_mail'] ? $query.= "parent_first_name = '".mysql_real_escape_string($edit['parent_mail'])."'," : '';
+      $edit['school_name'] ? $query.= "parent_first_name = '".mysql_real_escape_string($edit['school_name'])."'," : '';
+      $edit['reason'] ? $query.= "parent_first_name = '".mysql_real_escape_string($edit['reason'])."'," : '';
+      $query = substr($query,0,-1);
+      $query .= " WHERE uid =". $account->uid;
+      db_query($query);
       if(in_array($edit['roles'],array(6,7)) ){ 
         db_query("UPDATE {bj_user_grades} SET gid = ".$edit['grade']." WHERE uid = ".$account->uid);
         db_query("UPDATE {bj_user_disabilities} SET did = ".$edit['learning_disablity']." WHERE uid = ".$account->uid);
