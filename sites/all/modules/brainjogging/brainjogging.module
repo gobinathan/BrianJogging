@@ -79,7 +79,7 @@ function brainjogging_menu() {
   );
   //learing disablity end
   
-    return $items;
+  return $items;
 }
 
 //remove anonymous registeration
@@ -279,7 +279,9 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     unset($options[2]);
     unset($options[5]);
     
-    if(!in_array(5,array_keys($user->roles)) && !in_array(6,array_keys($user->roles)) && !in_array(4,array_keys($user->roles))){
+    $a = array(4,5,6);
+    
+    if(!count(array_intersect($a,array_keys($user->roles)))){
       $form['account']['roles'] = array(
         '#type' => 'select',
         '#title' => t('Roles'),

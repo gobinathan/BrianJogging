@@ -1,0 +1,32 @@
+<?php
+
+function brainjogging_test_theme(){
+  return array(
+    'bj_test' => array(
+      'arguments' => array('vars' => NULL),
+      'template'  => 'bj-test',
+    ),
+  );
+}
+
+function brainjogging_test_menu(){
+  $items['brainjogging/run_test'] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('brainjogging_test_run_test'),
+    'access callback' => TRUE,
+  );
+  return $items;
+}
+
+function brainjogging_test_run_test(){
+  $form = array();
+  $path = drupal_get_path('module', 'brainjogging_test');
+  drupal_add_css($path . '/css/bj_test_style.css', 'module', 'all', FALSE);
+  drupal_add_js($path . '/js/libs/handlebars.1.0.0.beta.3.js');
+  drupal_add_js($path . '/js/libs/jquery.chrono.min.js');
+  drupal_add_js($path . '/js/application.js');
+  $form['test'] = array(
+    '#value' => theme('bj_test',array('path'=>drupal_get_path('module', 'brainjogging_test')))
+  );
+  return $form;
+}

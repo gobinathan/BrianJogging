@@ -1,0 +1,120 @@
+div {
+  padding:5px;
+}
+#container {
+  margin: 0 auto;
+  padding:10px;
+  min-height:500px;
+}
+
+#main_menu, #wf_settings, #wf_instruction, #wf_begin, #wf_container {
+  margin: 80px auto;
+  border: 1px dotted;
+  width:500px;
+  background-color:#736F6E;
+  position:relative;
+  padding-left:10px;
+}
+
+#main_menu ul, #wf_settings div ul {
+ list-style-type: none;
+}
+
+#main_menu ul li {
+  padding:10px;
+}
+#main_menu ul li a {
+  text-decoration: none;
+  color: white;
+  font-weight:bold;
+}
+img{
+  border:none;
+  padding-right:2px;
+}
+span{
+  font-weight : bold;
+}
+.wrong {
+  color:#7E2217;
+}
+
+.msg {
+  color:#347C17;
+}
+
+input.wf_answer{
+border : 1px solid Black;
+background-color : #fff;
+color : #0E1930;
+font-size : 25px;
+font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+font-weight : bold;
+width : 480px;
+}
+
+#wf_settings_font{
+margin: 20px auto;
+width: 200px;
+font-size: medium;
+}
+
+/* letter flash */
+
+#lf_test_main_container #lf_begin{
+  margin:0 auto;
+  width:60px;
+}
+
+#lf_cp,#result_container{
+  margin-left: auto;
+  margin-right: auto;
+  width: 35%;
+}
+
+#lf_description{
+  text-align:center;
+}
+
+#lf_cp table{
+  width:100%;
+  text-align:left;
+  border:1px solid;
+}
+
+##result_container table{
+  width:100%;
+  text-align:center;
+  border:1px solid;
+}
+
+p{
+  text-align : justify;
+}
+
+#lf_test{
+  height:40%;
+  width:100%;  
+}
+
+.chars{
+  height:100px;
+  width:100px; 
+}
+
+.chars span{
+  height:100px;
+  width:100px; 
+}
+
+.large{
+  font-size:100px;
+}
+
+.medium{
+  font-size:75px;
+}
+
+.small{
+  font-size:50px;
+}
