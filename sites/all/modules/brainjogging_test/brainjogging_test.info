@@ -1,0 +1,7 @@
+name = BrainJogging Test
+description = Enables brainjogging test software.
+package = BrainJogging
+version = "6.x-1.0"
+core = 6.x
+
+
