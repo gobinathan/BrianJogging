@@ -23,7 +23,7 @@ function brainjogging_test_run_test(){
   $path = drupal_get_path('module', 'brainjogging_test');
   drupal_add_css($path . '/css/bj_test_style.css', 'module', 'all', FALSE);
   drupal_add_js($path . '/js/libs/handlebars.1.0.0.beta.3.js');
-  drupal_add_js($path . '/js/libs/jquery.chrono.min.js');
+  drupal_add_js($path . '/js/libs/jquery_plugins.js');
   drupal_add_js($path . '/js/application.js');
   $form['test'] = array(
     '#value' => theme('bj_test',array('path'=>drupal_get_path('module', 'brainjogging_test')))
