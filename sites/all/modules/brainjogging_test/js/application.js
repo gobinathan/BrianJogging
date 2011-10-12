@@ -232,7 +232,6 @@ BrianJogging.letter_flash = (function(pub) {
       letters[i] = {id:i,charecter:properties.Case? l.toUpperCase() : l,size : properties.f_size,tabindex:i+1};
       properties.qn_array.push(l);
     }
-        
     var context = {
       letter : letters
     };
@@ -293,14 +292,12 @@ BrianJogging.letter_flash = (function(pub) {
           
           //add the ans char into the array
           properties.ans_array.push($(this).val());
-          
           //Disable the current textbox
           $(this).attr('disabled','disabled');
         }
         else{
           //add the ans char into the array
           properties.ans_array.push($(this).val());
-          
           //Disable the current textbox
           $(this).attr('disabled','disabled');
           
@@ -309,7 +306,7 @@ BrianJogging.letter_flash = (function(pub) {
       });
     });
   }
-  
+ 
   pub.computeResults = function(){
     //Increase the total No of attempts
     properties.total_attempts++;
@@ -318,6 +315,10 @@ BrianJogging.letter_flash = (function(pub) {
     var level_flag = true;
     for(i=0; i < properties.type; i++){
       //compare qn chars against ans chars
+      
+      //console.debug(properties.qn_array[i]);
+      //console.debug(i);
+      //console.debug(properties.ans_array[i]);
       if(properties.ans_array[i] != properties.qn_array[i]){
         level_flag = false;
       }
@@ -341,7 +342,20 @@ BrianJogging.letter_flash = (function(pub) {
     }
     else{ //if the answer is not correct
       if(properties.sublevel == 3){
-        pub.quitAndShowResult(); //quit and show the result
+        pub.quitAndShowResult();
+        //quit and show the result
+        var qus=$.JSON.encode(properties.qn_array);
+        alert(qus);
+        //xmlhttp=$.ajax({
+        //  type: 'POST',
+        //  url: '/brainjogging/submit/',
+        //  data: 'ques='+properties.qn_array+'&ans='+properties.ans_array,
+        //  success: function(msg){
+        //  alert("success");
+        //  }
+        //  });
+        //  return false;
+          
       }
       else{
         alert("InCorrect.... Try again");

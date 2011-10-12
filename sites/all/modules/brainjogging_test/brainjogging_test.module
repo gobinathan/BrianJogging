@@ -15,6 +15,11 @@ function brainjogging_test_menu(){
     'page arguments' => array('brainjogging_test_run_test'),
     'access callback' => TRUE,
   );
+    $items['brainjogging/submit'] = array(
+    'page callback' => 'letter_flash_submit',
+    'page arguments' => array('list'),
+    'access callback' => TRUE,
+  );
   return $items;
 }
 
