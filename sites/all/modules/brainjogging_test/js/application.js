@@ -597,21 +597,3 @@ BrianJogging.eyemomvent = (function(pub) {
     
   return pub;
 }(BrianJogging.eyemomvent || {}));
-
-
-// Dom Ready event
-$(document).ready(function(){
-  $('.word').click(function(){
-    $('#main_menu').hide();
-    BrianJogging.wordflash.initialize();
-  });
-  $('.letter').click(function(){
-    $('#main_menu').hide();
-    BrianJogging.letter_flash.initialize();
-  });
-  
-  $('.eye').click(function(){
-    $('#main_menu').hide();
-    BrianJogging.eyemomvent.initialize();
-  });    
-});

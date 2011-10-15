@@ -2,17 +2,44 @@
 
 function brainjogging_test_theme(){
   return array(
-    'bj_test' => array(
+    'bj_dashboard' => array(
       'arguments' => array('vars' => NULL),
-      'template'  => 'bj-test',
+      'template'  => 'bj-dashboard',
+    ),
+    'bj_eye_movement' => array(
+      'arguments' => array('vars' => NULL),
+      'template'  => 'bj-eye-movement',
+    ),
+    'bj_letter_flash' => array(
+      'arguments' => array('vars' => NULL),
+      'template'  => 'bj-letter-flash',
+    ),
+    'bj_word_flash' => array(
+      'arguments' => array('vars' => NULL),
+      'template'  => 'bj-word-flash',
     ),
   );
 }
 
 function brainjogging_test_menu(){
-  $items['brainjogging/run_test'] = array(
+  $items['brainjogging/test/dashboard'] = array(
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('brainjogging_test_run_test'),
+    'page arguments' => array('brainjogging_test_dashboard'),
+    'access callback' => TRUE,
+  );
+  $items['brainjogging/test/eye_movement'] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('brainjogging_test_eye_movement'),
+    'access callback' => TRUE,
+  );
+  $items['brainjogging/test/letter_flash'] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('brainjogging_test_letter_flash'),
+    'access callback' => TRUE,
+  );
+  $items['brainjogging/test/word_flash'] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('brainjogging_test_word_flash'),
     'access callback' => TRUE,
   );
     $items['brainjogging/submit'] = array(
@@ -30,15 +57,77 @@ function brainjogging_test_menu(){
   return $items;
 }
 
-function brainjogging_test_run_test(){
+function brainjogging_test_dashboard(){
+  $path = drupal_get_path('module', 'brainjogging_test');
+  drupal_add_css($path . '/css/bj_test_style.css', 'module', 'all', FALSE);
   $form = array();
+  $form['dashboard'] = array(
+    '#value' => theme('bj_dashboard',array('path'=>drupal_get_path('module', 'brainjogging_test')))
+  );
+  return $form;
+}
+
+function brainjogging_test_eye_movement(){
+  bj_add_js();
+  drupal_add_js("
+    jQuery(document).ready(function () {
+      BrianJogging.eyemomvent.initialize();
+    });",
+    'inline'
+  );
+  $form = array();
+  $form['eye_movement'] = array(
+    '#value' => theme('bj_eye_movement',array('path'=>drupal_get_path('module', 'brainjogging_test')))
+  );
+  return $form;
+}
+
+function brainjogging_test_letter_flash(){
+  bj_add_js();
+  drupal_add_js("
+    jQuery(document).ready(function () {
+      init = {
+        highest_level : 1,
+        missed_letter : ['a','e','i','o','u'],
+        missed_letter_reinforcement : '50%',
+        change_case : false
+      };
+      BrianJogging.letter_flash.initialize(init);
+    });",
+    'inline'
+  );
+  $form = array();
+  $form['letter_flash'] = array(
+    '#value' => theme('bj_letter_flash',array('path'=>drupal_get_path('module', 'brainjogging_test')))
+  );
+  return $form;
+}
+
+function brainjogging_test_word_flash(){
+  bj_add_js();
+  drupal_add_js("
+    jQuery(document).ready(function () {
+      BrianJogging.wordflash.initialize();
+    });",
+    'inline'
+  );
+  $form = array();
+  $form['word_flash'] = array(
+    '#value' => theme('bj_word_flash',array('path'=>drupal_get_path('module', 'brainjogging_test')))
+  );
+  return $form;
+}
+
+function bj_add_js(){
   $path = drupal_get_path('module', 'brainjogging_test');
   drupal_add_css($path . '/css/bj_test_style.css', 'module', 'all', FALSE);
   drupal_add_js($path . '/js/libs/handlebars.1.0.0.beta.3.js');
   drupal_add_js($path . '/js/libs/jquery_plugins.js');
   drupal_add_js($path . '/js/application.js');
-  $form['test'] = array(
-    '#value' => theme('bj_test',array('path'=>drupal_get_path('module', 'brainjogging_test')))
-  );
-  return $form;
+}
+
+function brainjogging_test_user($op, &$edit, &$account, $category = NULL) {
+  if ( $op == 'login' ) {
+    $_REQUEST['destination'] = 'brainjogging/test/eye_movement';
+  }
 }
