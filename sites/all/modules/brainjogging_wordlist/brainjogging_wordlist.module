@@ -1,16 +1,19 @@
 <?php
 
 function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
-  global $user;
-   if( $form_id == "word_list_node_form"){
-    // Remove and alter fields
+ 
+   global $user;
+   if( $form_id == "word_list_node_form" || $form_id == "word_list_category_node_form" ){
     unset($form['body_field']['format']);
     unset($form['revision_information']);
     $form['options']['#collapsible'] = FALSE;
     $form['name'] = array('#type' => 'value', '#value' => $user->name);
     unset($form['author']);
     unset($form['options']['promote'],$form['options']['sticky']);
-    
+    }
+   if( $form_id == "word_list_node_form"){
+    // Remove and alter fields
+   
     // Add category filed
     $form['category_id'] = array(
       '#type' => 'select', 
@@ -21,6 +24,15 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
       '#description' => t('select the category for this world list'),
     );
   }
+  if( $form_id == "word_list_category_node_form"){
+    
+    $form['options']=array('#type' => 'value', '#value' => $form['options']['status']['#default_value'] = 1);
+
+    
+  }
+  
+  
+  
 }
 
 function brainjogging_wordlist_get_wl_categories(){
