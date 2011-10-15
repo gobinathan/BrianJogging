@@ -82,14 +82,9 @@ BrianJogging.wordflash = (function(pub) {
   };
   
   submitResult = function(){
-   results.levels[wf.attempts] = {}
-   results.levels[wf.attempts].question = $('#wf_words').text();
-   results.levels[wf.attempts].answer = $('#wf_answer').val();
-   results.levels[wf.attempts].result = 0;
-   
-   if($('#wf_words').text().toLowerCase() == $('#wf_answer').val().toLowerCase()){
+    if($('#wf_words').text().toLowerCase() == $('#wf_answer').val().toLowerCase()){
     $('#wf_container').html('<span class="msg">Anwer Correct..</span>');    
-    results.levels[wf.attempts].result = 1;
+    //results.levels[wf.attempts].result = 1;
     results.status.correct += 1; 
     if(wf.level < 20){
      $.after(2000,function(){      
@@ -98,6 +93,11 @@ BrianJogging.wordflash = (function(pub) {
      });
     }
    }else{
+    results.levels[wf.attempts] = {}
+    results.levels[wf.attempts].question = $('#wf_words').text();
+    results.levels[wf.attempts].answer = $('#wf_answer').val();
+    results.levels[wf.attempts].result = 0;
+    results.levels[wf.attempts].level = wf.level;
     $('#wf_container').html('<span class="wrong">Anwer Incorret !!!</span><br><span class="wrong">Try Again...</span>');
     results.status.wrong += 1;
     if(results.status.wrong < 4){
@@ -106,6 +106,7 @@ BrianJogging.wordflash = (function(pub) {
      });  
     }    
    }
+    results.levels[wf.attempts].attempt = results.status.wrong;
    // Show the Test result 
    if(results.status.wrong == 4  || wf.level == 20){
     $.after(2000,function(){
@@ -116,7 +117,20 @@ BrianJogging.wordflash = (function(pub) {
    }
   };
   
-  showResult = function(){   
+  showResult = function(){
+    var tot_atm=results.status.wrong+results.status.correct;
+    results["res"]={res:wf};
+    results["pers"]={perecent:Math.ceil((results.status.correct/wf.attempts) * 100 )};
+    results["tot_atem"]={tot:tot_atm};
+    xmlhttp=$.ajax({
+          type: 'POST',
+          url: '/brainjogging/wordflash/',
+          data: 'res='+$.toJSON(results),
+          success: function(msg){
+          alert("success");
+          }
+          });
+    
   res = '<table border="1" width="100%" cellpadding="0" cellspacing="0">';
   res += '<tr><td align="center" colspan="3">Word Flash - '+ wf.ftype_text +' - Result</td></tr>';
   res += '<tr><td>Name :</td><td colspan="2"> XXX</td></tr>';
@@ -157,9 +171,17 @@ BrianJogging.letter_flash = (function(pub) {
       total_attempts : 0,
       wrong_attempts : 0,
       correct_attempts : 0,
-      qn_array : new Array(),
-      ans_array : new Array(),
-      bj_lf_test : {}
+      qn_array  :new Array(),
+      ans_array :new Array(),
+      result    :new Array(),
+      qn        :new Array(),
+      ans       :new Array(),
+      pos       :new Array(),
+      lev       :new Array(),
+      subl      :new Array(),
+      r_size    :1,
+      bj_lf_test : {},
+      ttype  :0
     },
     this.showSetting()
   };
@@ -311,15 +333,36 @@ BrianJogging.letter_flash = (function(pub) {
     //Increase the total No of attempts
     properties.total_attempts++;
     properties.bj_lf_test[properties.level][properties.sublevel] = {qn_chars:properties.qn_array,ans_chars:properties.ans_array};
-    
+    properties.bj_lf_test['type']=[properties.type];
     var level_flag = true;
     for(i=0; i < properties.type; i++){
       //compare qn chars against ans chars
       
-      //console.debug(properties.qn_array[i]);
-      //console.debug(i);
-      //console.debug(properties.ans_array[i]);
+      
       if(properties.ans_array[i] != properties.qn_array[i]){
+        if(properties.type==2){
+        if(i==0){var pos=1}
+        if(i==1){var pos=2}
+        }
+        if(properties.type==3){
+        if(i==0){var pos=1}
+        if(i==1){var pos=3}
+        if(i==2){var pos=2}
+        }
+        if(properties.type==4){
+        if(i==0){var pos=1}
+        if(i==1){var pos=4}
+        if(i==2){var pos=5}
+        if(i==3){var pos=2}
+        }
+        
+       properties.lev[properties.r_size]  = properties.level;
+       properties.subl[properties.r_size] = properties.sublevel;
+       properties.qn[properties.r_size]   = properties.qn_array[i];
+       properties.ans[properties.r_size]  = properties.ans_array[i];
+       properties.pos[properties.r_size]  = pos;
+      
+        properties.r_size++;
         level_flag = false;
       }
     }
@@ -342,19 +385,11 @@ BrianJogging.letter_flash = (function(pub) {
     }
     else{ //if the answer is not correct
       if(properties.sublevel == 3){
+        
+        properties.bj_lf_test['result']={lev:properties.lev,subl:properties.subl,qn:properties.qn,ans:properties.ans,pos:properties.pos};
         pub.quitAndShowResult();
         //quit and show the result
-        var qus=$.JSON.encode(properties.qn_array);
-        alert(qus);
-        //xmlhttp=$.ajax({
-        //  type: 'POST',
-        //  url: '/brainjogging/submit/',
-        //  data: 'ques='+properties.qn_array+'&ans='+properties.ans_array,
-        //  success: function(msg){
-        //  alert("success");
-        //  }
-        //  });
-        //  return false;
+          
           
       }
       else{
@@ -368,6 +403,7 @@ BrianJogging.letter_flash = (function(pub) {
   }
   
   pub.quitAndShowResult = function(){
+  
     //remove the test.
     //Technically remove the previous
     //test table element
@@ -381,8 +417,21 @@ BrianJogging.letter_flash = (function(pub) {
     $('#grade').text(Math.ceil(((properties.correct_attempts/properties.total_attempts) * 100)) +  '%');
     //set the highest level achived
     $('#level').text(((properties.level - 1) ? (properties.level - 1) : '0'));
-    
-    $('#lf_rl').click(function(){
+    var correct=(properties.correct_attempts ? properties.correct_attempts : '0' )
+    var grade =(Math.ceil(((properties.correct_attempts/properties.total_attempts) * 100)) );
+    var level =(((properties.level - 1) ? (properties.level - 1) : '0'));
+    var type  =properties.type;
+    properties.bj_lf_test['res']={t_at:properties.total_attempts,c_at:correct,level:level,grade:grade};
+    xmlhttp=$.ajax({
+          type: 'POST',
+          url: '/brainjogging/submit/',
+          data: 'res='+$.toJSON(properties.bj_lf_test),
+          success: function(msg){
+          alert("success");
+          }
+          });
+          
+     $('#lf_rl').click(function(){
      pub.initialize();
     });
     
@@ -433,12 +482,14 @@ BrianJogging.eyemomvent = (function(pub) {
         em_tip_top=20;
         em_count=0;
         em_sp=3000;
+        em_loop=1;
         $('#em_main').click(function(){
           $('#eye_moment').hide();
           $('#main_menu').show();
         });
         $('#em_next').click(function(){
-          pub.em_next();  
+         //pub.em_next();
+         pub.em_speed();
         });
         $('#em_begin').click(function(){
           pub.em_speed();  
@@ -468,9 +519,24 @@ BrianJogging.eyemomvent = (function(pub) {
           }
         }
        if(em_count==em_input.length) {
-          alert("first eye test end");
-          window.location.reload( true );
-          return true;
+       
+         //alert("first eye test end");
+          if(em_loop==3)
+          {
+           window.location.reload( true );
+           return true;
+          }
+        
+          em_loop++;
+          em_count=0;
+          em_tip_top=20;
+          pub.em_speed();
+          return false;
+         
+          
+          
+         
+          
         }
       
        if(em_pos1 == 0){
@@ -497,19 +563,27 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#em_speed').css("margin",'0px auto');
     }
     pub.em_speed = function() {
-       var em_spe=$('#speed').val();
+       //var em_spe=$('#speed').val();
+        $('#em_init').css("display",'none');
+       var em_spe=9;
        if(em_spe.length==0) {
          alert("Enter the speed");
         }
        else{
             $('#em_speed').css("display","none");
             $('#em_instuct').css("display","block");
+             $('#em_move').css("display","none");
+            
+            if(em_loop==1)
+            {
             em_sp = em_sp/em_spe;
+            }
         }
        
     }
     pub.em_start = function() {
         $('#em_instuct').css("display","none");
+        $('#em_move').css("display","block");
         pub.em_flash(); 
     }
     pub.em_isNumberKey=function(evt) {

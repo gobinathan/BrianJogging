@@ -19,6 +19,13 @@ function brainjogging_test_menu(){
     'page callback' => 'letter_flash_submit',
     'page arguments' => array('list'),
     'access callback' => TRUE,
+    'file' => 'letter_flash.inc',
+  );
+     $items['brainjogging/wordflash'] = array(
+    'page callback' => 'word_flash_submit',
+    'page arguments' => array('list'),
+    'access callback' => TRUE,
+    'file' => 'word_flash.inc',
   );
   return $items;
 }
