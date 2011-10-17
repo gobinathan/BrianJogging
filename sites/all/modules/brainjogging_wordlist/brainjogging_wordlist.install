@@ -11,6 +11,11 @@ function brainjogging_wordlist_schema() {
     'fields' => array(      
       'c_id' => array('type' => 'int', 'not null' => TRUE),
       'wl_id' => array('type' => 'int', 'not null' => TRUE),
+      'type'  => array('type' => 'int','not null' => TRUE),
+      'disability'  => array('type' => 'int','not null' => TRUE),
+      'instruction'  => array('type' => 'text','not null' => TRUE),
+      
+      
     ),
     'primary key' => array('wl_id'),
   );
