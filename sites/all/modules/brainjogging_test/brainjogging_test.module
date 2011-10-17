@@ -89,8 +89,9 @@ function brainjogging_test_letter_flash(){
       init = {
         highest_level : 1,
         missed_letter : ['a','e','i','o','u'],
-        missed_letter_reinforcement : '50%',
-        change_case : false
+        missed_letter_reinforcement : ".variable_get('missed_letters_reinforcement',"50").",
+        change_case : 0,
+        show_start_from_same_level : ".variable_get('start_from_same_level_per',"50").",
       };
       BrianJogging.letter_flash.initialize(init);
     });",

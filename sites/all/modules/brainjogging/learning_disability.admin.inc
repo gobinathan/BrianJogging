@@ -75,6 +75,13 @@ function bj_learning_disability_create_form(){
     '#default_value' => $learning_disability_obj->description, 
     '#weight' => 1,
   );
+	$form['letter_flash_select_case'] = array(
+    '#type' => 'radios',
+    '#title' => t('Have select case option in letter flash'),
+		'#options' => array(t('Disabled'), t('Enabled')),
+    '#default_value' => $learning_disability_obj->letter_flash_select_case, 
+    '#weight' => 1,
+  );
   $form['submit'] = array(
     '#type' => 'submit',
     '#title' => t('Save'),
@@ -97,11 +104,11 @@ function bj_learning_disability_create_form_submit(&$form,&$form_state){
  
   if(($form_state['values']['submit'])=='add'){
    
-    db_query("INSERT INTO {bj_learning_disability} (name,description) VALUES('".$form_state['values']['name']."','".$form_state['values']['description']."')");
+    db_query("INSERT INTO {bj_learning_disability} (name,description,letter_flash_select_case) VALUES('".$form_state['values']['name']."','".$form_state['values']['description']."',".$form_state['values']['letter_flash_select_case'].")");
     drupal_set_message(t('Learning Disability Added successfuly'));
   }
    if(($form_state['values']['submit'])=='edit'){
-    db_query("UPDATE {bj_learning_disability}  SET name='".$form_state['values']['name']."', description='".$form_state['values']['description']."' WHERE did=".arg(4));
+    db_query("UPDATE {bj_learning_disability}  SET name='".$form_state['values']['name']."', description='".$form_state['values']['description']."', letter_flash_select_case = ".$form_state['values']['letter_flash_select_case']."  WHERE did=".arg(4));
      drupal_set_message(t('Learning Disability Updated successfuly'));
   }
   

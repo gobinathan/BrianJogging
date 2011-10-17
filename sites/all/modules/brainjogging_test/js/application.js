@@ -158,14 +158,16 @@ BrianJogging.wordflash = (function(pub) {
 
 // Letter flash
 BrianJogging.letter_flash = (function(pub) {
-  pub.initialize = function(){
+  pub.init = {};
+  pub.initialize = function(args){
+    pub.init = args;
     properties = {
       letter_bank : new Array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'),
       Case : 0,
       type : 2,
       f_size : "large",
       time : 5000,
-      level : 1,
+      level : init.level ? init.level : 1,
       sublevel : 1,
       max_attempts : 20,
       total_attempts : 0,
@@ -183,10 +185,14 @@ BrianJogging.letter_flash = (function(pub) {
       bj_lf_test : {},
       ttype  :0
     },
+    alert(properties.level);
     this.showSetting()
   };
   
   pub.showSetting = function(){
+    if(!init.change_case){
+      $('#lf_case').remove();
+    }
     $('#letter_flash_div').show();    
     $('#lf_description').hide();    //hide the description div
     $('#lf_test_main_container').hide();           //hide the test div
@@ -194,6 +200,7 @@ BrianJogging.letter_flash = (function(pub) {
     $('lf_test_container').hide();  //hide the test(chat table) div
     $('#lf_cp').show();             //hide the control panel div
     $('#result_container').hide();            //hide the result_container div
+    $('lf_rll_span').hide;   //Initially hide the result table repeat from the same level
     
     //add event to description div button
     $('#desc').click(function(){
@@ -249,10 +256,13 @@ BrianJogging.letter_flash = (function(pub) {
     
     //Prepare the charecters to be shown for test
     properties.qn_array = new Array();
+    reinforcement_time = Math.ceil(20 *(init.missed_letter_reinforcement/100));
     for(i=0; i < properties.type; i++){
       l = properties.letter_bank[Math.ceil(Math.random()*25)];
-      letters[i] = {id:i,charecter:properties.Case? l.toUpperCase() : l,size : properties.f_size,tabindex:i+1};
-      properties.qn_array.push(l);
+      if($.inArray(l,properties.qn_array) == -1){
+        letters[i] = {id:i,charecter:properties.Case? l.toUpperCase() : l,size : properties.f_size,tabindex:i+1};
+        properties.qn_array.push(l);
+      }
     }
     var context = {
       letter : letters
@@ -374,7 +384,12 @@ BrianJogging.letter_flash = (function(pub) {
         pub.quitAndShowResult();    //quit the test and show the results
       }
       else{ //if level is lessthen 20
-        alert("Congrats.. You successfully complete Level - " +properties.level);
+        if(properties.level == (init.highest_level - 1) && (init.highest_level - 1) != 0){
+          alert("Congrats... Achived the highest Level");
+        }
+        else{
+          alert("Congrats.. You successfully complete Level - " + properties.level);
+        }
         properties.sublevel = 1;                         //initiate the sublevel to 1 for the next level test
         properties.time = properties.time - 250;         //Decrease the time level 250 ms for the next level test
         properties.correct_attempts++;                   //Increase the correct attempts
@@ -409,6 +424,15 @@ BrianJogging.letter_flash = (function(pub) {
     //test table element
     $('#test_table').remove();
     
+    show_same_level = Math.ceil(20 * (init.show_start_from_same_level/100));
+    if(show_same_level < (properties.level)){
+      init.level = properties.level - 1;
+      $('lf_rll_span').show();
+      $('#lf_rll').click(function(){
+        pub.initialize(init);
+      });
+    }
+    
     //set the total attempts value
     $('#attempts').text(properties.total_attempts);
     //sett he correct attempts value
@@ -417,6 +441,7 @@ BrianJogging.letter_flash = (function(pub) {
     $('#grade').text(Math.ceil(((properties.correct_attempts/properties.total_attempts) * 100)) +  '%');
     //set the highest level achived
     $('#level').text(((properties.level - 1) ? (properties.level - 1) : '0'));
+
     var correct=(properties.correct_attempts ? properties.correct_attempts : '0' )
     var grade =(Math.ceil(((properties.correct_attempts/properties.total_attempts) * 100)) );
     var level =(((properties.level - 1) ? (properties.level - 1) : '0'));
@@ -432,7 +457,7 @@ BrianJogging.letter_flash = (function(pub) {
           });
           
      $('#lf_rl').click(function(){
-     pub.initialize();
+     pub.initialize(init);
     });
     
     $('#lf_mm').click(function(){
@@ -485,7 +510,7 @@ BrianJogging.eyemomvent = (function(pub) {
         em_loop=1;
         $('#em_main').click(function(){
           $('#eye_moment').hide();
-          $('#main_menu').show();
+          window.location = "/brainjogging/test/dashboard";
         });
         $('#em_next').click(function(){
          //pub.em_next();

@@ -45,7 +45,7 @@ function brainjogging_menu() {
   );
   //learning disablity
   
-   $items['admin/brainjogging/learning_disability'] = array(
+  $items['admin/brainjogging/learning_disability'] = array(
     'title' => 'User Learing Disability',
     'description' => 'List, add, and edit user learning disability.',
     'page callback' => 'bj_learning_disability_admin',
@@ -79,6 +79,15 @@ function brainjogging_menu() {
   );
   //learing disablity end
   
+  
+  //Letter flash settings
+  $items['admin/brainjogging/settings/letter_flash'] = array(
+    'title' => 'Settings for Letter flash',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('brainjogging_site_settings_manage'),
+		'file' => 'site_settings.pages.inc',
+    'access arguments' => array('manage site settings')
+  );
   return $items;
 }
 
@@ -96,7 +105,7 @@ function bj_user_edit_access($account){
 }
 
 function brainjogging_perm() {
-  return array("administer grades","administer learning disablities");
+  return array("administer grades","administer learning disablities","manage site settings");
 }
 
 function brainjogging_form_alter(&$form, &$form_state, $form_id){
