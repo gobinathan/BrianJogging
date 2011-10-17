@@ -1,0 +1,37 @@
+<?php
+// $Id: brainjogging_wordlist.install,v 1.6 2010/10/12 15:05:10 MegaGrunt Exp $
+
+/**
+ * Implementation of hook_schema().
+ */
+function brainjogging_wordlist_schema() {
+  $schema = array();
+  $schema['bj_wordlist_relativity'] = array(
+    'description' => t('Maintains wordlist relativity.'),
+    'fields' => array(      
+      'c_id' => array('type' => 'int', 'not null' => TRUE),
+      'wl_id' => array('type' => 'int', 'not null' => TRUE),
+      'type'  => array('type' => 'int','not null' => TRUE),
+      'disability'  => array('type' => 'int','not null' => TRUE),
+      'instruction'  => array('type' => 'text','not null' => TRUE),
+      
+      
+    ),
+    'primary key' => array('wl_id'),
+  );
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function brainjogging_wordlist_install() {
+  drupal_install_schema('brainjogging_wordlist');
+}
+
+/**
+ * Implementation of hook_uninstall()
+ */
+function brainjogging_wordlist_uninstall() {
+  drupal_uninstall_schema('brainjogging_wordlist');
+}
