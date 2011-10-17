@@ -3,7 +3,7 @@
     <!-- Letter Flash Control Panel -->
     <div id="lf_cp">
       <table>
-        <tr>
+        <tr id="lf_case">
           <td>
             Select Case : 
           </td>
@@ -12,7 +12,7 @@
             <input type="radio" name="case" value="1" /> Upper Case
           </td>
         </tr>
-        <tr>
+        <tr id="lf_type">
           <td>
             Select Test type : 
           </td>
@@ -22,7 +22,7 @@
             <input type="radio" name="type" value="4" /> 4 Letter Flash <br>
           </td>
         </tr>
-        <tr>
+        <tr id="lf_font_type">
           <td>
             Select Font Size : 
           </td>
@@ -74,7 +74,7 @@
       </tr>
       <tr>
         <td align="center"><input type="button" value="Print" onclick="window.print()"></td>
-        <td colspan="2" align="center"><input id="lf_rl" type="button" value="Repeat Lesson"></td>
+        <td colspan="2" align="center"><span><input id="lf_rl" type="button" value="Repeat Lesson"></span><span id="lf_rll_span"><input id="lf_rll" type="button" value="Repeat from the last level"></span></td>
         <td align="center"><input id="lf_mm" type="button" value="Main Menu"></td>          
       </tr>
     </table>
