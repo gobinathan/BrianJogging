@@ -22,6 +22,8 @@ function brainjogging_schema() {
       'did' => array('type' => 'serial', 'not null' => TRUE),
       'name' => array('type' => 'varchar', 'length'=>255, 'not null' => TRUE),
       'description'  => array('type' => 'text','not null' => TRUE),
+       'letter_flash_select_case' => array('type' => 'int','not null' => TRUE),
+      
       ),
     'primary key' => array('did'),
   );
