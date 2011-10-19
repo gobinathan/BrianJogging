@@ -189,6 +189,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       '#description' => t('Learning Disabiltiy.'),
       '#weight' => 12,
     );
+    $form['#validate'] = array('bj_user_details_validator');
   }
   if($form_id == 'user_profile_form'){
      //Load the user object 
@@ -245,13 +246,12 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       unset($form['account']['roles']);
       $form['account']['roles'] = array('#type' => 'value','#value'=>5);
     }
+    $form['#validate'] = array('bj_user_details_validator');
   }
-  $form['#validate'] = array('bj_user_details_validator');
 }
 
 function bj_user_details_validator(&$form, &$form_state){
   global $user;
-  print_r($form_state);exit;
   if(!in_array($form_state['values']['roles'],array(3,4,5))){
     if($user->uid && in_array($form_state['values']['teacher'],array(NULL,'',0))) {
       form_set_error('teacher', t('The Teacher must be mandatory for clients.'));
