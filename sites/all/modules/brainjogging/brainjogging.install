@@ -1,1 +1,56 @@
 <?php
+ 
+// $Id: brainjogging.install,v 1.6 2010/10/12 15:05:10 MegaGrunt Exp $
+
+/**
+ * Implementation of hook_schema().
+ */
+function brainjogging_schema() {
+  $schema = array();
+  $schema['bj_grade'] = array(
+    'description' => t('brain jogging grade.'),
+    'fields' => array(      
+      'gid' => array('type' => 'serial', 'not null' => TRUE),
+      'name' => array('type' => 'varchar', 'length'=>255,'not null' => TRUE),
+      'description'  => array('type' => 'text','not null' => TRUE),
+      ),
+    'primary key' => array('gid'),
+  );
+   $schema['bj_learning_disability'] = array(
+    'description' => t('Maintains brainjogging learning Disability.'),
+    'fields' => array(      
+      'did' => array('type' => 'serial', 'not null' => TRUE),
+      'name' => array('type' => 'varchar', 'length'=>255, 'not null' => TRUE),
+      'description'  => array('type' => 'text','not null' => TRUE),
+       'letter_flash_select_case' => array('type' => 'int','not null' => TRUE),
+      
+      ),
+    'primary key' => array('did'),
+  );
+    $schema['bj_school'] = array(
+    'description' => t('Maintains school Details.'),
+    'fields' => array(      
+      'sid' => array('type' => 'serial', 'not null' => TRUE),
+      'school_name' => array('type' => 'varchar', 'length'=>255,'not null' => TRUE),
+      'phone'  => array('type' => 'varchar',  'length'=>255,'not null' => TRUE),
+      'fax'  => array('type' => 'varchar',  'length'=>255,'not null' => TRUE),
+      'address'  => array('type' => 'text',  'size'=>'big', 'not null' => TRUE),
+      ),
+    'primary key' => array('sid'),
+  );
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function brainjogging_install() {
+  drupal_install_schema('brainjogging');
+}
+
+/**
+ * Implementation of hook_uninstall()
+ */
+function brainjogging_uninstall() {
+  drupal_uninstall_schema('brainjogging');
+}
