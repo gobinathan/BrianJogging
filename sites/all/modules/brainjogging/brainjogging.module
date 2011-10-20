@@ -160,6 +160,12 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     $grades[$grade_obj->gid] = $grade_obj->name;
   }
   
+  $schools = array();
+  $schools_res = db_query("SELECT * FROM {bj_school}");
+  while($schools_obj = db_fetch_object($schools_res)){
+    $schools[$schools_obj->sid] = $schools_obj->school_name;
+  }
+  
   $lds = array();
   $ld_res = db_query("SELECT * FROM {bj_learning_disability}");
   while($ld_obj = db_fetch_object($ld_res)){
@@ -179,6 +185,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
   
   if($form_id == 'user_register'){
     global $user;
+    
     if($user->uid){
       $options = $form['account']['roles']['#options'];
       unset($options[2]);
@@ -191,7 +198,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     
     $form['account']['roles'] = array(
       '#type' => 'select',
-      '#title' => t('Roles'),
+      '#title' => t('User Type'),
       '#options' => $options,
       '#description' => t('Select the type of user you are creating.'),
       '#required' => TRUE,
@@ -206,15 +213,21 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
         '#description' => t('Select teacher for this client.'),
         '#weight' => 7,
       );
-    }
-    
-    if($user->uid){ 
+      
       $form['Brainjogging Information']['grade'] = array(
         '#type' => 'select',
         '#title' => t('Grade'),
         '#options' => $grades,
         '#description' => t('Grade at current.'),
         '#weight' => 11,
+      );
+      
+      $form['Brainjogging Information']['school'] = array(
+        '#type' => 'select',
+        '#title' => t('School'),
+        '#options' => $schools,
+        '#description' => t('School association'),
+        '#weight' => 12,
       );
     }
     
@@ -225,10 +238,12 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       '#description' => t('Learning Disabiltiy.'),
       '#weight' => 12,
     );
+    
     $form['#validate'] = array('bj_user_details_validator');
   }
   if($form_id == 'user_profile_form'){
-     //Load the user object 
+    
+    //Load the user object 
     $user =user_load(arg(1));
     //make Username field hidden
     unset($form['account']['name']);
@@ -240,7 +255,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     unset($options[2]);
     unset($options[5]);
     
-    $a = array(4,5,6);
+    $a = array(4,5,6);//teacher,parent,d_client
     
     if(!count(array_intersect($a,array_keys($user->roles)))){
       $form['account']['roles'] = array(
@@ -269,6 +284,15 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
         '#weight' => 11,
       );
       
+      $form['Brainjogging Information']['school'] = array(
+        '#type' => 'select',
+        '#title' => t('School'),
+        '#options' => $schools,
+        '#default_value' => $user->grade,
+        '#description' => t('School association'),
+        '#weight' => 12,
+      );
+      
       $form['account']['learning_disablity'] = array(
         '#type' => 'select',
         '#title' => t('Learning Disablity'),
@@ -288,7 +312,13 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
 
 function bj_user_details_validator(&$form, &$form_state){
   global $user;
-  if(!in_array($form_state['values']['roles'],array(3,4,5))){
+  //var_dump($form_state['values']['roles']);
+  if(!in_array($form_state['values']['roles'],array(3))){//siteadmin
+    if(!(boolean)($form_state['values']['school'])) {
+      form_set_error('school', t('The school must be mandatory.'));
+    }
+  }
+  if(!in_array($form_state['values']['roles'],array(3,4,5,8))){ //siteadmin,teacher,parent,schooladmin
     if($user->uid && in_array($form_state['values']['teacher'],array(NULL,'',0))) {
       form_set_error('teacher', t('The Teacher must be mandatory for clients.'));
     }
@@ -374,6 +404,9 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
       //add the Learning Disabilty
       $ld = db_result(db_query("SELECT did FROM {bj_user_disabilities} WHERE uid = ".$account->uid));
       $account->learning_disability = $ld;
+      //add the School
+      $school = db_result(db_query("SELECT sid FROM {bj_user_schools} WHERE uid = ".$account->uid));
+      $account->school = $school;
       break;
     case 'insert':
       $role = array_keys($edit['roles']);
@@ -393,9 +426,15 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
         //  $parent = user_save('',$user);
         //  db_query("INSERT INTO {bj_user_parents} (uid,pid) VALUES (".$edit['uid'].",".$parent->uid.") ");
         //}
+        $role = array_keys($edit['roles']);
+        $role_id = $role[0];
         
+        if(in_array($role_id,array(4,6,7,8))){
+          db_query("INSERT INTO {bj_user_schools} (uid,sid) VALUES (".$edit['uid'].",".$edit['school'].")");
+          unset($edit['school']);
+        }
         
-        if(in_array($edit['roles'],array(6,7)) ){        
+        if(in_array($role_id,array(6,7)) ){        
           db_query("INSERT INTO {bj_user_teachers} (uid,tid) VALUES (".$edit['uid'].",".$edit['teacher'].")");
           unset($edit['teacher']);
           
