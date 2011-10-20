@@ -5,7 +5,7 @@ function bj_school_admin($args){
  
   switch($args){
     case 'list':
-      return bj_learning_disability_list();
+      return bj_school_list();
       break;
     case 'create':
       return  drupal_get_form('bj_school_create_form');
@@ -20,7 +20,7 @@ function bj_school_admin($args){
   }
 }
 
-function bj_learning_disability_list(){
+function bj_school_list(){
   $limit = 5;
   $sql_count = db_rewrite_sql("SELECT COUNT(sid) FROM {bj_school}");
   $school_res = pager_query("SELECT * FROM bj_school", $limit, 0, $sql_count);
@@ -92,6 +92,7 @@ function bj_school_create_form(){
   $form['address'] = array(
     '#type' => 'textarea',
     '#title' => t('Address'),
+    '#required' => TRUE,
     '#default_value' => $schol_obj->address, 
     '#weight' => 1,
   );
@@ -102,14 +103,30 @@ function bj_school_create_form(){
     '#value'=> $save,
     '#weight' => 2,
   );
-    
+  $form['#validate'] = array('bj_school_create_form_validator');  
   return $form;
 }
 
-function bj_grade_create_form_validate(){
-  //TODO
-  //Validator for bj_grade_create_form
- 
+function bj_school_create_form_validator(&$form,&$form_state){
+       if(($form_state['values']['submit'])=='add'){
+	$school   = $form_state['values']['school_name'];
+	$res      = db_query("SELECT school_name FROM {bj_school} WHERE school_name='$school'");
+	$sc_count = mysql_num_rows($res);
+       if($sc_count!=0){
+	form_set_error('school_name', t('School Name Exist.'));
+      }
+    }
+    if(($form_state['values']['submit'])=='edit'){
+     if($form['school_name']['#default_value'] != $form_state['values']['school_name']){
+      	$school   = $form_state['values']['school_name'];
+	$res      = db_query("SELECT school_name FROM {bj_school} WHERE school_name='$school'");
+        $sc_count = mysql_num_rows($res);
+	if($sc_count==1){
+	 form_set_error('school_name', t('School Name Exist.'));
+        }
+      }
+   
+    }
 }
 
 

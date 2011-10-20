@@ -37,6 +37,7 @@ function brainjogging_schema() {
       'address'  => array('type' => 'text',  'size'=>'big', 'not null' => TRUE),
       ),
     'primary key' => array('sid'),
+    'unique key' => array('school_name'),
   );
   return $schema;
 }
