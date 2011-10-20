@@ -5,6 +5,62 @@
  */
 function brainjogging_menu() {
   
+  $items['admin/brainjogging'] = array(
+    'title' => 'My Tools',
+    'description' => 'List, add, and edit user grades.',
+    'page callback' => 'bj_grade_admin',
+    'page arguments' => array('list'),
+    'access callback' => 'user_is_logged_in',
+    'file' => 'grade.admin.inc',
+  );
+  
+  // Admin user pages.
+  
+  $items['admin/brainjogging/user'] = array(
+    'title' => 'User management',
+    'description' => 'List, add, and edit users.',
+    'page callback' => 'user_admin',
+    'page arguments' => array('list'),
+    'access arguments' => array('administer users'),
+    'file' => 'user.admin.inc',
+    'file path' => drupal_get_path('module', 'user'),
+  );
+  
+  $items['admin/brainjogging/user/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  
+  $items['admin/brainjogging/user/create'] = array(
+    'title' => 'Add user',
+    'page arguments' => array('create'),
+    'access arguments' => array('administer users'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'user.admin.inc',
+    'file path' => drupal_get_path('module', 'user'),
+  );
+  
+  $items['admin/brainjogging/user_view'] = array(
+    'title' => 'Manage My account',
+    'page callback' => 'bj_user_view',
+    'access callback' => 'user_is_logged_in',    
+  );
+  
+  $items['admin/brainjogging/logout'] = array(
+    'title' => 'Log out',
+    'access callback' => 'user_is_logged_in',
+    'page callback' => 'user_logout',
+    'weight' => 10,
+    'file' => 'user.pages.inc',
+    'file path' => drupal_get_path('module', 'user'),
+  );
+  
+    
+    
+    
+    
+    
   $items['admin/brainjogging/grade'] = array(
     'title' => 'User Grades',
     'description' => 'List, add, and edit user grades.',
@@ -36,12 +92,6 @@ function brainjogging_menu() {
     'page arguments' => array('delete'),
     'access arguments' => array('administer grades'),
     'file' => 'grade.admin.inc',
-  );
-  $items['brainjogging'] = array(
-    'title' => 'Blogs',
-    'page callback' => 'blog_page_last',
-    'access arguments' => array('access content'),
-    'type' => MENU_SUGGESTED_ITEM,
   );
   //learning disablity
   
@@ -86,7 +136,7 @@ function brainjogging_menu() {
     'description' => 'List, add, and edit user school.',
     'page callback' => 'bj_school_admin',
     'page arguments' => array('list'),
-    'access arguments' => array('administer learning disablities'),
+    'access arguments' => array('administer schools'),
     'file' => 'school.admin.inc',
   );
   $items['admin/brainjogging/school/list'] = array(
@@ -97,20 +147,20 @@ function brainjogging_menu() {
   $items['admin/brainjogging/school/create'] = array(
     'title' => 'Add School',
     'page arguments' => array('create'),
-    'access arguments' => array('administer learning disablities'),
+    'access arguments' => array('administer schools'),
     'type' => MENU_LOCAL_TASK,
     'file' => 'school.admin.inc',
   );
   $items['admin/brainjogging/school/edit/%'] = array(
     'title' => 'Update School',
     'page arguments' => array('edit'),
-    'access arguments' => array('administer learning disablities'),
+    'access arguments' => array('administer schools'),
     'file' => 'school.admin.inc',
   );
   $items['admin/brainjogging/school/delete/%'] = array(
     'title' => 'Delete School',
     'page arguments' => array('delete'),
-    'access arguments' => array('administer learning disablities'),
+    'access arguments' => array('administer schools'),
     'file' => 'school.admin.inc',
   );
   
@@ -127,6 +177,10 @@ function brainjogging_menu() {
   return $items;
 }
 
+function bj_user_view(){
+  drupal_goto('user/'.$GLOBALS['user']->uid);
+}
+
 //remove anonymous registeration
 function brainjogging_menu_alter(&$items) {
   unset($items['user/register']);
@@ -141,7 +195,7 @@ function bj_user_edit_access($account){
 }
 
 function brainjogging_perm() {
-  return array("administer grades","administer learning disablities","manage site settings");
+  return array("administer grades","administer learning disablities","manage site settings","administer schools");
 }
 
 
