@@ -249,7 +249,6 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       $options = array('6' => 'Independent client','7' => 'Dependent client');
     }
     
-    
     $form['account']['roles'] = array(
       '#type' => 'select',
       '#title' => t('User Type'),
@@ -292,7 +291,6 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       '#description' => t('Learning Disabiltiy.'),
       '#weight' => 12,
     );
-    
     $form['#validate'] = array('bj_user_details_validator');
   }
   if($form_id == 'user_profile_form'){
@@ -309,9 +307,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     unset($options[2]);
     unset($options[5]);
     
-    $a = array(4,5,6);//teacher,parent,d_client
-    
-    if(!count(array_intersect($a,array_keys($user->roles)))){
+    if(arg(3) == ''){
       $form['account']['roles'] = array(
         '#type' => 'select',
         '#title' => t('Roles'),
@@ -321,23 +317,54 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
         '#required' => TRUE,
         '#weight' => 6,
       );
-      $form['account']['teacher'] = array(
-        '#type' => 'select',
-        '#title' => t('Teachers'),
-        '#options' => $teachers,
-        '#default_value' => $user->teacher,
-        '#description' => t('Select teacher for this client.'),
-        '#weight' => 7,
-      );
-      $form['account']['grade'] = array(
-        '#type' => 'select',
-        '#title' => t('Grade'),
-        '#options' => $grades,
-        '#default_value' => $user->grade,
-        '#description' => t('Grade at current.'),
-        '#weight' => 11,
-      );
-      
+    }
+
+    //Dont show the following fields for the
+    //teacher,parent,i_client,schooladmin users
+    $a = array(4,5,6,8);//teacher,parent,i_client,schooladmin
+    if(!count(array_intersect($a,array_keys($user->roles)))){
+      if(arg(3) == 'Brainjogging Information'){
+        $form['Brainjogging Information']['teacher'] = array(
+          '#type' => 'select',
+          '#title' => t('Teachers'),
+          '#options' => $teachers,
+          '#default_value' => $user->teacher,
+          '#description' => t('Select teacher for this client.'),
+          '#weight' => 7,
+        );
+        $form['Brainjogging Information']['grade'] = array(
+          '#type' => 'select',
+          '#title' => t('Grade'),
+          '#options' => $grades,
+          '#default_value' => $user->grade,
+          '#description' => t('Grade at current.'),
+          '#weight' => 11,
+        );
+        
+        $form['Brainjogging Information']['learning_disablity'] = array(
+          '#type' => 'select',
+          '#title' => t('Learning Disablity'),
+          '#options' => $lds,
+          '#default_value' => $user->learning_disability,
+          '#description' => t('Learning Disabiltiy.'),
+          '#weight' => 12,
+        );
+      }
+    }
+    else{
+      if(arg(3) == 'Brainjogging Information'){
+        unset($form['Brainjogging Information']['profile_reason']);
+      }
+      if(arg(3) == 'Personal information'){
+        unset($form['Personal information']['profile_parent_fname']);
+        unset($form['Personal information']['profile_parent_lname']);
+        unset($form['Personal information']['profile_parent_email']);
+      }
+    }
+    //Show school Under Brainjogging Information tab for all users
+    //except site admin
+    $a = array(4,5,6,7,8);//teacher,parent,i_client,schooladmin
+    if(count(array_intersect($a,array_keys($user->roles)))  && arg(3) == 'Brainjogging Information'){
       $form['Brainjogging Information']['school'] = array(
         '#type' => 'select',
         '#title' => t('School'),
@@ -346,19 +373,6 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
         '#description' => t('School association'),
         '#weight' => 12,
       );
-      
-      $form['account']['learning_disablity'] = array(
-        '#type' => 'select',
-        '#title' => t('Learning Disablity'),
-        '#options' => $lds,
-        '#default_value' => $user->learning_disability,
-        '#description' => t('Learning Disabiltiy.'),
-        '#weight' => 12,
-      );
-    }
-    else{
-      unset($form['account']['roles']);
-      $form['account']['roles'] = array('#type' => 'value','#value'=>5);
     }
     $form['#validate'] = array('bj_user_details_validator');
   }
