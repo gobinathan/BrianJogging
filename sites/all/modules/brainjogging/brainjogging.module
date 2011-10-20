@@ -144,8 +144,9 @@ function brainjogging_perm() {
   return array("administer grades","administer learning disablities","manage site settings");
 }
 
+
 function brainjogging_form_alter(&$form, &$form_state, $form_id){
-  
+  //print_r($form);
   if($form_id == 'user_filter_form'){
     unset($form['filters']['filter']['#options']['permission']);
     unset($form['filters']['status']['permission']);
@@ -157,6 +158,12 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
   $grade_res = db_query("SELECT * FROM {bj_grade}");
   while($grade_obj = db_fetch_object($grade_res)){
     $grades[$grade_obj->gid] = $grade_obj->name;
+  }
+  
+  $schools = array();
+  $schools_res = db_query("SELECT * FROM {bj_school}");
+  while($schools_obj = db_fetch_object($schools_res)){
+    $schools[$schools_obj->sid] = $schools_obj->school_name;
   }
   
   $lds = array();
@@ -175,11 +182,12 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
   while($teacher_obj = db_fetch_object($teacher_res)){
     $teachers[$teacher_obj->uid] = $teacher_obj->name;
   }
-
+  
   if($form_id == 'user_register'){
     global $user;
+    
     if($user->uid){
-      $options = $form['roles']['#options'];
+      $options = $form['account']['roles']['#options'];
       unset($options[2]);
       unset($options[5]);
     }
@@ -188,82 +196,42 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     }
     
     
-    $form['roles'] = array(
+    $form['account']['roles'] = array(
       '#type' => 'select',
-      '#title' => t('Roles'),
+      '#title' => t('User Type'),
       '#options' => $options,
       '#description' => t('Select the type of user you are creating.'),
       '#required' => TRUE,
       '#weight' => 6,
     );
     
-    $form['fname'] = array(
-      '#type' => 'textfield',
-      '#title' => t('First Name'),
-      '#size' => 25,
-      '#maxlength' => 30,
-      '#required' => TRUE,
-      '#weight' => 0,
-    );
-    
-    $form['lname'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Last Name'),
-      '#size' => 25,
-      '#maxlength' => 30,
-      '#required' => TRUE,
-      '#weight' => 1,
-    );
-    
-    $form['name']['#weight'] = 2;
-    $form['mail']['#weight'] = 3;
-    $form['pass']['#weight'] = 4;
-    $form['status']['#weight'] = 5;
-    
     if($user->uid){
-      $form['teacher'] = array(
+      $form['Brainjogging Information']['teacher'] = array(
         '#type' => 'select',
         '#title' => t('Teachers'),
         '#options' => $teachers,
         '#description' => t('Select teacher for this client.'),
         '#weight' => 7,
       );
-    }
-    
-    $form['parent_fname'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Parent First Name'),
-      '#size' => 25,
-      '#maxlength' => 30,
-      '#weight' => 8,
-    );
-    
-    $form['parent_lname'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Parent Last Name'),
-      '#size' => 25,
-      '#maxlength' => 30,
-      '#weight' => 9,
-    );
-    
-    $form['parent_mail'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Parent E-Mail Address'),
-      '#maxlength' => 64,
-      '#description' => 'A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.',
-      '#weight' => 10,
-    );
-    if($user->uid){ 
-      $form['grade'] = array(
+      
+      $form['Brainjogging Information']['grade'] = array(
         '#type' => 'select',
         '#title' => t('Grade'),
         '#options' => $grades,
         '#description' => t('Grade at current.'),
         '#weight' => 11,
       );
+      
+      $form['Brainjogging Information']['school'] = array(
+        '#type' => 'select',
+        '#title' => t('School'),
+        '#options' => $schools,
+        '#description' => t('School association'),
+        '#weight' => 12,
+      );
     }
     
-    $form['learning_disablity'] = array(
+    $form['Brainjogging Information']['learning_disablity'] = array(
       '#type' => 'select',
       '#title' => t('Learning Disablity'),
       '#options' => $lds,
@@ -271,44 +239,8 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       '#weight' => 12,
     );
     
-    $form['school_name'] = array(
-      '#type' => 'textfield',
-      '#title' => t('School Name'),
-      '#size' => 25,
-      '#maxlength' => 60,
-      '#required' => TRUE,
-      '#weight' => 13,
-    );
-    
-    $form['phone'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Phone'),
-      '#size' => 20,
-      '#maxlength' => 10,
-      '#required' => TRUE,
-      '#description' => 'Phone number with area code, without white space and special charecters',
-      '#weight' => 14,
-    );
-    
-    $form['address'] = array(
-      '#type' => 'textarea',
-      '#title' => t('Address'),
-      '#required' => TRUE,
-      '#weight' => 15,
-    );
-    
-    $form['reason'] = array(
-      '#type' => 'textarea',
-      '#title' => t('Reason for BrainJogging'),
-      '#weight' => 16,
-    );
-    
-    $form['notify']['#weight'] = 17;
-    $form['submit']['#weight'] = 18;
     $form['#validate'] = array('bj_user_details_validator');
-    
   }
-  
   if($form_id == 'user_profile_form'){
     
     //Load the user object 
@@ -323,7 +255,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     unset($options[2]);
     unset($options[5]);
     
-    $a = array(4,5,6);
+    $a = array(4,5,6);//teacher,parent,d_client
     
     if(!count(array_intersect($a,array_keys($user->roles)))){
       $form['account']['roles'] = array(
@@ -343,34 +275,6 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
         '#description' => t('Select teacher for this client.'),
         '#weight' => 7,
       );
-      
-      $form['account']['parent_fname'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Parent First Name'),
-        '#size' => 25,
-        '#maxlength' => 30,
-        '#default_value' => $user->parent_fname,
-        '#weight' => 8,
-      );
-      
-      $form['account']['parent_lname'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Parent Last Name'),
-        '#size' => 25,
-        '#maxlength' => 30,
-        '#default_value' => $user->parent_lname,
-        '#weight' => 9,
-      );
-      
-      $form['account']['parent_mail'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Parent E-Mail Address'),
-        '#maxlength' => 64,
-        '#default_value' => $user->parent_mail,
-        '#description' => 'A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.',
-        '#weight' => 10,
-      );
-      
       $form['account']['grade'] = array(
         '#type' => 'select',
         '#title' => t('Grade'),
@@ -378,6 +282,15 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
         '#default_value' => $user->grade,
         '#description' => t('Grade at current.'),
         '#weight' => 11,
+      );
+      
+      $form['Brainjogging Information']['school'] = array(
+        '#type' => 'select',
+        '#title' => t('School'),
+        '#options' => $schools,
+        '#default_value' => $user->grade,
+        '#description' => t('School association'),
+        '#weight' => 12,
       );
       
       $form['account']['learning_disablity'] = array(
@@ -388,93 +301,34 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
         '#description' => t('Learning Disabiltiy.'),
         '#weight' => 12,
       );
-      
-      $form['account']['school_name'] = array(
-        '#type' => 'textfield',
-        '#title' => t('School Name'),
-        '#size' => 25,
-        '#maxlength' => 60,
-        '#default_value' => $user->school_name,
-        '#required' => TRUE,
-        '#weight' => 13,
-      );
-      $form['account']['reason'] = array(
-        '#type' => 'textarea',
-        '#default_value' => $user->reason,
-        '#title' => t('Reason for BrainJogging'),
-        '#weight' => 16,
-      );
     }
     else{
       unset($form['account']['roles']);
       $form['account']['roles'] = array('#type' => 'value','#value'=>5);
     }
-    
-    $form['account']['fname'] = array(
-      '#type' => 'textfield',
-      '#title' => t('First Name'),
-      '#size' => 25,
-      '#maxlength' => 30,
-      '#default_value' => $user->fname,
-      '#required' => TRUE,
-      '#weight' => 0,
-    );
-    
-    $form['account']['lname'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Last Name'),
-      '#size' => 25,
-      '#maxlength' => 30,
-      '#default_value' => $user->lname,
-      '#required' => TRUE,
-      '#weight' => 1,
-    );
-    
-    $form['account']['name']['#weight'] = 2;
-    $form['account']['mail']['#weight'] = 3;
-    $form['account']['pass']['#weight'] = 4;
-    $form['account']['status']['#weight'] = 5;
-    
-    
-    
-    $form['account']['phone'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Phone'),
-      '#size' => 20,
-      '#maxlength' => 10,
-      '#required' => TRUE,
-      '#default_value' => $user->phone,
-      '#description' => 'Phone number with area code, without white space and special charecters',
-      '#weight' => 14,
-    );
-    
-    $form['account']['address'] = array(
-      '#type' => 'textarea',
-      '#title' => t('Address'),
-      '#default_value' => $user->address,
-      '#required' => TRUE,
-      '#weight' => 15,
-    );
-    
-    $form['account']['submit']['#weight'] = 17;
     $form['#validate'] = array('bj_user_details_validator');
-    //var_dump($form);
   }
 }
 
 function bj_user_details_validator(&$form, &$form_state){
   global $user;
-  if(!in_array($form_state['values']['roles'],array(3,4,5))){
+  //var_dump($form_state['values']['roles']);
+  if(!in_array($form_state['values']['roles'],array(3))){//siteadmin
+    if(!(boolean)($form_state['values']['school'])) {
+      form_set_error('school', t('The school must be mandatory.'));
+    }
+  }
+  if(!in_array($form_state['values']['roles'],array(3,4,5,8))){ //siteadmin,teacher,parent,schooladmin
     if($user->uid && in_array($form_state['values']['teacher'],array(NULL,'',0))) {
       form_set_error('teacher', t('The Teacher must be mandatory for clients.'));
     }
-    if(!(boolean)($form_state['values']['parent_fname'])) {
+    if(!(boolean)($form_state['values']['profile_parent_fname'])) {
       form_set_error('parent_fname', t('The parent firstname must be mandatory for clients.'));
     }
-    if(!(boolean)($form_state['values']['parent_lname'])) {
+    if(!(boolean)($form_state['values']['profile_parent_lname'])) {
       form_set_error('parent_lname', t('The parent lastname must be mandatory for clients.'));
     }
-    if(!(boolean)($form_state['values']['parent_mail'])) {
+    if(!(boolean)($form_state['values']['profile_parent_email'])) {
       form_set_error('parent_mail', t('The Teacher must be mandatory for clients.'));
     }
     if($user->uid && !(boolean)($form_state['values']['grade'])) {
@@ -501,16 +355,6 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
         '#attributes' => array('class' => 'user-member'),
         '#weight' => 5,
         '#title' => t('User Details'),
-      );
-      $account->content['user_info']['fname'] = array(
-        '#type' => 'user_profile_item',
-        '#title' => t('First Name'),
-        '#value' => $user_obj->first_name,
-      );
-       $account->content['user_info']['last_name'] = array(
-        '#type' => 'user_profile_item',
-        '#title' => t('Last Name'),
-        '#value' => $user_obj->last_name,
       );
       if(end(array_keys($account->roles))==6 ||end(array_keys($account->roles))==7){
         $account->content['user_info']['parent_first_name'] = array(
@@ -554,64 +398,43 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
     
       break;
     case 'load':
-      $user_obj = db_fetch_object(db_query("SELECT * FROM {bj_user_details} WHERE uid = ".$account->uid));
-      $account->fname = $user_obj->first_name;
-      $account->lname = $user_obj->last_name;
-      $account->parent_fname = $user_obj->parent_first_name;
-      $account->parent_lname = $user_obj->parent_last_name;
-      $account->parent_mail = $user_obj->parent_email_address;
-      $account->school_name = $user_obj->schoolname;
-      $account->phone = $user_obj->phone;
-      $account->address = $user_obj->address;
-      $account->reason = $user_obj->reason_for_bj;
       //add the grade
       $grade = db_result(db_query("SELECT gid FROM {bj_user_grades} WHERE uid = ".$account->uid));
       $account->grade = $grade;
       //add the Learning Disabilty
       $ld = db_result(db_query("SELECT did FROM {bj_user_disabilities} WHERE uid = ".$account->uid));
       $account->learning_disability = $ld;
+      //add the School
+      $school = db_result(db_query("SELECT sid FROM {bj_user_schools} WHERE uid = ".$account->uid));
+      $account->school = $school;
       break;
     case 'insert':
       $role = array_keys($edit['roles']);
       if($edit['uid']){
-        db_query("INSERT INTO {bj_user_details}
-                 (
-                  uid, first_name, last_name,
-                  parent_first_name, parent_last_name,
-                  parent_email_address, schoolname,
-                  phone, address, reason_for_bj
-                 )
-                VALUES
-                 (
-                  ".$edit['uid'].",
-                  '".mysql_real_escape_string($edit['fname'])."','".mysql_real_escape_string($edit['lname'])."',
-                  '".mysql_real_escape_string($edit['parent_fname'])."',
-                  '".mysql_real_escape_string($edit['parent_lname'])."','".mysql_real_escape_string($edit['parent_mail'])."',
-                  '".mysql_real_escape_string($edit['school_name'])."','".$edit['phone']."',
-                  '".mysql_real_escape_string($edit['address'])."','".mysql_real_escape_string($edit['reason'])."'
-                 )
-              ");
         
-        if(in_array($role[0],array(7))){
-          $user['name'] = strtolower($edit['parent_fname']."_".$edit['parent_lname']);
-          $user['pass'] = $edit['pass'];
-          $user['mail'] = $edit['parent_mail'];
-          $user['init'] = $edit['parent_mail'];
-          $user['roles'] = array(5=>'parent');
-          $user['status'] = 1;
-          $user['fname'] = $edit['parent_fname'];
-          $user['lname'] = $edit['parent_lname'];
-          $user['phone'] = $edit['phone'];
-          $user['address'] = $edit['address'];
-          $parent = user_save('',$user);
-          db_query("INSERT INTO {bj_user_parents} (uid,pid) VALUES (".$edit['uid'].",".$parent->uid.") ");
+        //if(in_array($role[0],array(7))){
+        //  $user['name'] = strtolower($edit['parent_fname']."_".$edit['parent_lname']);
+        //  $user['pass'] = $edit['pass'];
+        //  $user['mail'] = $edit['parent_mail'];
+        //  $user['init'] = $edit['parent_mail'];
+        //  $user['roles'] = array(5=>'parent');
+        //  $user['status'] = 1;
+        //  $user['fname'] = $edit['parent_fname'];
+        //  $user['lname'] = $edit['parent_lname'];
+        //  $user['phone'] = $edit['phone'];
+        //  $user['address'] = $edit['address'];
+        //  $parent = user_save('',$user);
+        //  db_query("INSERT INTO {bj_user_parents} (uid,pid) VALUES (".$edit['uid'].",".$parent->uid.") ");
+        //}
+        $role = array_keys($edit['roles']);
+        $role_id = $role[0];
+        
+        if(in_array($role_id,array(4,6,7,8))){
+          db_query("INSERT INTO {bj_user_schools} (uid,sid) VALUES (".$edit['uid'].",".$edit['school'].")");
+          unset($edit['school']);
         }
         
-        
-        unset($edit['fname']);unset($edit['lname']);unset($edit['parent_fname']);unset($edit['parent_lname']);
-        unset($edit['parent_mail']);unset($edit['school_name']);unset($edit['phone']);unset($edit['address']);unset($edit['reason']);
-        
-        if(in_array($edit['roles'],array(6,7)) ){        
+        if(in_array($role_id,array(6,7)) ){        
           db_query("INSERT INTO {bj_user_teachers} (uid,tid) VALUES (".$edit['uid'].",".$edit['teacher'].")");
           unset($edit['teacher']);
           
@@ -630,19 +453,6 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
       break;
   case 'after_update':
     if($account->uid){
-      $query = "UPDATE {bj_user_details} SET
-               first_name = '".mysql_real_escape_string($edit['fname'])."',
-               last_name = '".mysql_real_escape_string($edit['lname'])."',
-               phone = ".$edit['phone'].",
-               address = '".mysql_real_escape_string($edit['address'])."',";
-      $edit['parent_fname'] ? $query.= "parent_first_name = '".mysql_real_escape_string($edit['parent_fname'])."'," : '';
-      $edit['parent_lname'] ? $query.= "parent_first_name = '".mysql_real_escape_string($edit['parent_lname'])."'," : '';
-      $edit['parent_mail'] ? $query.= "parent_first_name = '".mysql_real_escape_string($edit['parent_mail'])."'," : '';
-      $edit['school_name'] ? $query.= "parent_first_name = '".mysql_real_escape_string($edit['school_name'])."'," : '';
-      $edit['reason'] ? $query.= "parent_first_name = '".mysql_real_escape_string($edit['reason'])."'," : '';
-      $query = substr($query,0,-1);
-      $query .= " WHERE uid =". $account->uid;
-      db_query($query);
       if(in_array($edit['roles'],array(6,7)) ){ 
         db_query("UPDATE {bj_user_grades} SET gid = ".$edit['grade']." WHERE uid = ".$account->uid);
         db_query("UPDATE {bj_user_disabilities} SET did = ".$edit['learning_disablity']." WHERE uid = ".$account->uid);
