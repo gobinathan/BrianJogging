@@ -1,0 +1,106 @@
+/*
+ * Use this file to customise the colours for your admin theme
+ *
+ * Default color set
+ *
+ *  Blue    #2C4E73
+ *  Yellow  #FFF47A
+ *  Orange  #FF7100
+ *  Red     #F23E83
+ *  Green   #4BCC65
+ *
+ */
+ 
+body {
+  color:      #444;
+  font-family: "Helvetica", "Arial", Arial, sans-serif;
+}
+
+a {
+  color:      #666;
+  text-decoration: underline;
+}
+
+/* Header */
+#header {
+  background: #444;
+}
+#breadcrumb {
+  color:      #CCC;
+  max-width:  75%;
+}
+
+/**
+ *  Greyscale theme
+ */
+#header ul.primary li a {
+  color:        #555;
+  background:   #EDEDED;
+}
+
+#header ul.primary li.active a,
+#header ul.primary li.active a:hover {
+  color:        #111;
+  background:   #FFF;
+}
+
+#header ul.primary li a:hover {
+  color:        #FFF;
+  background:   #888;
+}
+
+#breadcrumb {
+  border-top:   1px solid #555;
+}
+
+#secondary-tabs {
+  border-bottom:  1px solid #ddd;
+  background:   #FFF;
+}
+
+tr.even, tr.odd {
+  background:   #FEFEFE;
+  border:       1px solid #DDD;
+}
+
+tr.even {
+  background:   #F5F5F5
+}
+
+/** 
+ *  Colored theme
+ */
+.color #header ul.primary li a {
+  color:        #666;
+  background:   #DDD;
+}
+
+.color #header ul.primary li.active a,
+.color #header ul.primary li.active a:hover {
+  color:        #222;
+  background:   #FFF;
+}
+
+.color #header ul.primary li a:hover {
+  color:        #EEE;
+  background:   #666;
+}
+
+.color #secondary-tabs {
+  border-bottom:  1px solid #ddd;
+}
+
+.color a {
+  color:        #2C4E73;
+  text-decoration:  none;
+}
+
+.color tr.even,
+.color tr.odd{
+  background:   #FEFEFE;
+  border:       1px solid #DDD;
+}
+
+.color tr.even{
+  background:   #F5F5F5
+}
