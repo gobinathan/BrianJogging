@@ -5,6 +5,62 @@
  */
 function brainjogging_menu() {
   
+  $items['admin/brainjogging'] = array(
+    'title' => 'My Tools',
+    'description' => 'List, add, and edit user grades.',
+    'page callback' => 'bj_grade_admin',
+    'page arguments' => array('list'),
+    'access callback' => 'user_is_logged_in',
+    'file' => 'grade.admin.inc',
+  );
+  
+  // Admin user pages.
+  
+  $items['admin/brainjogging/user'] = array(
+    'title' => 'User management',
+    'description' => 'List, add, and edit users.',
+    'page callback' => 'user_admin',
+    'page arguments' => array('list'),
+    'access arguments' => array('administer users'),
+    'file' => 'user.admin.inc',
+    'file path' => drupal_get_path('module', 'user'),
+  );
+  
+  $items['admin/brainjogging/user/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  
+  $items['admin/brainjogging/user/create'] = array(
+    'title' => 'Add user',
+    'page arguments' => array('create'),
+    'access arguments' => array('administer users'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'user.admin.inc',
+    'file path' => drupal_get_path('module', 'user'),
+  );
+  
+  $items['admin/brainjogging/user_view'] = array(
+    'title' => 'Manage My account',
+    'page callback' => 'bj_user_view',
+    'access callback' => 'user_is_logged_in',    
+  );
+  
+  $items['admin/brainjogging/logout'] = array(
+    'title' => 'Log out',
+    'access callback' => 'user_is_logged_in',
+    'page callback' => 'user_logout',
+    'weight' => 10,
+    'file' => 'user.pages.inc',
+    'file path' => drupal_get_path('module', 'user'),
+  );
+  
+    
+    
+    
+    
+    
   $items['admin/brainjogging/grade'] = array(
     'title' => 'User Grades',
     'description' => 'List, add, and edit user grades.',
@@ -36,12 +92,6 @@ function brainjogging_menu() {
     'page arguments' => array('delete'),
     'access arguments' => array('administer grades'),
     'file' => 'grade.admin.inc',
-  );
-  $items['brainjogging'] = array(
-    'title' => 'Blogs',
-    'page callback' => 'blog_page_last',
-    'access arguments' => array('access content'),
-    'type' => MENU_SUGGESTED_ITEM,
   );
   //learning disablity
   
@@ -86,7 +136,7 @@ function brainjogging_menu() {
     'description' => 'List, add, and edit user school.',
     'page callback' => 'bj_school_admin',
     'page arguments' => array('list'),
-    'access arguments' => array('administer learning disablities'),
+    'access arguments' => array('administer schools'),
     'file' => 'school.admin.inc',
   );
   $items['admin/brainjogging/school/list'] = array(
@@ -97,20 +147,20 @@ function brainjogging_menu() {
   $items['admin/brainjogging/school/create'] = array(
     'title' => 'Add School',
     'page arguments' => array('create'),
-    'access arguments' => array('administer learning disablities'),
+    'access arguments' => array('administer schools'),
     'type' => MENU_LOCAL_TASK,
     'file' => 'school.admin.inc',
   );
   $items['admin/brainjogging/school/edit/%'] = array(
     'title' => 'Update School',
     'page arguments' => array('edit'),
-    'access arguments' => array('administer learning disablities'),
+    'access arguments' => array('administer schools'),
     'file' => 'school.admin.inc',
   );
   $items['admin/brainjogging/school/delete/%'] = array(
     'title' => 'Delete School',
     'page arguments' => array('delete'),
-    'access arguments' => array('administer learning disablities'),
+    'access arguments' => array('administer schools'),
     'file' => 'school.admin.inc',
   );
   
@@ -127,6 +177,10 @@ function brainjogging_menu() {
   return $items;
 }
 
+function bj_user_view(){
+  drupal_goto('user/'.$GLOBALS['user']->uid);
+}
+
 //remove anonymous registeration
 function brainjogging_menu_alter(&$items) {
   unset($items['user/register']);
@@ -141,13 +195,17 @@ function bj_user_edit_access($account){
 }
 
 function brainjogging_perm() {
-  return array("administer grades","administer learning disablities","manage site settings");
+  return array("administer grades","administer learning disablities","manage site settings","administer schools");
 }
 
 
 function brainjogging_form_alter(&$form, &$form_state, $form_id){
   //print_r($form);
   if($form_id == 'user_filter_form'){
+    global $user;
+    if(in_array(8,array_keys($user->roles))){
+      unset($form['filters']['status']['role']['#options'][3]);
+    }
     unset($form['filters']['filter']['#options']['permission']);
     unset($form['filters']['status']['permission']);
   }
@@ -195,6 +253,9 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       $options = array('6' => 'Independent client','7' => 'Dependent client');
     }
     
+    if(in_array(8,array_keys($user->roles))){
+      unset($options[3]);
+    }
     
     $form['account']['roles'] = array(
       '#type' => 'select',
@@ -222,13 +283,33 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
         '#weight' => 11,
       );
       
-      $form['Brainjogging Information']['school'] = array(
-        '#type' => 'select',
-        '#title' => t('School'),
-        '#options' => $schools,
-        '#description' => t('School association'),
-        '#weight' => 12,
-      );
+      /*
+       * for school administrators we have to show only his associated school
+      */
+      if(in_array(8,array_keys($user->roles))){ // 8=>school admin role
+        $sid = db_result(db_query("SELECT sid FROM {bj_user_schools} WHERE uid = ".$user->uid));
+        $form['Brainjogging Information']['school'] = array(
+          '#type' => 'value',
+          '#value' => $sid,
+        );
+        $form['Brainjogging Information']['school_display'] = array(
+          '#title' => t('User type'),
+          '#value' => t('<div id="edit-pass-pass2-wrapper" class="form-item confirm-parent">
+                          <label for="edit-pass-pass2">User type: </label>
+                          <ul><li>'.ucfirst(db_result(db_query("SELECT school_name from {bj_school} WHERE sid = ".$sid))).'</li></ul>
+                         </div>'),
+          '#weight' => 12,
+        );
+      }
+      else{
+        $form['Brainjogging Information']['school'] = array(
+          '#type' => 'select',
+          '#title' => t('School'),
+          '#options' => $schools,
+          '#description' => t('School association'),
+          '#weight' => 12,
+        );
+      }
     }
     
     $form['Brainjogging Information']['learning_disablity'] = array(
@@ -238,16 +319,16 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       '#description' => t('Learning Disabiltiy.'),
       '#weight' => 12,
     );
-    
     $form['#validate'] = array('bj_user_details_validator');
   }
+  
   if($form_id == 'user_profile_form'){
-    
+    global $user;
     //Load the user object 
-    $user =user_load(arg(1));
+    $user_edit = user_load(arg(1));
     //make Username field hidden
     unset($form['account']['name']);
-    $form['account']['name'] = array('#type' => 'value', '#value' => $user->name);
+    $form['account']['name'] = array('#type' => 'value', '#value' => $user_edit->name);
     
     unset($form['timezone']);
     
@@ -255,58 +336,146 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     unset($options[2]);
     unset($options[5]);
     
-    $a = array(4,5,6);//teacher,parent,d_client
-    
-    if(!count(array_intersect($a,array_keys($user->roles)))){
-      $form['account']['roles'] = array(
-        '#type' => 'select',
-        '#title' => t('Roles'),
-        '#options' => $options,
-        '#default_value' => array_keys($user->roles),
-        '#description' => t('Select the type of user you are creating.'),
-        '#required' => TRUE,
+    if(arg(3) == ''){
+      unset($form['account']['roles']);
+      $form['account']['roles'] = array('#type' => 'value', '#value' => $user_edit->roles);
+      $role = $user_edit->roles;
+      unset($role[2]);
+      $role = array_values($role);
+      $form['account']['roles_display'] = array(
+        '#title' => t('User type'),
+        '#value' => t('<div id="edit-pass-pass2-wrapper" class="form-item confirm-parent">
+                        <label for="edit-pass-pass2">User type: </label>
+                        <ul><li>'.ucfirst($role[0]).'</li></ul>
+                       </div>'),
         '#weight' => 6,
       );
-      $form['account']['teacher'] = array(
-        '#type' => 'select',
-        '#title' => t('Teachers'),
-        '#options' => $teachers,
-        '#default_value' => $user->teacher,
-        '#description' => t('Select teacher for this client.'),
-        '#weight' => 7,
-      );
-      $form['account']['grade'] = array(
-        '#type' => 'select',
-        '#title' => t('Grade'),
-        '#options' => $grades,
-        '#default_value' => $user->grade,
-        '#description' => t('Grade at current.'),
-        '#weight' => 11,
-      );
-      
-      $form['Brainjogging Information']['school'] = array(
-        '#type' => 'select',
-        '#title' => t('School'),
-        '#options' => $schools,
-        '#default_value' => $user->grade,
-        '#description' => t('School association'),
-        '#weight' => 12,
-      );
-      
-      $form['account']['learning_disablity'] = array(
-        '#type' => 'select',
-        '#title' => t('Learning Disablity'),
-        '#options' => $lds,
-        '#default_value' => $user->learning_disability,
-        '#description' => t('Learning Disabiltiy.'),
-        '#weight' => 12,
-      );
+    }
+
+    //Dont show the following fields for the
+    //teacher,parent,i_client,schooladmin users
+    $a = array(4,5,6,8);//teacher,parent,i_client,schooladmin
+    if(!count(array_intersect($a,array_keys($user_edit->roles)))){
+      if(arg(3) == 'Brainjogging Information'){
+        $form['Brainjogging Information']['teacher'] = array(
+          '#type' => 'select',
+          '#title' => t('Teachers'),
+          '#options' => $teachers,
+          '#default_value' => $user_edit->teacher,
+          '#description' => t('Select teacher for this client.'),
+          '#weight' => 7,
+        );
+        $form['Brainjogging Information']['grade'] = array(
+          '#type' => 'select',
+          '#title' => t('Grade'),
+          '#options' => $grades,
+          '#default_value' => $user_edit->grade,
+          '#description' => t('Grade at current.'),
+          '#weight' => 11,
+        );
+        
+        $form['Brainjogging Information']['learning_disablity'] = array(
+          '#type' => 'select',
+          '#title' => t('Learning Disablity'),
+          '#options' => $lds,
+          '#default_value' => $user_edit->learning_disability,
+          '#description' => t('Learning Disabiltiy.'),
+          '#weight' => 12,
+        );
+      }
     }
     else{
-      unset($form['account']['roles']);
-      $form['account']['roles'] = array('#type' => 'value','#value'=>5);
+      if(arg(3) == 'Brainjogging Information'){
+        unset($form['Brainjogging Information']['profile_reason']);
+      }
+      if(arg(3) == 'Personal information'){
+        unset($form['Personal information']['profile_parent_fname']);
+        unset($form['Personal information']['profile_parent_lname']);
+        unset($form['Personal information']['profile_parent_email']);
+      }
     }
-    $form['#validate'] = array('bj_user_details_validator');
+    //Show school Under Brainjogging Information tab for all users
+    //except site admin
+    $a = array(4,5,6,7,8);//teacher,parent,i_client,schooladmin
+    if(count(array_intersect($a,array_keys($user_edit->roles)))  && arg(3) == 'Brainjogging Information'){
+      /*
+       * for school administrators we have to show only his associated school
+      */
+      $sid = db_result(db_query("SELECT sid FROM {bj_user_schools} WHERE uid = ".$user->uid));
+      if(in_array(8,array_keys($user->roles))){ // 8 => school adminstrator rid
+        $form['Brainjogging Information']['school'] = array(
+          '#type' => 'value',
+          '#value' => $sid,
+        );
+        $form['Brainjogging Information']['school_display'] = array(
+        '#title' => t('User type'),
+        '#value' => t('<div id="edit-pass-pass2-wrapper" class="form-item confirm-parent">
+                        <label for="edit-pass-pass2">User type: </label>
+                        <ul><li>'.ucfirst(db_result(db_query("SELECT school_name from {bj_school} WHERE sid = ".$sid))).'</li></ul>
+                       </div>'),
+        '#weight' => 12,
+      );
+      }
+      else{
+        $form['Brainjogging Information']['school'] = array(
+          '#type' => 'select',
+          '#title' => t('School'),
+          '#options' => $schools,
+          '#default_value' => $user_edit->school,
+          '#description' => t('School association'),
+          '#weight' => 12,
+        );
+      }
+    }
+    $form['#validate'] = array('bj_user_edit_details_validator');
+  }
+}
+
+function bj_user_edit_details_validator(&$form, &$form_state){
+  global $user;
+  $user_edit = user_load(arg(1));
+  
+  if(arg(3) == ''){
+    $role = $form_state['values']['roles'];
+    unset($role[2]);
+    $role = array_values($role);
+  }
+  else{
+    $role = $user_edit->roles;
+    unset($role[2]);
+    $role = array_keys($role);
+  }
+  
+  if(arg(3) == 'Brainjogging Information'){
+    if(!in_array($role[0],array(3))){//siteadmin
+      if(!(boolean)($form_state['values']['school'])) {
+        form_set_error('school', t('The school must be mandatory.'));
+      }
+    }
+    if(!in_array($role[0],array(3,4,5,8))){//siteadmin
+      if($user->uid && !(boolean)($form_state['values']['grade'])) {
+        form_set_error('grade', t('The grade must be mandatory for clients.'));
+      }
+      if(!(boolean)($form_state['values']['learning_disablity'])) {
+        form_set_error('learning_disablity', t('The learning disablity must be mandatory for clients.'));
+      }
+      if($user->uid && in_array($form_state['values']['teacher'],array(NULL,'',0))) {
+        form_set_error('teacher', t('The Teacher must be mandatory for clients.'));
+      }
+    }
+  }
+  if(arg(3) == 'Personal information'){
+    if(!in_array($role[0],array(3,4,5,8))){ //siteadmin,teacher,parent,schooladmin
+      if(!(boolean)($form_state['values']['profile_parent_fname'])) {
+        form_set_error('parent_fname', t('The parent firstname must be mandatory for clients.'));
+      }
+      if(!(boolean)($form_state['values']['profile_parent_lname'])) {
+        form_set_error('parent_lname', t('The parent lastname must be mandatory for clients.'));
+      }
+      if(!(boolean)($form_state['values']['profile_parent_email'])) {
+        form_set_error('parent_mail', t('The Teacher must be mandatory for clients.'));
+      }
+    }
   }
 }
 
@@ -345,58 +514,6 @@ function bj_user_details_validator(&$form, &$form_state){
 
 function brainjogging_user($op, &$edit, &$account, $category = NULL) {
   switch($op){
-    case 'view':
-      $user_obj = db_fetch_object(db_query("SELECT * FROM {bj_user_details} WHERE uid = ".$account->uid));
-      if (!isset($account->content['user_info'])) {
-        $account->content['user_info'] = array();
-      }
-      $account->content['user_info'] += array(
-        '#type' => 'user_profile_category',
-        '#attributes' => array('class' => 'user-member'),
-        '#weight' => 5,
-        '#title' => t('User Details'),
-      );
-      if(end(array_keys($account->roles))==6 ||end(array_keys($account->roles))==7){
-        $account->content['user_info']['parent_first_name'] = array(
-          '#type' => 'user_profile_item',
-          '#title' => t('parent_first_name'),
-          '#value' => $user_obj->parent_first_name,
-        );
-         $account->content['user_info']['parent_last_name'] = array(
-          '#type' => 'user_profile_item',
-          '#title' => t('Parent Last Name'),
-          '#value' => $user_obj->parent_last_name,
-        );
-         
-        $account->content['user_info']['parent_email_address'] = array(
-          '#type' => 'user_profile_item',
-          '#title' => t('Parent Email Address'),
-          '#value' => $user_obj->parent_email_address,
-          
-        );
-        $account->content['user_info']['reason_for_bj'] = array(
-          '#type' => 'user_profile_item',
-          '#title' => t('Reson for Brain Jogging'),
-          '#value' => $user_obj->reason_for_bj,
-        ); 
-      }
-      $account->content['user_info']['schoolname'] = array(
-        '#type' => 'user_profile_item',
-        '#title' => t('Schoolname'),
-        '#value' => $user_obj->schoolname,
-      );
-      $account->content['user_info']['phone'] = array(
-        '#type' => 'user_profile_item',
-        '#title' => t('Phone'),
-        '#value' => $user_obj->phone,
-      );
-      $account->content['user_info']['address'] = array(
-        '#type' => 'user_profile_item',
-        '#title' => t('address'),
-        '#value' => $user_obj->address,
-      );
-    
-      break;
     case 'load':
       //add the grade
       $grade = db_result(db_query("SELECT gid FROM {bj_user_grades} WHERE uid = ".$account->uid));
@@ -426,6 +543,7 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
         //  $parent = user_save('',$user);
         //  db_query("INSERT INTO {bj_user_parents} (uid,pid) VALUES (".$edit['uid'].",".$parent->uid.") ");
         //}
+        
         $role = array_keys($edit['roles']);
         $role_id = $role[0];
         
@@ -453,9 +571,20 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
       break;
   case 'after_update':
     if($account->uid){
-      if(in_array($edit['roles'],array(6,7)) ){ 
-        db_query("UPDATE {bj_user_grades} SET gid = ".$edit['grade']." WHERE uid = ".$account->uid);
-        db_query("UPDATE {bj_user_disabilities} SET did = ".$edit['learning_disablity']." WHERE uid = ".$account->uid);
+      $role = $account->roles;
+      unset($role[2]);
+      $role = array_keys($role);
+      $role_id = $role[0];
+      
+      if(arg(3) == 'Brainjogging Information'){
+        if(in_array($role_id,array(4,6,7,8))){
+          db_query("UPDATE {bj_user_schools} SET sid = ".$edit['school']." WHERE uid = ".$account->uid);
+        }
+        
+        if(in_array($role_id,array(6,7)) ){ 
+          db_query("UPDATE {bj_user_grades} SET gid = ".$edit['grade']." WHERE uid = ".$account->uid);
+          db_query("UPDATE {bj_user_disabilities} SET did = ".$edit['learning_disablity']." WHERE uid = ".$account->uid);
+        }
       }
     }
     break;
