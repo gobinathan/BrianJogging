@@ -128,7 +128,7 @@ ul.secondary a:hover{text-decoration:underline;}
 #user-login-form #edit-name-wrapper label{padding-left:10px;float:left;}
 #user-login-form #edit-pass-wrapper label{padding-left:10px;float:left;}
 #user-login-form .item-list li{list-style:none;}
-
+#header .head a {text-decoration:none}
 
 /** Alternative secondary tab styling **/
 /*#secondary-tabs ul.secondary li {border:0;padding:0;}
