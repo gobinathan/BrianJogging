@@ -38,6 +38,21 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
       '#options' => brainjogging_wordlist_get_disability(),
       '#description' => t('select the disability level for this world list'),
     );
+     
+     
+      $form['age'] = array(
+      '#type' => 'select', 
+      '#title' => t('Age group'), 
+      '#default_value' => brainjogging_wordlist_get_age($form['nid']['#value']),
+      '#options' => array(
+        '5-10' => t('5-10'), 
+        '10-15' => t('10-15'), 
+        '5-15' => t('5-15'),
+        ),
+        '#description' => t('Select the age group for the wordlist.'),
+        
+    );
+     
        $form['wordlist_type'] = array(
       '#type' => 'radios', 
       '#title' => t('WordList Type'),
@@ -101,6 +116,11 @@ function brainjogging_wordlist_get_update_disability($nid){
     return db_result(db_query("SELECT disability FROM {bj_wordlist_relativity} WHERE wl_id = %d",$nid));    
   }
 }
+function brainjogging_wordlist_get_age($nid){
+  if($nid){
+    return db_result(db_query("SELECT age FROM {bj_wordlist_relativity} WHERE wl_id = %d",$nid));    
+  }
+}
 
 function brainjogging_wordlist_get_type($nid){
   if($nid){
@@ -151,10 +171,10 @@ function brainjogging_wordlist_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       }
       break;
     case 'insert':
-      db_query("INSERT INTO {bj_wordlist_relativity} (c_id,wl_id,type,level,disability,instruction) VALUES(%d, %d, %d, %d, %d, '%s')", $node->category_id, $node->nid, $node->wordlist_type, $node->wordlist_level, $node->disability, $node->instruction);
+      db_query("INSERT INTO {bj_wordlist_relativity} (c_id,wl_id,type,level,disability,age,instruction) VALUES(%d, %d, %d, %d, %d, '%s', '%s')", $node->category_id, $node->nid, $node->wordlist_type, $node->wordlist_level, $node->disability, $node->age, $node->instruction);
       break;
     case 'update':
-      db_query("UPDATE {bj_wordlist_relativity} SET c_id = %d, type = %d, level = %d, disability = %d, instruction = '%s' WHERE  wl_id = %d", $node->category_id, $node->wordlist_type, $node->wordlist_level, $node->disability, $node->instruction,$node->nid);
+      db_query("UPDATE {bj_wordlist_relativity} SET c_id = %d, type = %d, level = %d, disability = %d, age = '%s', instruction = '%s' WHERE  wl_id = %d", $node->category_id, $node->wordlist_type, $node->wordlist_level, $node->disability, $node->age, $node->instruction,$node->nid);
       break;
     case 'load':
       $node->category_id = brainjogging_wordlist_get_wl_category($node->nid);
