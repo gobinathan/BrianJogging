@@ -13,12 +13,19 @@
       </div>
       <div>
        <span>Word Lists :</span>
-       <select id="wf_settings_wl">
+       <select id="wf_settings_wl">        
         <option value="0">-Select-</option>
-        <option value="1">Fruits</option>
-        <option disabled="disabled" value="2">Adverbs</option>
-        <option disabled="disabled" value="3">Adjectives</option>
-        <option disabled="disabled" value="4">Games</option>          
+        <?php
+        foreach ($vars as $cat => $wlist){
+          if(count($wlist['childs']) > 0){
+            printf('<optgroup label="%s">', $wlist['title']);
+            foreach ($wlist['childs'] as $wl){
+             printf('<option value="%d">%s</option>',$wl->nid, $wl->title);
+            }
+            print "</optgroup>";
+          }
+        }
+        ?>
        </select>
       </div>
       <div>

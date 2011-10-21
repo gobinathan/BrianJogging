@@ -14,6 +14,7 @@ function brainjogging_wordlist_schema() {
       'type'  => array('type' => 'int','not null' => TRUE),
       'level'  => array('type' => 'int','not null' => TRUE),
       'disability'  => array('type' => 'int','not null' => TRUE),
+      'age'  => array('type' => 'varchar','length'=>255,'not null' => TRUE),
       'instruction'  => array('type' => 'text','not null' => TRUE),
       
       
