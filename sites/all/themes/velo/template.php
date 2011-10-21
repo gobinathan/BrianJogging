@@ -47,7 +47,7 @@ function velo_preprocess_page(&$vars){
 /**
  * Implementation of theme_fieldset().
  */
-function velo_fieldset(&$element) {
+function velo_fieldset($element) {
   $fieldset_classes = array();
   
   !empty($element['#attributes']['class']) ? $fieldset_classes = explode(' ', $element['#attributes']['class']) : $fieldset_classes[] = 'no-attributes';

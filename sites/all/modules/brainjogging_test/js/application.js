@@ -4,7 +4,9 @@ BrianJogging = {};
 BrianJogging.wordflash = (function(pub) {
   pub.initialize = function(){
     words = [];
-    words[1] = Array('Apple', 'Apricot', 'Avocado', 'Banana', 'Bilberry', 'Blackberry', 'Blackcurrant', 'Blueberry', 'Currant', 'Cherry', 'Cherimoya', 'Clementine', 'Date', 'Damson', 'Durian', 'Eggplant', 'Elderberry', 'Feijoa', 'Gooseberry', 'Grape', 'Grapefruit', 'Huckleberry', 'Jackfruit', 'Jambul', 'Kiwi', 'Kumquat', 'Legume', 'Lemon', 'Lime', 'Lychee', 'Mango', 'Mangostine', 'Melon', 'Cantaloupe', 'Honeydew', 'Watermelon', 'Rock', 'Nectarine', 'Orange', 'Peach', 'Pear', 'Bartlett', 'Physalis', 'Plum', 'Pineapple', 'Pomegranate', 'Raisin', 'Raspberry', 'Raspberry', 'Peaches', 'Rambutan', 'Redcurrant', 'Salal', 'jujube', 'Carrot','Figs', 'Dates', 'Olive', 'Jujube', 'Pomegranate', 'Lemon', 'Lime', 'KeyLime', 'Mandarin', 'Orange', 'Tangerine', 'Avocado', 'Guava', 'Kumquat', 'Lychee', 'Passion', 'Tomato', 'CashewFruit', 'Cacao', 'Coconut', 'Custard', 'Jackfruit', 'Mango', 'Okra', 'Pineapple');
+    alert(Drupal.settings.input1);
+    words [1] =Drupal.settings.input1;
+    //words[1] = Array('Apple', 'Apricot', 'Avocado', 'Banana', 'Bilberry', 'Blackberry', 'Blackcurrant', 'Blueberry', 'Currant', 'Cherry', 'Cherimoya', 'Clementine', 'Date', 'Damson', 'Durian', 'Eggplant', 'Elderberry', 'Feijoa', 'Gooseberry', 'Grape', 'Grapefruit', 'Huckleberry', 'Jackfruit', 'Jambul', 'Kiwi', 'Kumquat', 'Legume', 'Lemon', 'Lime', 'Lychee', 'Mango', 'Mangostine', 'Melon', 'Cantaloupe', 'Honeydew', 'Watermelon', 'Rock', 'Nectarine', 'Orange', 'Peach', 'Pear', 'Bartlett', 'Physalis', 'Plum', 'Pineapple', 'Pomegranate', 'Raisin', 'Raspberry', 'Raspberry', 'Peaches', 'Rambutan', 'Redcurrant', 'Salal', 'jujube', 'Carrot','Figs', 'Dates', 'Olive', 'Jujube', 'Pomegranate', 'Lemon', 'Lime', 'KeyLime', 'Mandarin', 'Orange', 'Tangerine', 'Avocado', 'Guava', 'Kumquat', 'Lychee', 'Passion', 'Tomato', 'CashewFruit', 'Cacao', 'Coconut', 'Custard', 'Jackfruit', 'Mango', 'Okra', 'Pineapple');
     words[2] = Array('Carefully', 'Easily', 'Patiently', 'Quickly');
     words[3] = Array('Beautiful', 'Elegant', 'Glamorous', 'Sparkling');
     words[4] = Array('Soccer', 'Volleyball', 'Swimming', 'Boxing');  
@@ -82,6 +84,8 @@ BrianJogging.wordflash = (function(pub) {
   };
   
   submitResult = function(){
+    alert($('#wf_words').text());
+     alert($('#wf_answer').val());
     if($('#wf_words').text().toLowerCase() == $('#wf_answer').val().toLowerCase()){
     $('#wf_container').html('<span class="msg">Anwer Correct..</span>');    
     //results.levels[wf.attempts].result = 1;
@@ -124,7 +128,7 @@ BrianJogging.wordflash = (function(pub) {
     results["tot_atem"]={tot:tot_atm};
     xmlhttp=$.ajax({
           type: 'POST',
-          url: '/brainjogging/wordflash/',
+          url: '/brainjogging/wordflash/submit',
           data: 'res='+$.toJSON(results),
           success: function(msg){
           alert("success");
@@ -480,28 +484,8 @@ BrianJogging.letter_flash = (function(pub) {
 
 BrianJogging.eyemomvent = (function(pub) {
     pub.initialize = function(){
-      alert(Drupal.settings.input1);
-        em_input=Drupal.settings.input1;
-        //em_input[0]="The origin of the Statue";
-        //em_input[1]="of Liberty project is";
-        //em_input[2]="generally traced to a ";
-        //em_input[3]="comment made by French law";
-        //em_input[4]="professor and politician";
-        //em_input[5]="Édouard René de Laboulaye";
-        //em_input[6]="in mid-1865. Inafter-dinner";
-        //em_input[7]="conversation at his home";
-        //em_input[8]="near Versailles,Laboulaye,";
-        //em_input[9]="an ardent supporter of ";
-        //em_input[10]="the Union in the American";
-        //em_input[11]="Civil War, stated";
-        //em_input[12]="If a monument should ";
-        //em_input[13]="rise in the United States";
-        //em_input[14]="as a memorial to their";
-        //em_input[15]="independence, I should think";
-        //em_input[16]="it only natural if it";
-        //em_input[17]="were built by united";
-        //em_input[18]="effort a common work";
-        //em_input[19]="of both our nations";
+       
+        
         $('#eye_moment').show();
         em_pos1 = 0;
         em_max=300;
@@ -509,6 +493,12 @@ BrianJogging.eyemomvent = (function(pub) {
         em_count=0;
         em_sp=3000;
         em_loop=1;
+        res=new Array();
+        bj_eye_move={};
+        
+        
+        bj_eye_move['res']=Drupal.settings.wordlist_id;
+        em_input=Drupal.settings.input1;
         $('#em_main').click(function(){
           $('#eye_moment').hide();
           window.location = "/brainjogging/test/dashboard";
@@ -546,10 +536,36 @@ BrianJogging.eyemomvent = (function(pub) {
         }
        if(em_count==em_input.length) {
        
+       if(em_loop==1)
+       {
+         alert("first eye test end");
+        
+       bj_eye_move['res1']=Drupal.settings.wordlist_id1;
+          em_input=Drupal.settings.input2;
+           
+       }
+       if(em_loop==2)
+       {
+         alert("Scecond eye test end");
+        bj_eye_move['res2']=Drupal.settings.wordlist_id2;
+         em_input=Drupal.settings.input3;
+         
+           
+       }
          //alert("first eye test end");
           if(em_loop==3)
           {
-           window.location.reload( true );
+            alert(bj_eye_move);
+          xmlhttp=$.ajax({
+          type: 'POST',
+          url: '/brainjogging/eye_movement/submit',
+          data: 'res='+$.toJSON(bj_eye_move),
+          success: function(msg){
+          alert("success");
+          }
+          });
+           
+           window.location='/brainjogging/test/dashboard';
            return true;
           }
         

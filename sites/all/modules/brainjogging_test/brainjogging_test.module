@@ -44,13 +44,19 @@ function brainjogging_test_menu(){
     'page arguments' => array('brainjogging_test_word_flash'),
     'access callback' => TRUE,
   );
-    $items['brainjogging/submit'] = array(
+    $items['brainjogging/letter_flash/submit'] = array(
     'page callback' => 'letter_flash_submit',
     'page arguments' => array('list'),
     'access callback' => TRUE,
     'file' => 'letter_flash.inc',
   );
-     $items['brainjogging/wordflash'] = array(
+    $items['brainjogging/eye_movement/submit'] = array(
+    'page callback' => 'eye_movement_submit',
+    'page arguments' => array('list'),
+    'access callback' => TRUE,
+    'file' => 'eye_movement.inc',
+  );
+     $items['brainjogging/wordflash/submit'] = array(
     'page callback' => 'word_flash_submit',
     'page arguments' => array('list'),
     'access callback' => TRUE,
@@ -70,18 +76,23 @@ function brainjogging_test_dashboard(){
 }
 
 function brainjogging_test_eye_movement(){
-  
-  $res=db_query("SELECT t1.body, t1.nid FROM node_revisions t1, bj_wordlist_relativity t2 WHERE t2.type=1 and  t1.nid=t2.wl_id");
+  global $user;
+  //eye movement input array generation
+  $res=db_query("SELECT t1.body, t1.nid FROM node_revisions t1, bj_wordlist_relativity t2 WHERE t2.type = 1 and t2.level = 1 and t1.nid = t2.wl_id");
   $eyeinput=array();
+  $i=0;
   while($row=mysql_fetch_array($res)){
     $eyeinput['nid'][]  = $row['nid'];
-    $eyeinput['input'][] = $row['body'];
+    $eyeinput['input'][$i++] = $row['body'];
   }
   $rand_keys = array_rand($eyeinput['input'], 3);
-  drupal_add_js(array('input1'=> $eyeinput['input'][$rand_keys[0]]),'setting');
-  drupal_add_js(array('input2'=> $eyeinput['input'][$rand_keys[1]]),'setting');
-  drupal_add_js(array('input2'=> $eyeinput['input'][$rand_keys[2]]),'setting');
- //drupal_add_js(array('name'=>'gobi'),'setting');
+  $eye_move  = explode("\n", $eyeinput['input'][$rand_keys[0]]);
+  $eye_move1 = explode("\n", $eyeinput['input'][$rand_keys[1]]);
+  $eye_move2 = explode("\n", $eyeinput['input'][$rand_keys[2]]);
+  drupal_add_js(array('input1'=> $eye_move, 'wordlist_id'  => $eyeinput['nid'][$rand_keys[0]]),'setting');
+  drupal_add_js(array('input2'=> $eye_move1,'wordlist_id1' => $eyeinput['nid'][$rand_keys[1]]),'setting');
+  drupal_add_js(array('input3'=> $eye_move2,'wordlist_id2' => $eyeinput['nid'][$rand_keys[2]]),'setting');
+ //eye movement input array generation end 
   
   bj_add_js();
   drupal_add_js("
@@ -120,6 +131,40 @@ function brainjogging_test_letter_flash(){
 }
 
 function brainjogging_test_word_flash(){
+  
+  $res_cat=db_query("SELECT t1.type, t1.nid, t1.title FROM node t1, bj_wordlist_relativity t2 WHERE  t1.type='word_list' and t2.type = 1 and t2.level = 0 group by t1.nid ");
+  $wordinput=array();
+  $wordlist=array();
+  $i=0;
+  while($row=mysql_fetch_array($res_cat)){
+    $wordinput['nid'][]  = $row['nid'];
+    $wordinput['type'][$i++] = $row['type'];
+    $wordinput['title'][$i++] = $row['title'];
+    
+  }
+  
+  //echo "<pre>";
+  ////print_r($wordinput);
+  ////exit;
+  //input array for wordlist
+  $res=db_query("SELECT t1.body, t1.nid FROM node_revisions t1, bj_wordlist_relativity t2 WHERE t2.type = 1 and t2.level = 0 and t1.nid = t2.wl_id");
+  $eyeinput=array();
+  $i=0;
+  while($row=mysql_fetch_array($res)){
+    $eyeinput['nid'][]  = $row['nid'];
+    $eyeinput['input'][$i++] = $row['body'];
+  }
+ 
+  $rand_keys = array_rand($eyeinput['input'], 3);
+  
+  $eye_move   = explode("\r\n", $eyeinput['input'][$rand_keys[0]]);
+  $eye_move1  = explode("\n\r", $eyeinput['input'][$rand_keys[1]]);
+  $eye_move2  = explode("\n\r", $eyeinput['input'][$rand_keys[2]]);
+ 
+  drupal_add_js(array('input1'=> $eye_move, 'wordlist_id'  => $eyeinput['nid'][$rand_keys[0]]),'setting');
+  drupal_add_js(array('input2'=> $eye_move1,'wordlist_id1' => $eyeinput['nid'][$rand_keys[1]]),'setting');
+  drupal_add_js(array('input3'=> $eye_move2,'wordlist_id2' => $eyeinput['nid'][$rand_keys[2]]),'setting');
+  //input array for wordlist end
   bj_add_js();
   drupal_add_js("
     jQuery(document).ready(function () {
