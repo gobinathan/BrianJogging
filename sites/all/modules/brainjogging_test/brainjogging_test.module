@@ -23,35 +23,46 @@ function brainjogging_test_theme(){
 
 function brainjogging_test_menu(){
   $items['brainjogging/test/dashboard'] = array(
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('brainjogging_test_dashboard'),
-    'access callback' => TRUE,
+    'page callback' => 'brainjogging_test_dashboard',
+    'access callback' => 'user_is_logged_in',
   );
   $items['brainjogging/test/eye_movement'] = array(
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('brainjogging_test_eye_movement'),
-    'access callback' => TRUE,
+    'page callback' => 'brainjogging_test_eye_movement',
+    'access callback' => 'user_is_logged_in',
+    'file' => 'letter_flash.inc',
+    
   );
   $items['brainjogging/test/letter_flash'] = array(
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('brainjogging_test_letter_flash'),
-    'access callback' => TRUE,
+    'page callback' => 'brainjogging_test_letter_flash',
+    'access callback' => 'user_is_logged_in',
   );
   $items['brainjogging/test/word_flash'] = array(
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('brainjogging_test_word_flash'),
-    'access callback' => TRUE,
+    'page callback' => 'brainjogging_test_word_flash',
+    'access callback' => 'user_is_logged_in',
   );
-    $items['brainjogging/submit'] = array(
+  
+  $items['brainjogging/ajax/word_flash/%'] = array(
+    'page callback' => 'brainjogging_test_get_wordlist',
+    'page arguments' => array(3),
+    'access callback' => 'user_is_logged_in',
+  );  
+  
+  $items['brainjogging/letter_flash/submit'] = array(
     'page callback' => 'letter_flash_submit',
     'page arguments' => array('list'),
-    'access callback' => TRUE,
+    'access callback' => 'user_is_logged_in',
     'file' => 'letter_flash.inc',
   );
-     $items['brainjogging/wordflash'] = array(
+    $items['brainjogging/eye_movement/submit'] = array(
+    'page callback' => 'eye_movement_submit',
+    'page arguments' => array('list'),
+    'access callback' => 'user_is_logged_in',
+    'file' => 'eye_movement.inc',
+  );
+     $items['brainjogging/wordflash/submit'] = array(
     'page callback' => 'word_flash_submit',
     'page arguments' => array('list'),
-    'access callback' => TRUE,
+    'access callback' => 'user_is_logged_in',
     'file' => 'word_flash.inc',
   );
   return $items;
@@ -60,14 +71,28 @@ function brainjogging_test_menu(){
 function brainjogging_test_dashboard(){
   $path = drupal_get_path('module', 'brainjogging_test');
   drupal_add_css($path . '/css/bj_test_style.css', 'module', 'all', FALSE);
-  $form = array();
-  $form['dashboard'] = array(
-    '#value' => theme('bj_dashboard',array('path'=>drupal_get_path('module', 'brainjogging_test')))
-  );
-  return $form;
+  return theme('bj_dashboard',array('path'=>drupal_get_path('module', 'brainjogging_test')));
 }
 
 function brainjogging_test_eye_movement(){
+  global $user;
+  //eye movement input array generation
+  $res=db_query("SELECT t1.body, t1.nid FROM node_revisions t1, bj_wordlist_relativity t2 WHERE t2.type = 1 and t2.level = 1 and t1.nid = t2.wl_id");
+  $eyeinput=array();
+  $i=0;
+  while($row=mysql_fetch_array($res)){
+    $eyeinput['nid'][]  = $row['nid'];
+    $eyeinput['input'][$i++] = $row['body'];
+  }
+  $rand_keys = array_rand($eyeinput['input'], 3);
+  $eye_move  = explode("\n", $eyeinput['input'][$rand_keys[0]]);
+  $eye_move1 = explode("\n", $eyeinput['input'][$rand_keys[1]]);
+  $eye_move2 = explode("\n", $eyeinput['input'][$rand_keys[2]]);
+  drupal_add_js(array('input1'=> $eye_move, 'wordlist_id'  => $eyeinput['nid'][$rand_keys[0]]),'setting');
+  drupal_add_js(array('input2'=> $eye_move1,'wordlist_id1' => $eyeinput['nid'][$rand_keys[1]]),'setting');
+  drupal_add_js(array('input3'=> $eye_move2,'wordlist_id2' => $eyeinput['nid'][$rand_keys[2]]),'setting');
+ //eye movement input array generation end 
+  
   bj_add_js();
   drupal_add_js("
     jQuery(document).ready(function () {
@@ -75,11 +100,8 @@ function brainjogging_test_eye_movement(){
     });",
     'inline'
   );
-  $form = array();
-  $form['eye_movement'] = array(
-    '#value' => theme('bj_eye_movement',array('path'=>drupal_get_path('module', 'brainjogging_test')))
-  );
-  return $form;
+  
+  return theme('bj_eye_movement',array('path'=>drupal_get_path('module', 'brainjogging_test')));
 }
 
 function brainjogging_test_letter_flash(){
@@ -97,14 +119,30 @@ function brainjogging_test_letter_flash(){
     });",
     'inline'
   );
-  $form = array();
-  $form['letter_flash'] = array(
-    '#value' => theme('bj_letter_flash',array('path'=>drupal_get_path('module', 'brainjogging_test')))
-  );
-  return $form;
+  
+  return theme('bj_letter_flash',array('path'=>drupal_get_path('module', 'brainjogging_test')));
 }
 
 function brainjogging_test_word_flash(){
+  $relativity = array();
+  $relativity_res = db_query("SELECT nid, title FROM {node} WHERE type = 'word_list_category' ORDER BY title");
+  while($obj = db_fetch_object($relativity_res)){
+    $relativity[$obj->nid]['title'] = ucfirst($obj->title);
+  }
+  
+  $res_cat = db_query("SELECT n.nid, n.title ,bwr.c_id FROM {node} n
+                      LEFT JOIN {node_revisions} nr ON n.nid = nr.nid
+                      LEFT JOIN {bj_wordlist_relativity} bwr ON n.nid = bwr.wl_id
+                      WHERE n.vid = nr.vid
+                      AND n.type = 'word_list'
+                      AND bwr.type = 1
+                      AND bwr.level = 0");
+  
+  while($row = db_fetch_object($res_cat)){
+   $relativity[$row->c_id]['childs'][] = $row; 
+  }
+  
+  
   bj_add_js();
   drupal_add_js("
     jQuery(document).ready(function () {
@@ -112,11 +150,19 @@ function brainjogging_test_word_flash(){
     });",
     'inline'
   );
-  $form = array();
-  $form['word_flash'] = array(
-    '#value' => theme('bj_word_flash',array('path'=>drupal_get_path('module', 'brainjogging_test')))
-  );
-  return $form;
+  return theme('bj_word_flash', $relativity);
+}
+
+
+function brainjogging_test_get_wordlist($nid){
+  if($nid){
+    $node = node_load($nid);    
+    $lines = array_filter(preg_split( '/\r\n|\r|\n/', $node->body ));
+    $lines = array_merge($lines, $lines, $lines, $lines, $lines, $lines);
+    $instruction = db_result(db_query("SELECT instruction FROM {bj_wordlist_relativity} WHERE wl_id = '%d'", $nid));    
+    drupal_json(array('words' => $lines, 'instruction' => $instruction));
+    exit;
+  }
 }
 
 function bj_add_js(){

@@ -1,0 +1,37 @@
+VELO CHANGELOG
+
+
+6.x-1.x-dev
+-----------
+- Issue #1299942 by Feng-Shui: Fixed Tab styling breaks on pages with lots of
+  tabs.
+
+6.x-1.5
+-----------
+- Revised theme styles and colours
+- Updated screenshot
+- Generic theme colours with ability to override
+- Fixed some minor layout bugs
+- Fixed a layout issue with Taxonomy Manager
+
+6.x-1.4
+-----------
+- Right sidebar is now fixed width.
+- Min and max widths set on body area.
+- Slimmer header
+- Improved rendering of elements provided by Token, CKEditor and IMCE
+
+6.x-1.3
+-----------
+- Better display in Firefox and Internet Explorer
+- Minor CSS tweaks
+- Improved rendering of fields in tabsets
+- HR style
+- Support use of ?ajax=true in URLs to return a blank template
+- Minor fixes
+
+6.x-1.2
+-----------
+- Extra TD on Taxonomy overview to improve legibility using Tabledrag
+- Fix for Taxonomy Manager button compatibility
+- Corrected display of DEL element

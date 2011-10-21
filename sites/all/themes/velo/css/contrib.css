@@ -1,0 +1,68 @@
+/** CSS for compatibility with contrib modules **/
+
+/** Ajax comments */
+h2.ajax-comments-processed {margin:0.5em 0; font-size:1.4em;}
+
+/* Markitup */
+div.markItUp {width:inherit;}
+div.node-form textarea.markItUpEditor {width:inherit;}
+
+/** Admin menu **/
+#admin-menu{background:#333;border-bottom:2px solid #000;font-size:14px;height:30px;line-height:25px;padding:4px 0}
+#admin-menu li li{opacity:1px}
+#admin-menu li li.expandable ul{margin:-23px 0 0 160px}
+#admin-menu li.admin-menu-icon a{height:20px}
+#admin-menu ul ul a{-moz-border-radius:0;-webkit-border-radius:0;border-top:1px solid #333;margin:0}
+
+/** Display Suite **/
+.nd-region-right {padding-left:10px;width:24%;}
+.nd-region-left {padding-right:10px;width:24%;}
+.nd-one-sidebar.nd-sidebar-right .nd-region-middle {padding-right:10px;}
+.nd-one-sidebar.nd-sidebar-left .nd-region-middle {padding-left:10px;}
+.nd-sidebar-left.nd-sidebar-right .nd-region-middle {padding-left:10px; padding-right:10px;}
+.light-grey {background: #EFEFEF;}
+
+/** jQuery Ui Datepicker **/
+.ui-datepicker-month {left:20%;}
+.ui-datepicker-year {left:50%;}
+
+/** Tabs **/
+.ui-tabs .tabs-tabset {
+border: 1px solid #BBB;
+padding:1em;
+margin-bottom: 1em;
+}
+.ui-tabs-nav {
+border-left: 1px solid #BBB;
+margin-bottom:1px;
+}
+.ui-tabs-nav li {
+float: left;
+list-style: none;
+padding: 2px 6px;
+border-top: 1px solid #BBB;
+border-right: 1px solid #BBB;
+background: #EFEFEF;
+}
+.ui-tabs-nav li.ui-tabs-selected {
+background: white;
+}
+
+/** CKEditor **/
+table.cke_editor tbody {background:inherit;}
+
+/** IMCE **/
+#imce-content a {
+  color: #666;
+}
+
+/** Token **/
+table.token-tree {
+  width:92%;
+}
+table.token-tree tr.odd {
+  background:none;
+}
+
+/** Taxonomy manager **/
+#taxonomy-manager-form fieldset {margin:0 0 20px 0;}

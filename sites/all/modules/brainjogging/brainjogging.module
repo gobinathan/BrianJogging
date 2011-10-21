@@ -7,11 +7,24 @@ function brainjogging_menu() {
   
   $items['admin/brainjogging'] = array(
     'title' => 'My Tools',
+<<<<<<< HEAD
     'description' => 'List, add, and edit user grades.',
     'page callback' => 'bj_grade_admin',
     'page arguments' => array('list'),
     'access callback' => 'user_is_logged_in',
     'file' => 'grade.admin.inc',
+=======
+    'description' => '',
+    'page callback' => 'bj_show_dashboard',
+    'access callback' => 'user_is_logged_in',
+  );
+  
+   $items['admin/brainjogging/tests'] = array(
+    'title' => 'Run Tests',
+    'description' => '',
+    'page callback' => 'bj_show_dashboard',
+    'access callback' => 'user_is_logged_in',
+>>>>>>> upstream/master
   );
   
   // Admin user pages.
@@ -47,6 +60,41 @@ function brainjogging_menu() {
     'access callback' => 'user_is_logged_in',    
   );
   
+<<<<<<< HEAD
+=======
+  $items['admin/brainjogging/node'] = array(
+    'title' => 'Content',
+    'description' => "View, edit, and delete your site's content.",
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('node_admin_content'),
+    'access arguments' => array('administer nodes'),
+    'file' => 'node.admin.inc',
+    'file path' => drupal_get_path('module', 'node'),
+  );
+  
+  $items['admin/brainjogging/node/overview'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  
+  foreach (node_get_types('types', NULL, TRUE) as $type) {
+    $type_url_str = str_replace('_', '-', $type->type);
+    $items['admin/brainjogging/node/add/'. $type_url_str] = array(
+      'title' => drupal_ucfirst($type->name),
+      'title callback' => 'check_plain',
+      'page callback' => 'node_add',
+      'page arguments' => array(4),
+      'access callback' => 'node_access',
+      'access arguments' => array('create', $type->type),
+      'description' => $type->description,
+      'file' => 'node.pages.inc',
+      'file path' => drupal_get_path('module', 'node'),
+    );
+  }
+  
+  
+>>>>>>> upstream/master
   $items['admin/brainjogging/logout'] = array(
     'title' => 'Log out',
     'access callback' => 'user_is_logged_in',
@@ -54,11 +102,15 @@ function brainjogging_menu() {
     'weight' => 10,
     'file' => 'user.pages.inc',
     'file path' => drupal_get_path('module', 'user'),
+<<<<<<< HEAD
   );
   
     
     
     
+=======
+  );    
+>>>>>>> upstream/master
     
     
   $items['admin/brainjogging/grade'] = array(
@@ -177,6 +229,13 @@ function brainjogging_menu() {
   return $items;
 }
 
+<<<<<<< HEAD
+=======
+function bj_show_dashboard(){
+  drupal_goto('brainjogging/test/dashboard');
+}
+
+>>>>>>> upstream/master
 function bj_user_view(){
   drupal_goto('user/'.$GLOBALS['user']->uid);
 }
@@ -338,7 +397,11 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     
     if(arg(3) == ''){
       unset($form['account']['roles']);
+<<<<<<< HEAD
       $form['account']['roles'] = array('#type' => 'value', '#value' => $user_edit->roles);
+=======
+      $form['account']['roles'] = array('#type' => 'value', '#value' => array_keys($user_edit->roles));
+>>>>>>> upstream/master
       $role = $user_edit->roles;
       unset($role[2]);
       $role = array_values($role);
@@ -426,6 +489,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
           '#weight' => 12,
         );
       }
+<<<<<<< HEAD
     }
     $form['#validate'] = array('bj_user_edit_details_validator');
   }
@@ -475,6 +539,9 @@ function bj_user_edit_details_validator(&$form, &$form_state){
       if(!(boolean)($form_state['values']['profile_parent_email'])) {
         form_set_error('parent_mail', t('The Teacher must be mandatory for clients.'));
       }
+=======
+      
+>>>>>>> upstream/master
     }
   }
 }

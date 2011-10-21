@@ -126,6 +126,12 @@ function user_filter_form_submit($form, &$form_state) {
  * @see user_admin_account_submit()
  */
 function user_admin_account() {
+  global $user;
+  if(in_array(8,array_keys($user->roles))){
+    $sid = db_result(db_query("SELECT sid FROM {bj_user_schools} WHERE uid = ".$user->uid));
+    $school['join'] = " LEFT JOIN bj_user_schools us ON u.uid = us.uid";
+    $school['where'] = " AND us.sid = ".$sid;
+  }
   $filter = user_build_filter_query();
 
   $header = array(
@@ -139,12 +145,12 @@ function user_admin_account() {
   );
 
   if ($filter['join'] != "") {
-    $sql = 'SELECT DISTINCT u.uid, u.name, u.status, u.created, u.access FROM {users} u LEFT JOIN {users_roles} ur ON u.uid = ur.uid '. $filter['join'] .' WHERE u.uid NOT IN (0,1) '. $filter['where'];
-    $query_count = 'SELECT COUNT(DISTINCT u.uid) FROM {users} u LEFT JOIN {users_roles} ur ON u.uid = ur.uid '. $filter['join'] .' u.uid NOT IN (0,1) '. $filter['where'];
+    $sql = 'SELECT DISTINCT u.uid, u.name, u.status, u.created, u.access FROM {users} u LEFT JOIN {users_roles} ur ON u.uid = ur.uid '. $filter['join'] . $school['join'] .' WHERE u.uid NOT IN (0,1) '. $filter['where'].$school['where'];
+    $query_count = 'SELECT COUNT(DISTINCT u.uid) FROM {users} u LEFT JOIN {users_roles} ur ON u.uid = ur.uid '. $filter['join'] . $school['join'] .' WHERE u.uid NOT IN (0,1) '. $filter['where'].$school['where'];
   }
   else {
-    $sql = 'SELECT u.uid, u.name, u.status, u.created, u.access FROM {users} u WHERE u.uid NOT IN (0,1) '. $filter['where'];
-    $query_count = 'SELECT COUNT(u.uid) FROM {users} u WHERE u.uid != 0 '. $filter['where'];
+    $sql = 'SELECT u.uid, u.name, u.status, u.created, u.access FROM {users} u '. $school['join'] .' WHERE u.uid NOT IN (0,1) '. $filter['where'].$school['where'];
+    $query_count = 'SELECT COUNT(u.uid) FROM {users} u '. $school['join'] .' WHERE u.uid != 0 '. $filter['where'].$school['where'];
   }
 
   
