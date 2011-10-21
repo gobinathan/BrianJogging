@@ -3,13 +3,7 @@ BrianJogging = {};
 // Word flash
 BrianJogging.wordflash = (function(pub) {
   pub.initialize = function(){
-    words = [];
-    alert(Drupal.settings.input1);
-    words [1] =Drupal.settings.input1;
-    //words[1] = Array('Apple', 'Apricot', 'Avocado', 'Banana', 'Bilberry', 'Blackberry', 'Blackcurrant', 'Blueberry', 'Currant', 'Cherry', 'Cherimoya', 'Clementine', 'Date', 'Damson', 'Durian', 'Eggplant', 'Elderberry', 'Feijoa', 'Gooseberry', 'Grape', 'Grapefruit', 'Huckleberry', 'Jackfruit', 'Jambul', 'Kiwi', 'Kumquat', 'Legume', 'Lemon', 'Lime', 'Lychee', 'Mango', 'Mangostine', 'Melon', 'Cantaloupe', 'Honeydew', 'Watermelon', 'Rock', 'Nectarine', 'Orange', 'Peach', 'Pear', 'Bartlett', 'Physalis', 'Plum', 'Pineapple', 'Pomegranate', 'Raisin', 'Raspberry', 'Raspberry', 'Peaches', 'Rambutan', 'Redcurrant', 'Salal', 'jujube', 'Carrot','Figs', 'Dates', 'Olive', 'Jujube', 'Pomegranate', 'Lemon', 'Lime', 'KeyLime', 'Mandarin', 'Orange', 'Tangerine', 'Avocado', 'Guava', 'Kumquat', 'Lychee', 'Passion', 'Tomato', 'CashewFruit', 'Cacao', 'Coconut', 'Custard', 'Jackfruit', 'Mango', 'Okra', 'Pineapple');
-    words[2] = Array('Carefully', 'Easily', 'Patiently', 'Quickly');
-    words[3] = Array('Beautiful', 'Elegant', 'Glamorous', 'Sparkling');
-    words[4] = Array('Soccer', 'Volleyball', 'Swimming', 'Boxing');  
+    words = [];  
     wf = {};
     results = {};
     results.status = {};
@@ -35,10 +29,15 @@ BrianJogging.wordflash = (function(pub) {
       if(wf.wordlist == 0){
         alert("Please select any Word list");
         return false;
+      }else{
+        $.getJSON('/brainjogging/ajax/word_flash/' + wf.wordlist, function(data) {
+          words = data.words;
+          $('#wf_instruction > p').text(data.instruction);
+          $('#wf_settings').slideUp('slow',function(){
+            $('#wf_instruction').slideDown('slow');
+          });
+        });
       }      
-      $('#wf_settings').slideUp('slow',function(){
-        $('#wf_instruction').slideDown('slow');
-      });
       return true;
     });
     
@@ -56,7 +55,7 @@ BrianJogging.wordflash = (function(pub) {
   
   beginExercise = function(){
     $('#wf_container').html('<div style="margin:0 auto;text-align:center;color:#fff;font-weight:bold;">Level '+ wf.level +'</div><div id="wf_words"></div><br><div id="wf_ans_div"><input type="text" class="wf_answer" size="50" id="wf_answer"></div>');
-    $('#wf_words').text(words[wf.wordlist].slice(((wf.level - 1) * wf.ftype), (wf.level * wf.ftype)).join(" "));
+    $('#wf_words').text(words.slice(((wf.level - 1) * wf.ftype), (wf.level * wf.ftype)).join(" "));
     $('#wf_words').css('font-size', wf.fsize);
     $('#wf_ans_div').hide();
     
@@ -84,11 +83,8 @@ BrianJogging.wordflash = (function(pub) {
   };
   
   submitResult = function(){
-    alert($('#wf_words').text());
-     alert($('#wf_answer').val());
     if($('#wf_words').text().toLowerCase() == $('#wf_answer').val().toLowerCase()){
     $('#wf_container').html('<span class="msg">Anwer Correct..</span>');    
-    //results.levels[wf.attempts].result = 1;
     results.status.correct += 1; 
     if(wf.level < 20){
      $.after(2000,function(){      
@@ -110,7 +106,7 @@ BrianJogging.wordflash = (function(pub) {
      });  
     }    
    }
-    results.levels[wf.attempts].attempt = results.status.wrong;
+   
    // Show the Test result 
    if(results.status.wrong == 4  || wf.level == 20){
     $.after(2000,function(){
@@ -130,8 +126,7 @@ BrianJogging.wordflash = (function(pub) {
           type: 'POST',
           url: '/brainjogging/wordflash/submit',
           data: 'res='+$.toJSON(results),
-          success: function(msg){
-          alert("success");
+          success: function(msg){          
           }
           });
     
@@ -146,14 +141,11 @@ BrianJogging.wordflash = (function(pub) {
   res += '<td align="center"><input id="wf_mm" type="button" value="Main Menu"></td></tr></table>';
   $('#wf_container').html(res);
   
-  $('#wf_rl').click(function(){      
-      $('#wf_container').hide();
-      pub.initialize();      
+  $('#wf_rl').click(function(){
+    window.location = "/brainjogging/test/word_flash";
   });
   $('#wf_mm').click(function(){
-    $('#wf_container').hide();
-    $('#words_flash_div').hide();
-    $('#main_menu').show();
+    window.location = "/brainjogging/test/dashboard";
   });
   }
   
@@ -189,7 +181,6 @@ BrianJogging.letter_flash = (function(pub) {
       bj_lf_test : {},
       ttype  :0
     },
-    alert(properties.level);
     this.showSetting()
   };
   
@@ -455,9 +446,7 @@ BrianJogging.letter_flash = (function(pub) {
           type: 'POST',
           url: '/brainjogging/submit/',
           data: 'res='+$.toJSON(properties.bj_lf_test),
-          success: function(msg){
-          alert("success");
-          }
+          success: function(msg){}
           });
           
      $('#lf_rl').click(function(){
@@ -483,10 +472,10 @@ BrianJogging.letter_flash = (function(pub) {
 
 
 BrianJogging.eyemomvent = (function(pub) {
-    pub.initialize = function(){
-       
-        
-        $('#eye_moment').show();
+    pub.initialize = function(){        
+        $('#header').hide();
+        $('#admin-menu').hide();
+        $('#eye_moment').show();        
         em_pos1 = 0;
         em_max=300;
         em_tip_top=20;
@@ -552,17 +541,13 @@ BrianJogging.eyemomvent = (function(pub) {
          
            
        }
-         //alert("first eye test end");
-          if(em_loop==3)
-          {
-            alert(bj_eye_move);
+         if(em_loop==3)
+          {            
           xmlhttp=$.ajax({
           type: 'POST',
           url: '/brainjogging/eye_movement/submit',
           data: 'res='+$.toJSON(bj_eye_move),
-          success: function(msg){
-          alert("success");
-          }
+          success: function(msg){}
           });
            
            window.location='/brainjogging/test/dashboard';
