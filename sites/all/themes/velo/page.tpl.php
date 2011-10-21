@@ -21,8 +21,8 @@ if ($_GET["format"] == "ajax") {
 </head>
 <body class="<?php print $body_classes; ?>">
   <div id="header">
-       <div class="head"><a href="/"><h1 class="title">Brain Jogging</h1</a></div>
-    <?php if($title): ?><h1 class="subtitle"><?php print $title; ?></h1><?php endif; ?>
+       <div class="head"><a href="/">Brain Jogging</a></div>
+    <?php if($title): ?><h1 class="title"><?php print $title; ?></h1><?php endif; ?>
       <!--<div id="breadcrumb"><?php //print $breadcrumb; ?></div>-->
 
     <?php if ($tabs_primary): ?>
