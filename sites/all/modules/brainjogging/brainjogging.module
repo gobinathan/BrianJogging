@@ -211,7 +211,7 @@ function brainjogging_menu() {
 }
 
 function brainjogging_init(){
-  if(!user_is_logged_in()){
+  if(!user_is_logged_in() && arg(0) != 'user' && arg(1) != 'login'){
     drupal_goto('user/login');
   }
 }
