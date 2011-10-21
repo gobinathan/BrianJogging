@@ -631,4 +631,5 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
     db_query("DELETE FROM {bj_user_disabilities} WHERE uid = ".$account->uid);
     break;
   }
+  
 }

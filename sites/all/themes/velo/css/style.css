@@ -12,6 +12,7 @@
 #header{margin:0;min-height:54px;padding:6px 15px 0 30px;position:relative}
 .admin-expanded #header{padding-left:15px;}
 #header h1.title{color:#FFF;line-height:1.8em;}
+#header h1.subtitle{color:#FFF;line-height:1.8em; font-size:15px;}
 #help{font-size:13px;margin:5px 0;}
 #main .content{padding:8px}
 body.no-sidebar #region-main{width:100%;}
@@ -124,7 +125,7 @@ ul.secondary a:hover{text-decoration:underline;}
 #header ul.primary li.active a,ul.primary li a.active{border-color:transparent;border-style:none;border-width:0;display:block;padding:0 18px}
 #secondary-tabs{padding:6px 10px 2px;font-size:0.9em;}
 #secondary-tabs ul.secondary{border-bottom:none;margin:0;}
-
+.block-user{width:300px; margin:0 auto;background-color:lightgrey;}
 /** Alternative secondary tab styling **/
 /*#secondary-tabs ul.secondary li {border:0;padding:0;}
 #secondary-tabs ul.secondary .active {font-weight:bold;}
