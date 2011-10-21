@@ -7,11 +7,16 @@ function brainjogging_menu() {
   
   $items['admin/brainjogging'] = array(
     'title' => 'My Tools',
-    'description' => 'List, add, and edit user grades.',
-    'page callback' => 'bj_grade_admin',
-    'page arguments' => array('list'),
+    'description' => '',
+    'page callback' => 'bj_show_dashboard',
     'access callback' => 'user_is_logged_in',
-    'file' => 'grade.admin.inc',
+  );
+  
+   $items['admin/brainjogging/tests'] = array(
+    'title' => 'Run Tests',
+    'description' => '',
+    'page callback' => 'bj_show_dashboard',
+    'access callback' => 'user_is_logged_in',
   );
   
   // Admin user pages.
@@ -203,6 +208,10 @@ function brainjogging_menu() {
     'access arguments' => array('manage site settings')
   );
   return $items;
+}
+
+function bj_show_dashboard(){
+  drupal_goto('brainjogging/test/dashboard');
 }
 
 function bj_user_view(){
