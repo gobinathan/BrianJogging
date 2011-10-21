@@ -7,11 +7,16 @@ function brainjogging_menu() {
   
   $items['admin/brainjogging'] = array(
     'title' => 'My Tools',
-    'description' => 'List, add, and edit user grades.',
-    'page callback' => 'bj_grade_admin',
-    'page arguments' => array('list'),
+    'description' => '',
+    'page callback' => 'bj_show_dashboard',
     'access callback' => 'user_is_logged_in',
-    'file' => 'grade.admin.inc',
+  );
+  
+   $items['admin/brainjogging/tests'] = array(
+    'title' => 'Run Tests',
+    'description' => '',
+    'page callback' => 'bj_show_dashboard',
+    'access callback' => 'user_is_logged_in',
   );
   
   // Admin user pages.
@@ -47,6 +52,38 @@ function brainjogging_menu() {
     'access callback' => 'user_is_logged_in',    
   );
   
+  $items['admin/brainjogging/node'] = array(
+    'title' => 'Content',
+    'description' => "View, edit, and delete your site's content.",
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('node_admin_content'),
+    'access arguments' => array('administer nodes'),
+    'file' => 'node.admin.inc',
+    'file path' => drupal_get_path('module', 'node'),
+  );
+  
+  $items['admin/brainjogging/node/overview'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  
+  foreach (node_get_types('types', NULL, TRUE) as $type) {
+    $type_url_str = str_replace('_', '-', $type->type);
+    $items['admin/brainjogging/node/add/'. $type_url_str] = array(
+      'title' => drupal_ucfirst($type->name),
+      'title callback' => 'check_plain',
+      'page callback' => 'node_add',
+      'page arguments' => array(4),
+      'access callback' => 'node_access',
+      'access arguments' => array('create', $type->type),
+      'description' => $type->description,
+      'file' => 'node.pages.inc',
+      'file path' => drupal_get_path('module', 'node'),
+    );
+  }
+  
+  
   $items['admin/brainjogging/logout'] = array(
     'title' => 'Log out',
     'access callback' => 'user_is_logged_in',
@@ -54,11 +91,7 @@ function brainjogging_menu() {
     'weight' => 10,
     'file' => 'user.pages.inc',
     'file path' => drupal_get_path('module', 'user'),
-  );
-  
-    
-    
-    
+  );    
     
     
   $items['admin/brainjogging/grade'] = array(
@@ -175,6 +208,10 @@ function brainjogging_menu() {
     'access arguments' => array('manage site settings')
   );
   return $items;
+}
+
+function bj_show_dashboard(){
+  drupal_goto('brainjogging/test/dashboard');
 }
 
 function bj_user_view(){
@@ -594,4 +631,5 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
     db_query("DELETE FROM {bj_user_disabilities} WHERE uid = ".$account->uid);
     break;
   }
+  
 }
