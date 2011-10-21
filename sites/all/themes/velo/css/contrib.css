@@ -8,7 +8,7 @@ div.markItUp {width:inherit;}
 div.node-form textarea.markItUpEditor {width:inherit;}
 
 /** Admin menu **/
-#admin-menu{background:#333;border-bottom:2px solid #000;font-size:12px;height:23px;line-height:25px;padding:2px 0}
+#admin-menu{background:#333;border-bottom:2px solid #000;font-size:14px;height:30px;line-height:25px;padding:4px 0}
 #admin-menu li li{opacity:1px}
 #admin-menu li li.expandable ul{margin:-23px 0 0 160px}
 #admin-menu li.admin-menu-icon a{height:20px}
