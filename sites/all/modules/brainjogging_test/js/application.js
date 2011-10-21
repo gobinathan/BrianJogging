@@ -592,7 +592,7 @@ BrianJogging.eyemomvent = (function(pub) {
     pub.em_speed = function() {
        //var em_spe=$('#speed').val();
         $('#em_init').css("display",'none');
-       var em_spe=9;
+       var em_spe=1;
        if(em_spe.length==0) {
          alert("Enter the speed");
         }
