@@ -1930,6 +1930,7 @@ function user_multiple_delete_confirm_submit($form, &$form_state) {
  * Implementation of hook_help().
  */
 function user_help($path, $arg) {
+  return;
   global $user;
 
   switch ($path) {
