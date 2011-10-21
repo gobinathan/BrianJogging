@@ -338,7 +338,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
     
     if(arg(3) == ''){
       unset($form['account']['roles']);
-      $form['account']['roles'] = array('#type' => 'value', '#value' => array_keys($user_edit->roles));
+      $form['account']['roles'] = array('#type' => 'value', '#value' => $user_edit->roles);
       $role = $user_edit->roles;
       unset($role[2]);
       $role = array_values($role);
@@ -426,9 +426,56 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
           '#weight' => 12,
         );
       }
-      
     }
-    $form['#validate'] = array('bj_user_details_validator');
+    $form['#validate'] = array('bj_user_edit_details_validator');
+  }
+}
+
+function bj_user_edit_details_validator(&$form, &$form_state){
+  global $user;
+  $user_edit = user_load(arg(1));
+  
+  if(arg(3) == ''){
+    $role = $form_state['values']['roles'];
+    unset($role[2]);
+    $role = array_values($role);
+  }
+  else{
+    $role = $user_edit->roles;
+    unset($role[2]);
+    $role = array_keys($role);
+  }
+  
+  if(arg(3) == 'Brainjogging Information'){
+    if(!in_array($role[0],array(3))){//siteadmin
+      if(!(boolean)($form_state['values']['school'])) {
+        form_set_error('school', t('The school must be mandatory.'));
+      }
+    }
+    if(!in_array($role[0],array(3,4,5,8))){//siteadmin
+      if($user->uid && !(boolean)($form_state['values']['grade'])) {
+        form_set_error('grade', t('The grade must be mandatory for clients.'));
+      }
+      if(!(boolean)($form_state['values']['learning_disablity'])) {
+        form_set_error('learning_disablity', t('The learning disablity must be mandatory for clients.'));
+      }
+      if($user->uid && in_array($form_state['values']['teacher'],array(NULL,'',0))) {
+        form_set_error('teacher', t('The Teacher must be mandatory for clients.'));
+      }
+    }
+  }
+  if(arg(3) == 'Personal information'){
+    if(!in_array($role[0],array(3,4,5,8))){ //siteadmin,teacher,parent,schooladmin
+      if(!(boolean)($form_state['values']['profile_parent_fname'])) {
+        form_set_error('parent_fname', t('The parent firstname must be mandatory for clients.'));
+      }
+      if(!(boolean)($form_state['values']['profile_parent_lname'])) {
+        form_set_error('parent_lname', t('The parent lastname must be mandatory for clients.'));
+      }
+      if(!(boolean)($form_state['values']['profile_parent_email'])) {
+        form_set_error('parent_mail', t('The Teacher must be mandatory for clients.'));
+      }
+    }
   }
 }
 
@@ -524,9 +571,20 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
       break;
   case 'after_update':
     if($account->uid){
-      if(in_array($edit['roles'],array(6,7)) ){ 
-        db_query("UPDATE {bj_user_grades} SET gid = ".$edit['grade']." WHERE uid = ".$account->uid);
-        db_query("UPDATE {bj_user_disabilities} SET did = ".$edit['learning_disablity']." WHERE uid = ".$account->uid);
+      $role = $account->roles;
+      unset($role[2]);
+      $role = array_keys($role);
+      $role_id = $role[0];
+      
+      if(arg(3) == 'Brainjogging Information'){
+        if(in_array($role_id,array(4,6,7,8))){
+          db_query("UPDATE {bj_user_schools} SET sid = ".$edit['school']." WHERE uid = ".$account->uid);
+        }
+        
+        if(in_array($role_id,array(6,7)) ){ 
+          db_query("UPDATE {bj_user_grades} SET gid = ".$edit['grade']." WHERE uid = ".$account->uid);
+          db_query("UPDATE {bj_user_disabilities} SET did = ".$edit['learning_disablity']." WHERE uid = ".$account->uid);
+        }
       }
     }
     break;
