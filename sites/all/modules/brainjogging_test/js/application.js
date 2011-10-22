@@ -454,9 +454,7 @@ BrianJogging.letter_flash = (function(pub) {
     });
     
     $('#lf_mm').click(function(){
-      $('#result_container').hide();
-      $('#letter_flash_div').hide();
-      $('#main_menu').show();
+      window.location = "/brainjogging/test/dashboard";
     });
     
     //show the results
