@@ -124,6 +124,12 @@ ul.secondary a:hover{text-decoration:underline;}
 #header ul.primary li.active a,ul.primary li a.active{border-color:transparent;border-style:none;border-width:0;display:block;padding:0 18px}
 #secondary-tabs{padding:6px 10px 2px;font-size:0.9em;}
 #secondary-tabs ul.secondary{border-bottom:none;margin:0;}
+#block-user-0{background-color:lightgrey;width:300px; margin:0 auto;}
+#user-login-form #edit-name-wrapper label{padding-left:10px;float:left;}
+#user-login-form #edit-pass-wrapper label{padding-left:10px;float:left;}
+#user-login-form .item-list li{list-style:none;}
+#header .head a {text-decoration:none}
+
 /** Alternative secondary tab styling **/
 /*#secondary-tabs ul.secondary li {border:0;padding:0;}
 #secondary-tabs ul.secondary .active {font-weight:bold;}
