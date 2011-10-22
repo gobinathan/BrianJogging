@@ -228,6 +228,13 @@ function bj_user_view(){
 function brainjogging_menu_alter(&$items) {
   unset($items['user/register']);
   $items['user/%user_category/edit']['access callback'] = 'bj_user_edit_access';
+  $items['user/%user_category/edit/Brainjogging Information']['access callback'] = 'bj_info_edit_access';
+}
+
+function bj_info_edit_access(){
+  global $user;
+  $edit_user = user_load(arg(1));
+  return $user->uid != $edit_user->uid ? true : false;
 }
 
 function bj_user_edit_access($account){
@@ -274,18 +281,12 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
   }
   
   $teachers = array();
-  $teacher_res = db_query ("SELECT u.uid, u.name
-                      FROM users u, role r, users_roles ur
-                      WHERE u.uid = ur.uid
-                      AND ur.rid = r.rid
-                      AND r.name = 'teacher'");
-  
-  while($teacher_obj = db_fetch_object($teacher_res)){
-    $teachers[$teacher_obj->uid] = $teacher_obj->name;
-  }
   
   if($form_id == 'user_register'){
     global $user;
+    
+    //get the users school ID
+    $sid = db_result(db_query("SELECT sid FROM {bj_user_schools} WHERE uid = ".$user->uid));
     
     if($user->uid){
       $options = $form['account']['roles']['#options'];
@@ -296,8 +297,10 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       $options = array('6' => 'Independent client','7' => 'Dependent client');
     }
     
+    //SChool admin cant create site admin and school admin users
     if(in_array(8,array_keys($user->roles))){
       unset($options[3]);
+      unset($options[8]);
     }
     
     $form['account']['roles'] = array(
@@ -309,7 +312,28 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       '#weight' => 6,
     );
     
-    if($user->uid){
+    if($user->uid){ //dont show in annonymous register page
+      
+      if(in_array(8,array_keys($user->roles))){ // 8=>school admin role
+        $teacher_res = db_query ("SELECT u.uid, u.name
+                        FROM users u, role r, users_roles ur, bj_user_schools us
+                        WHERE u.uid = ur.uid
+                        AND ur.rid = r.rid
+                        AND u.uid = us.uid
+                        AND r.name = 'teacher'
+                        And us.sid = ".$sid);
+      }
+      else{
+        $teacher_res = db_query ("SELECT u.uid, u.name
+                        FROM users u, role r, users_roles ur
+                        WHERE u.uid = ur.uid
+                        AND ur.rid = r.rid
+                        AND r.name = 'teacher'");
+      }
+      while($teacher_obj = db_fetch_object($teacher_res)){
+        $teachers[$teacher_obj->uid] = $teacher_obj->name;
+      }
+      
       $form['Brainjogging Information']['teacher'] = array(
         '#type' => 'select',
         '#title' => t('Teachers'),
@@ -330,7 +354,6 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
        * for school administrators we have to show only his associated school
       */
       if(in_array(8,array_keys($user->roles))){ // 8=>school admin role
-        $sid = db_result(db_query("SELECT sid FROM {bj_user_schools} WHERE uid = ".$user->uid));
         $form['Brainjogging Information']['school'] = array(
           '#type' => 'value',
           '#value' => $sid,
@@ -367,8 +390,15 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
   
   if($form_id == 'user_profile_form'){
     global $user;
+    
+    //get the user school id
+    $sid = db_result(db_query("SELECT sid FROM {bj_user_schools} WHERE uid = ".$user->uid));
+    
     //Load the user object 
     $user_edit = user_load(arg(1));
+    
+    $own_acc = $user->uid == $user_edit->uid;
+    
     //make Username field hidden
     unset($form['account']['name']);
     $form['account']['name'] = array('#type' => 'value', '#value' => $user_edit->name);
@@ -397,8 +427,28 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
 
     //Dont show the following fields for the
     //teacher,parent,i_client,schooladmin users
-    $a = array(4,5,6,8);//teacher,parent,i_client,schooladmin
-    if(!count(array_intersect($a,array_keys($user_edit->roles)))){
+    $a = array(6,7);//teacher,parent,i_client,schooladmin,siteadmin
+    if(count(array_intersect($a,array_keys($user_edit->roles))) && !$own_acc){
+      if(in_array(8,array_keys($user->roles))){ // 8=>school admin role
+        $teacher_res = db_query ("SELECT u.uid, u.name
+                        FROM users u, role r, users_roles ur, bj_user_schools us
+                        WHERE u.uid = ur.uid
+                        AND ur.rid = r.rid
+                        AND u.uid = us.uid
+                        AND r.name = 'teacher'
+                        And us.sid = ".$sid);
+      }
+      else{
+        $teacher_res = db_query ("SELECT u.uid, u.name
+                        FROM users u, role r, users_roles ur
+                        WHERE u.uid = ur.uid
+                        AND ur.rid = r.rid
+                        AND r.name = 'teacher'");
+      }
+      while($teacher_obj = db_fetch_object($teacher_res)){
+        $teachers[$teacher_obj->uid] = $teacher_obj->name;
+      }
+      
       if(arg(3) == 'Brainjogging Information'){
         $form['Brainjogging Information']['teacher'] = array(
           '#type' => 'select',
@@ -437,6 +487,7 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
         unset($form['Personal information']['profile_parent_email']);
       }
     }
+    
     //Show school Under Brainjogging Information tab for all users
     //except site admin
     $a = array(4,5,6,7,8);//teacher,parent,i_client,schooladmin
@@ -444,20 +495,21 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
       /*
        * for school administrators we have to show only his associated school
       */
-      $sid = db_result(db_query("SELECT sid FROM {bj_user_schools} WHERE uid = ".$user->uid));
       if(in_array(8,array_keys($user->roles))){ // 8 => school adminstrator rid
         $form['Brainjogging Information']['school'] = array(
           '#type' => 'value',
           '#value' => $sid,
         );
-        $form['Brainjogging Information']['school_display'] = array(
-        '#title' => t('User type'),
-        '#value' => t('<div id="edit-pass-pass2-wrapper" class="form-item confirm-parent">
-                        <label for="edit-pass-pass2">User type: </label>
-                        <ul><li>'.ucfirst(db_result(db_query("SELECT school_name from {bj_school} WHERE sid = ".$sid))).'</li></ul>
-                       </div>'),
-        '#weight' => 12,
-      );
+        if(!$own_acc){
+          $form['Brainjogging Information']['school_display'] = array(
+            '#title' => t('School'),
+            '#value' => t('<div id="edit-school-wrapper" class="form-item confirm-parent">
+                            <label for="edit-pass-pass2">School: </label>
+                            <ul><li>'.ucfirst(db_result(db_query("SELECT school_name from {bj_school} WHERE sid = ".$sid))).'</li></ul>
+                           </div>'),
+            '#weight' => 12,
+          );
+        }
       }
       else{
         $form['Brainjogging Information']['school'] = array(
@@ -470,6 +522,11 @@ function brainjogging_form_alter(&$form, &$form_state, $form_id){
         );
       }
     }
+    
+    if($own_acc && arg(3) == ''){
+      $form['account']['status'] = array('#type' => 'value','#value' => $user_edit->status);
+    }
+    
     $form['#validate'] = array('bj_user_edit_details_validator');
   }
 }
@@ -631,8 +688,7 @@ function brainjogging_user($op, &$edit, &$account, $category = NULL) {
       }
     }
     break;
-  case 'delete':
-    db_query("DELETE FROM {bj_user_details} WHERE uid = ".$account->uid);
+  case 'delete': 
     db_query("DELETE FROM {bj_user_grades} WHERE uid = ".$account->uid);
     db_query("DELETE FROM {bj_user_disabilities} WHERE uid = ".$account->uid);
     break;
