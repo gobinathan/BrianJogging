@@ -95,6 +95,7 @@ function node_node_operations() {
       'callback' => 'node_mass_update',
       'callback arguments' => array('updates' => array('status' => 0)),
     ),
+    /*
     'promote' => array(
       'label' => t('Promote to front page'),
       'callback' => 'node_mass_update',
@@ -115,6 +116,7 @@ function node_node_operations() {
       'callback' => 'node_mass_update',
       'callback arguments' => array('updates' => array('sticky' => 0)),
     ),
+    */
     'delete' => array(
       'label' => t('Delete'),
       'callback' => NULL,
@@ -133,10 +135,10 @@ function node_filters() {
     'options' => array(
       'status-1' => t('published'),
       'status-0' => t('not published'),
-      'promote-1' => t('promoted'),
+      /*'promote-1' => t('promoted'),
       'promote-0' => t('not promoted'),
       'sticky-1' => t('sticky'),
-      'sticky-0' => t('not sticky'),
+      'sticky-0' => t('not sticky'),*/
     ),
   );
   // Include translation states if we have this module enabled
@@ -492,7 +494,9 @@ function node_admin_nodes() {
     if ($multilanguage) {
       $form['language'][$node->nid] = array('#value' => empty($node->language) ? t('Language neutral') : t($languages[$node->language]->name));
     }
-    $form['operations'][$node->nid] = array('#value' => l(t('edit'), 'node/'. $node->nid .'/edit', array('query' => $destination)));
+    $form['operations'][$node->nid] = array(array('#value' => l(t('edit'), 'node/'. $node->nid .'/edit', array('query' => $destination))),
+                                            array('#value' => l(t('delete'), 'node/'. $node->nid .'/delete', array('query' => $destination)))
+                                           );
   }
   $form['nodes'] = array('#type' => 'checkboxes', '#options' => $nodes);
   $form['pager'] = array('#value' => theme('pager', NULL, 50, 0));

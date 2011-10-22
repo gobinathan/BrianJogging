@@ -73,25 +73,21 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
     );
  
   }
-  if( $form_id == "word_list_category_node_form"){
-    //alter fields
+  if( $form_id == "word_list_category_node_form"){   
     $form['options']=array('#type' => 'value', '#value' => $form['options']['status']['#default_value'] = 1);
   }
   
-    if( $form_id == "image_node_form"){
+  if( $form_id == "image_node_form"){
     //alter fields
     unset($form['attachments']);
     unset($form['image']['rebuild_images']);
     
     $form['options']=array('#type' => 'value', '#value' => $form['options']['status']['#default_value'] = 1);
-  }
-  
- 
-  
+  }  
 }
 
 function brainjogging_wordlist_get_wl_categories(){
- $res = db_query("SELECT nid,title FROM {node} WHERE type = 'word_list_category' ORDER BY title");
+ $res = db_query("SELECT nid,title FROM {node} WHERE type = 'word_list_category' AND status = 1 ORDER BY title");
  while($obj = db_fetch_object($res)){
   $categories[$obj->nid] = $obj->title;
  }
@@ -133,59 +129,82 @@ function brainjogging_wordlist_get_level($nid){
   }
 }
 
-
 function brainjogging_wordlist_get_wl_category($nid){
   if($nid){
     return db_result(db_query("SELECT c_id FROM {bj_wordlist_relativity} WHERE wl_id = %d",$nid));    
   }
 }
 
-
-
-
-
-
 function brainjogging_wordlist_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
-  if($node->type == 'word_list'){
-  switch ($op) {
-    
+  switch ($op) {    
     case 'validate':
-      if(preg_match('/[^a-z0-9,.&\s]/i', $node->body)){
-       form_set_error('body', t('special charactors are not alloweded.'));
-      }
-      if($node->wordlist_level==0){
-        $num_words  =str_word_count($node->body);
-        if($num_words < 15 || $num_words > 25 ){
-          form_set_error('body', t('words must be 15.'));
-        }
-      }
-      if($node->wordlist_level==1){
-        $text = trim($node->body);
-        $textAr = explode("\n", $text);
-        foreach ($textAr as $line) {
-         $num_words  =str_word_count($line);
-         if($num_words > 4 ){
-          form_set_error('body', t('words must be 4 per  line.'));
+        if($node->type == 'word_list'){
+          if(preg_match('/[^a-z0-9,.&\s]/i', $node->body)){
+           form_set_error('body', t('special charactors are not alloweded.'));
+          }
+          if($node->wordlist_level==0){
+            $num_words  =str_word_count($node->body);
+            if($num_words < 15 || $num_words > 25 ){
+            form_set_error('body', t('words must be 15.'));
+            }
+          }
+          if($node->wordlist_level==1){
+            $text = trim($node->body);
+            $textAr = explode("\n", $text);
+            foreach ($textAr as $line) {
+             $num_words  =str_word_count($line);
+             if($num_words > 4 ){
+              form_set_error('body', t('words must be 4 per  line.'));
+              }
+            }
           }
         }
+      break;
+    
+    case 'insert':
+      if($node->type == 'word_list'){
+        db_query("INSERT INTO {bj_wordlist_relativity} (c_id,wl_id,type,level,disability,age,instruction)
+                 VALUES(%d, %d, %d, %d, %d, '%s', '%s')",
+                 $node->category_id,
+                 $node->nid,
+                 $node->wordlist_type,
+                 $node->wordlist_level,
+                 $node->disability,
+                 $node->age,
+                 $node->instruction);
       }
       break;
-    case 'insert':
-      db_query("INSERT INTO {bj_wordlist_relativity} (c_id,wl_id,type,level,disability,age,instruction) VALUES(%d, %d, %d, %d, %d, '%s', '%s')", $node->category_id, $node->nid, $node->wordlist_type, $node->wordlist_level, $node->disability, $node->age, $node->instruction);
-      break;
+    
     case 'update':
-      db_query("UPDATE {bj_wordlist_relativity} SET c_id = %d, type = %d, level = %d, disability = %d, age = '%s', instruction = '%s' WHERE  wl_id = %d", $node->category_id, $node->wordlist_type, $node->wordlist_level, $node->disability, $node->age, $node->instruction,$node->nid);
+      if($node->type == 'word_list'){
+      db_query("UPDATE {bj_wordlist_relativity} SET c_id = %d, type = %d, level = %d, disability = %d, age = '%s',
+               instruction = '%s' WHERE  wl_id = %d",
+               $node->category_id,
+               $node->wordlist_type,
+               $node->wordlist_level,
+               $node->disability,
+               $node->age,
+               $node->instruction,
+               $node->nid);
+      }
       break;
+    
     case 'load':
-      $node->category_id = brainjogging_wordlist_get_wl_category($node->nid);
+      if($node->type == 'word_list'){
+        $node->category_id = brainjogging_wordlist_get_wl_category($node->nid);
+      }
       break;
+    
     case 'delete';
-      db_query("DELETE FROM {bj_wordlist_relativity} WHERE wl_id = %d", $node->nid);
+      // Delete all word list under the category
+      if($node->type == 'word_list_category'){
+        $res = db_query("SELECT wl_id FROM {bj_wordlist_relativity} WHERE c_id = %d", $node->nid);
+        while($obj = db_fetch_object($res)){
+          node_delete($obj->wl_id);
+        }
+      }elseif($node->type == 'word_list'){
+        db_query("DELETE FROM {bj_wordlist_relativity} WHERE wl_id = %d", $node->nid);
+      }
       break;
-  }  
   }  
 }
-
-
-
-?>

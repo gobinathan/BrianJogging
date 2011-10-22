@@ -136,3 +136,24 @@ ul.secondary a:hover{text-decoration:underline;}
 #secondary-tabs ul.secondary a {background:#EFEFEF;display:block;float:left;margin:0 5px 5px 0;padding:0.25em 0.75em;}
 #secondary-tabs ul.secondary .active a, #secondary-tabs ul.secondary .active a:hover {background:#DDD;color:#666;border:none;}
 #secondary-tabs ul.secondary a:hover {background:#DDD;color:#666;text-decoration:none;}*/
+
+a.icon {
+    background-color: transparent;
+    background-position: left top;
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    height: 16px;
+    margin: 0 0.25em;
+    text-indent: -9999px;
+    width: 16px;
+}
+
+a.edit {
+  background-image: url("/sites/all/themes/velo/images/edit.png");
+}
+
+a.delete {
+  background-image: url("/sites/all/themes/velo/images/delete.png");
+}
+

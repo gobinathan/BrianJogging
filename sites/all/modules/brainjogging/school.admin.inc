@@ -56,10 +56,10 @@ function bj_school_list(){
 
 function bj_school_create_form(){
   
-  $save = 'add';
+  $save = 'Add';
   if(arg(3)=='edit' && arg(4)){
     $schol_obj = db_fetch_object(db_query("SELECT * FROM {bj_school} WHERE sid = ".arg(4)));
-    $save = 'edit';
+    $save = 'Update';
   }
   
   $form['school_name'] = array(
@@ -108,7 +108,7 @@ function bj_school_create_form(){
 }
 
 function bj_school_create_form_validator(&$form,&$form_state){
-       if(($form_state['values']['submit'])=='add'){
+       if(($form_state['values']['submit'])=='Add'){
 	$school   = $form_state['values']['school_name'];
 	$res      = db_query("SELECT school_name FROM {bj_school} WHERE school_name='$school'");
 	$sc_count = mysql_num_rows($res);
@@ -116,7 +116,7 @@ function bj_school_create_form_validator(&$form,&$form_state){
 	form_set_error('school_name', t('School Name Exist.'));
       }
     }
-    if(($form_state['values']['submit'])=='edit'){
+    if(($form_state['values']['submit'])=='Update'){
      if($form['school_name']['#default_value'] != $form_state['values']['school_name']){
       	$school   = $form_state['values']['school_name'];
 	$res      = db_query("SELECT school_name FROM {bj_school} WHERE school_name='$school'");
@@ -133,12 +133,12 @@ function bj_school_create_form_validator(&$form,&$form_state){
 
 function bj_school_create_form_submit(&$form,&$form_state){
  
-  if(($form_state['values']['submit'])=='add'){
+  if(($form_state['values']['submit'])=='Add'){
    
     db_query("INSERT INTO {bj_school} (school_name,phone,fax,address) VALUES('".$form_state['values']['school_name']."','".$form_state['values']['phone']."','".$form_state['values']['fax']."','".$form_state['values']['address']."')");
     drupal_set_message(t('School Added successfuly'));
   }
-   if(($form_state['values']['submit'])=='edit'){
+   if(($form_state['values']['submit'])=='Update'){
     db_query("UPDATE {bj_school}  SET school_name='".$form_state['values']['school_name']."', phone='".$form_state['values']['phone']."', fax = '".$form_state['values']['fax']."', address = '".$form_state['values']['address']."'   WHERE sid=".arg(4));
      drupal_set_message(t('School Updated successfuly'));
   }
