@@ -9,7 +9,9 @@ function eye_movement_submit($args){
   foreach($result as $key => $res){
    db_query("INSERT INTO bj_eyemovement_test VALUES('','".$user->uid."','','".$res[$key]."','$date','','".$user->sid."')");
   }
-  $_SESSION['brainjogging']['eye_test']=true;
+  echo session_id();
+  
+  
   }
  }
 

@@ -69,6 +69,9 @@ function brainjogging_test_menu(){
 }
 
 function brainjogging_test_dashboard(){
+  if(arg(3)=='emset'){
+    $_SESSION['brainjogging']['eye_test']=true;
+  }
   $path = drupal_get_path('module', 'brainjogging_test');
   drupal_add_css($path . '/css/bj_test_style.css', 'module', 'all', FALSE);
   return theme('bj_dashboard',array('path'=>drupal_get_path('module', 'brainjogging_test')));
@@ -76,8 +79,10 @@ function brainjogging_test_dashboard(){
 
 function brainjogging_test_eye_movement(){
   global $user;
+  
+  
  
-  //eye movement input array generation
+  //eye movement input  warm uparray generation
   $res=db_query("SELECT t1.body, t1.nid FROM node_revisions t1, bj_wordlist_relativity t2 WHERE t2.type = 1 and t2.level = 1 and t1.nid = t2.wl_id");
   $eyeinput=array();
   $i=0;
@@ -92,7 +97,7 @@ function brainjogging_test_eye_movement(){
   drupal_add_js(array('input1'=> $eye_move, 'wordlist_id'  => $eyeinput['nid'][$rand_keys[0]]),'setting');
   drupal_add_js(array('input2'=> $eye_move1,'wordlist_id1' => $eyeinput['nid'][$rand_keys[1]]),'setting');
   drupal_add_js(array('input3'=> $eye_move2,'wordlist_id2' => $eyeinput['nid'][$rand_keys[2]]),'setting');
- //eye movement input array generation end 
+ //eye movement input  warm uparray generation end 
   
   bj_add_js();
   drupal_add_js("

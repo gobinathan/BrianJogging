@@ -214,6 +214,15 @@ function brainjogging_init(){
   if(!user_is_logged_in() && arg(0) != 'user' && arg(1) != 'login'){
     drupal_goto('user/login');
   }
+  
+  if(brainjogging_is_student() && arg(3) != 'emset' && $_SESSION['brainjogging']['eye_test']!=true){
+    
+    if(arg(0) == 'brainjogging' && arg(1) == 'test' && arg(2)!= 'eye_movement') {
+    drupal_goto('brainjogging/test/eye_movement');
+    }
+  }
+  
+ 
 }
 
 function bj_show_dashboard(){
