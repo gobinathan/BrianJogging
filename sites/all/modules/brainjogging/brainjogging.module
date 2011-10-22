@@ -549,6 +549,14 @@ function bj_user_details_validator(&$form, &$form_state){
   $form_state['values']['roles'][$role] = $role;
 }
 
+function brainjogging_is_student(){
+  global $user;
+    if(in_array('independent client',$user->roles) || in_array('dependent client',$user->roles)){
+   return true;
+  }
+  return false;
+}
+
 function brainjogging_user($op, &$edit, &$account, $category = NULL) {
   switch($op){
     case 'load':

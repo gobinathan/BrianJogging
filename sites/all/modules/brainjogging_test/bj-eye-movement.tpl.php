@@ -12,7 +12,10 @@
       You will now be directed to the Eye Movement activity.
       <br/><br/>
       <center>
+      <?php if(!brainjogging_is_student()){ ?>
       <input type="button" value="Return to Main" id="em_main">
+      <?php  }
+      else{  echo $_SESSION['brainjogging']['eye_test']; }?>
       <input type="button" value="Next" id="em_next">
       </center>
     </div>
