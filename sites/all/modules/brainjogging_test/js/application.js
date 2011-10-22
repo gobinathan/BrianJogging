@@ -491,13 +491,19 @@ BrianJogging.eyemomvent = (function(pub) {
           window.location = "/brainjogging/test/dashboard";
         });
         $('#em_next').click(function(){
-         //pub.em_next();
-         pub.em_speed();
+         pub.em_next();
+         //pub.em_speed();
+        });
+         $('#em_next1').click(function(){
+         
+         pub.em_next1();
+         
         });
         $('#em_begin').click(function(){
-          pub.em_speed();  
+          pub.em_speed1();  
         });
         $('#em_start').click(function(){
+            
           pub.em_start();  
         });
         $('#em_init').slideDown('slow');
@@ -548,7 +554,7 @@ BrianJogging.eyemomvent = (function(pub) {
           success: function(msg){}
           });
            
-           window.location='/brainjogging/test/dashboard';
+           window.location='/brainjogging/test/dashboard/emset';
            return true;
           }
         
@@ -582,6 +588,15 @@ BrianJogging.eyemomvent = (function(pub) {
     }
     pub.em_next = function() {
         $('#em_init').css("display",'none');
+        $('#em_instuct').css("display","block");
+        $('#em_speed').show();
+        $('#em_speed').css("position",'relative');
+        $('#em_speed').css("width",500);
+        $('#em_speed').css("margin",'0px auto');
+    }
+      pub.em_next1 = function() {
+        $('#em_init').css("display",'none');
+        $('#em_speed').css("display","block");
         $('#em_speed').show();
         $('#em_speed').css("position",'relative');
         $('#em_speed').css("width",500);
@@ -590,7 +605,7 @@ BrianJogging.eyemomvent = (function(pub) {
     pub.em_speed = function() {
        //var em_spe=$('#speed').val();
         $('#em_init').css("display",'none');
-       var em_spe=1;
+       var em_spe=9;
        if(em_spe.length==0) {
          alert("Enter the speed");
         }
@@ -603,6 +618,24 @@ BrianJogging.eyemomvent = (function(pub) {
             {
             em_sp = em_sp/em_spe;
             }
+        }
+       
+    }
+     pub.em_speed1 = function() {
+       var em_spe=$('#speed').val();
+        $('#em_init').css("display",'none');
+       //var em_spe=9;
+       if(em_spe.length==0) {
+         alert("Enter the speed");
+        }
+       else{
+            $('#em_speed').css("display","none");
+            $('#em_instuct').css("display","block");
+             $('#em_move').css("display","none");
+            
+            
+            em_sp = em_sp/em_spe;
+            
         }
        
     }

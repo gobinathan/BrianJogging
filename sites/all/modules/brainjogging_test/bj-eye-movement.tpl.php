@@ -12,16 +12,25 @@
       You will now be directed to the Eye Movement activity.
       <br/><br/>
       <center>
-      <input type="button" value="Return to Main" id="em_main">
+      <?php if(!brainjogging_is_student() || $_SESSION['brainjogging']['eye_test']==true){ ?>
+      <input type="button" value="Skip Eye Movement" id="em_main">
+      <input type="button" value="Next" id="em_next1">
+      <?php  }
+      else{ ?>
       <input type="button" value="Next" id="em_next">
+      <?php }?>
+      
       </center>
     </div>
+     <?php if(!brainjogging_is_student() || $_SESSION['brainjogging']['eye_test']==true){ ?>
     <div id="em_speed" style="display:none;">
       Enter  A Speed (1-9):<input type="text" name="speed" id="speed" maxlength="1"  style="background-color:gray;"><br>
       <center>
       <input type="button" value="Begin" id="em_begin">
       </center>
     </div>
+    <?php  }
+      else{  }?>
     <div id="em_instuct" style="border:1px dotted gray; display:none; width:400px; position:relative;height:300px; margin:0px auto;">
       <center><b>Direction for Eye Movemnt</b></center>
       A word or phrase will be flahed  to the right and left sides of the screen. The words to be clled aloud are the first word on the far left and the last
