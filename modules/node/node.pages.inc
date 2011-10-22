@@ -499,9 +499,16 @@ function node_delete_confirm(&$form_state, $node) {
     '#type' => 'value',
     '#value' => $node->nid,
   );
+  
+  // If its a word_list_category show inc..
+  if($node->type == 'word_list_category'){
+    $wl_count  = db_result(db_query("SELECT COUNT(wl_id) FROM {bj_wordlist_relativity} WHERE c_id = %d", $node->nid));
+    $wl_count  = t("'%title' category has %wl_count word lists, <br>", array('%title' => $node->title,'%wl_count'=>$wl_count));
+    $wl_count .= "This action will delete all the word lists under this category<br>";
+  }
 
   return confirm_form($form,
-    t('Are you sure you want to delete %title?', array('%title' => $node->title)),
+    $wl_count. t("Are you sure you want to delete '%title'?", array('%title' => $node->title)),
     isset($_GET['destination']) ? $_GET['destination'] : 'node/'. $node->nid,
     t('This action cannot be undone.'),
     t('Delete'),
