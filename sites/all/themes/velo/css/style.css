@@ -157,3 +157,8 @@ a.delete {
   background-image: url("/sites/all/themes/velo/images/delete.png");
 }
 
+#footer{
+    margin: 10px auto;
+    width:auto;
+    text-align:center;
+}

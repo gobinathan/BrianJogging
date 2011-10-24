@@ -486,9 +486,25 @@ BrianJogging.eyemomvent = (function(pub) {
         
         bj_eye_move['res']=Drupal.settings.wordlist_id;
         em_input=Drupal.settings.input1;
+        
+        $('#ses_wordfetch').click(function(){
+          bj_eye_move.wordlist = $('#eye_wordlist option:selected').val();
+          $.getJSON('/brainjogging/ajax/eye_movement/' + bj_eye_move.wordlist, function(data) {
+          em_input = data.words;
+          
+           
+        });
+          pub.eye_word_next();  
+      return true;
+    });
         $('#em_main').click(function(){
           $('#eye_moment').hide();
-          window.location = "/brainjogging/test/dashboard";
+          window.location = "/brainjogging/test/dashboard/emset";
+        });
+         $('#ses_next').click(function(){
+         $('#ses_menu').css("display",'none');
+         $('#ses_wordlist').css("display",'block');
+         
         });
         $('#em_next').click(function(){
          pub.em_next();
@@ -503,8 +519,12 @@ BrianJogging.eyemomvent = (function(pub) {
           pub.em_speed1();  
         });
         $('#em_start').click(function(){
-            
+            pub.em_speed(); 
           pub.em_start();  
+        });
+        $('#em_word_start').click(function(){
+            
+          pub.em_word_start();  
         });
         $('#em_init').slideDown('slow');
     }
@@ -532,16 +552,27 @@ BrianJogging.eyemomvent = (function(pub) {
        if(em_loop==1)
        {
          alert("first eye test end");
-        
+         
        bj_eye_move['res1']=Drupal.settings.wordlist_id1;
           em_input=Drupal.settings.input2;
+          em_loop++;
+          em_count=0;
+          em_tip_top=20;
+          pub.em_count();
+          return false;
            
        }
        if(em_loop==2)
        {
          alert("Scecond eye test end");
+          
         bj_eye_move['res2']=Drupal.settings.wordlist_id2;
          em_input=Drupal.settings.input3;
+         em_loop++;
+          em_count=0;
+          em_tip_top=20;
+         pub.em_count();
+         return false;
          
            
        }
@@ -561,6 +592,7 @@ BrianJogging.eyemomvent = (function(pub) {
           em_loop++;
           em_count=0;
           em_tip_top=20;
+          
           pub.em_speed();
           return false;
          
@@ -569,6 +601,7 @@ BrianJogging.eyemomvent = (function(pub) {
          
           
         }
+        
       
        if(em_pos1 == 0){
         $("#em_letter").css("right", ''); 
@@ -586,6 +619,72 @@ BrianJogging.eyemomvent = (function(pub) {
        em_count++;
        return true;
     }
+        pub.em_flash1 = function() {
+       $('#em_move').html(em_input[em_count]);
+       var em_end =screen.width;
+       em_pos1 += em_end-210;
+       if (em_count==0) {
+          em_pos1=0;
+        }
+       if (em_pos1 > em_end) {
+           em_pos1 = 0;
+        }
+       if(em_count%2==0) { 
+         if(em_tip_top<em_max) {
+          em_tip_top+=50;
+          }
+          else{
+          em_tip_top=20;
+          }
+        }
+       if(em_count==em_input.length) {
+       
+      
+     
+         if(em_loop==1)
+          {            
+          xmlhttp=$.ajax({
+          type: 'POST',
+          url: '/brainjogging/eye_movement/submit',
+          data: 'res='+$.toJSON(bj_eye_move),
+          success: function(msg){}
+          });
+           
+           window.location='/brainjogging/test/dashboard/emset';
+           return true;
+          }
+        
+          em_loop++;
+          em_count=0;
+          em_tip_top=20;
+          
+          pub.em_speed();
+          return false;
+         
+          
+          
+         
+          
+        }
+        
+      
+       if(em_pos1 == 0){
+        $("#em_letter").css("right", ''); 
+        $("#em_letter").css("left", '10px');        
+       }else{
+        $("#em_letter").css("left", ''); 
+        $("#em_letter").css("right", '10px')
+       }
+       $("#em_letter").css("top", em_tip_top);
+       
+     
+       $.after(em_sp,function(){
+        pub.em_flash1();
+        });
+       em_count++;
+       return true;
+    }
+    
     pub.em_next = function() {
         $('#em_init').css("display",'none');
         $('#em_instuct').css("display","block");
@@ -595,6 +694,7 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#em_speed').css("margin",'0px auto');
     }
       pub.em_next1 = function() {
+        
         $('#em_init').css("display",'none');
         $('#em_speed').css("display","block");
         $('#em_speed').show();
@@ -602,8 +702,41 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#em_speed').css("width",500);
         $('#em_speed').css("margin",'0px auto');
     }
+      pub.eye_word_next = function() {
+        
+        $('#ses_wordlist').css("display",'none');
+        $('#em_speed').css("display","block");
+        $('#em_speed').show();
+        $('#em_speed').css("position",'relative');
+        $('#em_speed').css("width",500);
+        $('#em_speed').css("margin",'0px auto');
+    }
+     
+     pub.em_count = function() {
+       if(em_loop==1){
+        $('#eyecount').text("Three");
+        }
+        if(em_loop==2){
+        $('#eyecount').text("Two More ");
+        }
+        if(em_loop==3){
+        $('#eyecount').text("Final");
+        }
+        $('#em_move').css("display","none");
+        $('#em_init').css("display",'block');
+    }
+     
     pub.em_speed = function() {
        //var em_spe=$('#speed').val();
+      if(em_loop==1){
+        $('#eyecount').text("Three");
+        }
+        if(em_loop==2){
+        $('#eyecount').text("Two More ");
+        }
+        if(em_loop==3){
+        $('#eyecount').text("Final");
+        }
         $('#em_init').css("display",'none');
        var em_spe=9;
        if(em_spe.length==0) {
@@ -643,6 +776,11 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#em_instuct').css("display","none");
         $('#em_move').css("display","block");
         pub.em_flash(); 
+    }
+     pub.em_word_start = function() {
+        $('#em_instuct').css("display","none");
+        $('#em_move').css("display","block");
+        pub.em_flash1(); 
     }
     pub.em_isNumberKey=function(evt) {
          var charCode = (evt.which) ? evt.which : event.keyCode
