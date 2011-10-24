@@ -60,6 +60,9 @@ if ($_GET["format"] == "ajax") {
       <?php } ?>
     </div>
   </div>
+  <div id="footer">
+    &copy;2011 Camp Acadamia
+  </div>
   <?php print $closure; ?>
 </body>
 </html>
