@@ -167,6 +167,7 @@ function node_filters() {
  * Build query for node administration filters based on session.
  */
 function node_build_filter_query() {
+  global $user;
   $filters = node_filters();
 
   // Build query
@@ -194,6 +195,17 @@ function node_build_filter_query() {
     }
     $args[] = $value;
   }
+  
+  if(count(array_intersect(array('teacher', 'parent', 'independent client'),$user->roles)) > 0){
+    $where[] = "n.uid = %d";
+    $args[] = $user->uid;
+  }
+  if(in_array('school administrator',$user->roles)){
+    $join .= "LEFT JOIN {bj_user_schools} bus ON n.uid = bus.uid ";
+    $where[] = "bus.sid = %d";
+    $args[] = $user->school;
+  }
+  
   $where = count($where) ? 'WHERE '. implode(' AND ', $where) : '';
 
   return array('where' => $where, 'join' => $join, 'args' => $args);
@@ -494,8 +506,8 @@ function node_admin_nodes() {
     if ($multilanguage) {
       $form['language'][$node->nid] = array('#value' => empty($node->language) ? t('Language neutral') : t($languages[$node->language]->name));
     }
-    $form['operations'][$node->nid] = array(array('#value' => l(t('edit'), 'node/'. $node->nid .'/edit', array('query' => $destination))),
-                                            array('#value' => l(t('delete'), 'node/'. $node->nid .'/delete', array('query' => $destination)))
+    $form['operations'][$node->nid] = array(array('#value' => l(t('edit'), 'node/'. $node->nid .'/edit', array('attributes'=> array('class' => 'icon edit'),'query' => $destination))),
+                                            array('#value' => l(t('delete'), 'node/'. $node->nid .'/delete', array('attributes'=> array('class' => 'icon delete'), 'query' => $destination)))
                                            );
   }
   $form['nodes'] = array('#type' => 'checkboxes', '#options' => $nodes);

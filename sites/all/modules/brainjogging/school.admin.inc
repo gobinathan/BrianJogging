@@ -34,7 +34,7 @@ function bj_school_list(){
 	while($school_object = db_fetch_object($school_res)) {
 		$rows[] = array($school_object->school_name,
 										$school_object->address,
-                    l(t('Edit'), 'admin/brainjogging/school/edit/' . $school_object->sid) . '|'. l(t('Delete'), 'admin/brainjogging/school/delete/' . $school_object->sid),
+                    l(t('Edit'), 'admin/brainjogging/school/edit/' . $school_object->sid, array('attributes'=> array('class' => 'icon edit'))) . l(t('Delete'), 'admin/brainjogging/school/delete/' . $school_object->sid, array('attributes'=> array('class' => 'icon delete'))),
                    );
 	}
   

@@ -1,4 +1,5 @@
 //
+/*
 $(document).ready(function() {
   $('a').each(function(index) {
     if($(this).text().toLowerCase() == 'edit'){
@@ -10,3 +11,4 @@ $(document).ready(function() {
     }
   });  
 });
+*/
