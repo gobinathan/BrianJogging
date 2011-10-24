@@ -83,7 +83,7 @@ function brainjogging_test_eye_movement(){
   
  
   //eye movement input  warm uparray generation
-  $res=db_query("SELECT t1.body, t1.nid FROM node_revisions t1, bj_wordlist_relativity t2 WHERE t2.type = 1 and t2.level = 1 and t1.nid = t2.wl_id");
+  $res=db_query("SELECT t1.body, t1.nid FROM node_revisions t1, bj_wordlist_relativity t2 WHERE t2.level = 1 and t1.nid = t2.wl_id");
   $eyeinput=array();
   $i=0;
   while($row=mysql_fetch_array($res)){

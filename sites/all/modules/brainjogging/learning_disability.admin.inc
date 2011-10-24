@@ -33,7 +33,7 @@ function bj_learning_disability_list(){
 	while($learning_disability_object = db_fetch_object($learning_disability_res)) {
 		$rows[] = array($learning_disability_object->name,
 										$learning_disability_object->description,
-                    l(t('Edit'), 'admin/brainjogging/learning_disability/edit/' . $learning_disability_object->did) . '|'. l(t('Delete'), 'admin/brainjogging/learning_disability/delete/' . $learning_disability_object->did),
+                    l(t('Edit'), 'admin/brainjogging/learning_disability/edit/' . $learning_disability_object->did, array('attributes'=> array('class' => 'icon edit'))) . l(t('Delete'), 'admin/brainjogging/learning_disability/delete/' . $learning_disability_object->did,array('attributes'=> array('class' => 'icon delete'))),
                    );
 	}
   
