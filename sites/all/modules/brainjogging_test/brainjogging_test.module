@@ -108,8 +108,8 @@ function brainjogging_test_eye_movement(){
   //after 3 eye test complete end
  else{
   //eye movement input  warm uparray generation
-  //$res=db_query("SELECT t1.body, t1.nid FROM node_revisions t1, bj_wordlist_relativity t2 WHERE t2.level = 1 and t1.nid = t2.wl_id");
-  db_query("SELECT n.nid, nr.body FROM {node} n
+
+  $res=db_query("SELECT n.nid, nr.body FROM {node} n
                       LEFT JOIN {node_revisions} nr ON n.nid = nr.nid
                       LEFT JOIN {bj_wordlist_relativity} bwr ON n.nid = bwr.wl_id
                       WHERE n.vid = nr.vid
