@@ -33,7 +33,7 @@ function bj_grade_list(){
 	while($grade_object = db_fetch_object($grade_res)) {
 		$rows[] = array($grade_object->name,
 										$grade_object->description,
-                    l(t('Edit'), 'admin/brainjogging/grade/edit/' . $grade_object->gid) . '|'. l(t('Delete'), 'admin/brainjogging/grade/delete/' . $grade_object->gid),
+                    l(t('Edit'), 'admin/brainjogging/grade/edit/' . $grade_object->gid, array('attributes'=> array('class' => 'icon edit'))) . l(t('Delete'), 'admin/brainjogging/grade/delete/' . $grade_object->gid, array('attributes'=> array('class' => 'icon delete'))),
                    );
 	}
   

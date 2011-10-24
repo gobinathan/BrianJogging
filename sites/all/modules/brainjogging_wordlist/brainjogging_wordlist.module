@@ -4,12 +4,16 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
    global $user;
    if( $form_id == "word_list_node_form" || $form_id == "word_list_category_node_form" || $form_id == "image_node_form" ){
     // Remove and alter fields
-    unset($form['body_field']['format']);
-    unset($form['revision_information']);
     $form['options']['#collapsible'] = FALSE;
     $form['name'] = array('#type' => 'value', '#value' => $user->name);
-    unset($form['author']);
-    unset($form['options']['promote'],$form['options']['sticky']);
+    $form['body_field']['body']['#required'] = TRUE;
+    unset($form['author'],
+          $form['options']['promote'],
+          $form['options']['sticky'],
+          $form['buttons']['preview'],
+          $form['body_field']['format'],
+          $form['revision_information']
+         );
     }
    if( $form_id == "word_list_node_form"){
       // Add category filed
@@ -53,22 +57,20 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
         
     );
      
-       $form['wordlist_type'] = array(
+      $form['wordlist_level'] = array(
+      '#type' => 'checkbox', 
+      '#title' => t('Is Global?'),
+      '#required' => FASLE,
+      '#weight' => 3,
+      '#default_value' => isset($form['nid']['#value']) ?  brainjogging_wordlist_get_type($form['nid']['#value']) : 0,
+    );
+      $form['wordlist_type'] = array(
       '#type' => 'radios', 
       '#title' => t('WordList Type'),
       '#required' => TRUE,
-      '#weight' => 3,
-      '#default_value' => brainjogging_wordlist_get_type($form['nid']['#value']), 
-      '#options' => array(0=>t('single'), 1=>t('global')),
-
-    );
-      $form['wordlist_level'] = array(
-      '#type' => 'radios', 
-      '#title' => t('WordList Level'),
-      '#required' => TRUE,
       '#weight' => -2,
-      '#default_value' => brainjogging_wordlist_get_level($form['nid']['#value']), 
-      '#options' => array(0=>t('simple'), 1=>t('phrase')),
+      '#default_value' => isset($form['nid']['#value']) ? brainjogging_wordlist_get_level($form['nid']['#value']) : 0, 
+      '#options' => array(0=>t('Basic'), 1=>t('Phrases')),
 
     );
  
@@ -142,19 +144,19 @@ function brainjogging_wordlist_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
           if(preg_match('/[^a-z0-9,.&\s]/i', $node->body)){
            form_set_error('body', t('special charactors are not alloweded.'));
           }
-          if($node->wordlist_level==0){
+          if($node->wordlist_type == 0){
             $num_words  =str_word_count($node->body);
             if($num_words < 15 || $num_words > 25 ){
-            form_set_error('body', t('words must be 15.'));
+            form_set_error('body', t('Minimum 15 words required for basic wordlist.'));
             }
           }
-          if($node->wordlist_level==1){
-            $text = trim($node->body);
-            $textAr = explode("\n", $text);
+          if($node->wordlist_type == 1){
+            $textAr = explode("\n", trim($node->body));
             foreach ($textAr as $line) {
              $num_words  =str_word_count($line);
              if($num_words > 4 ){
-              form_set_error('body', t('words must be 4 per  line.'));
+              form_set_error('body', t('Minimum 4 words per line required for Phrases.'));
+              break;
               }
             }
           }
@@ -168,7 +170,7 @@ function brainjogging_wordlist_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
                  $node->category_id,
                  $node->nid,
                  $node->wordlist_type,
-                 $node->wordlist_level,
+                 $node->wordlist_level,                 
                  $node->disability,
                  $node->age,
                  $node->instruction);
