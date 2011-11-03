@@ -2,8 +2,10 @@
   <div id="letter_flash_div" style="display:none">
     <!-- Letter Flash Control Panel -->
     <div id="lf_cp">
-      <table>
+      <table id="letter_set">
+        <td colspan="2" align="center" style="font-weight:bold;"> Letter Flash </td><tr>
         <tr id="lf_case">
+          
           <td>
             Select Case : 
           </td>
@@ -59,7 +61,14 @@
     </div>
   </div>
   <div id="result_container" style="display:none">
-    <table border="1" cellpadding="0" cellspacing="0">
+    <table border="1"  id="letter_res" cellpadding="0" cellspacing="0">
+      <td align="center" colspan="4" style="font-weight:bold;">Letter Flash Result</td><tr>
+      <td colspan="2">Name</td>
+      <td colspan="2">XXX</td>
+      <tr>
+      <td colspan="2">Date</td>
+      <td colspan="2"><?php echo  Date('Y-m-d'); ?></td>
+      <tr>
       <tr>
         <th>Attempts</th>
         <th>Correct</th>

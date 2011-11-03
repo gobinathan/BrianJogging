@@ -231,7 +231,7 @@ BrianJogging.letter_flash = (function(pub) {
     
     //add events to the control panel div button
     $('#start_lf').click(function(){
-      $('#lf_cp').hide();           //hide the cpanel div
+      $('#lf_cp').slideUp("slow");           //hide the cpanel div
       $('#lf_description').show();  //show the descriotion div
     });
     
@@ -502,9 +502,18 @@ BrianJogging.eyemomvent = (function(pub) {
           window.location = "/brainjogging/test/dashboard/emset";
         });
          $('#ses_next').click(function(){
-         $('#ses_menu').css("display",'none');
+         $('#ses_menu').slideUp("slow");
          $('#ses_wordlist').css("display",'block');
          
+        });
+        $('#speed').keypress(function(evt){
+          
+         var charCode = (evt.which) ? evt.which : event.keyCode
+         if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            
+            return false;
+         }
+         return true;
         });
         $('#em_next').click(function(){
          pub.em_next();
@@ -686,7 +695,7 @@ BrianJogging.eyemomvent = (function(pub) {
     }
     
     pub.em_next = function() {
-        $('#em_init').css("display",'none');
+        $('#em_init').slideUp('slow');
         $('#em_instuct').css("display","block");
         $('#em_speed').show();
         $('#em_speed').css("position",'relative');
@@ -782,14 +791,7 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#em_move').css("display","block");
         pub.em_flash1(); 
     }
-    pub.em_isNumberKey=function(evt) {
-         var charCode = (evt.which) ? evt.which : event.keyCode
-         if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            
-            return false;
-         }
-         return true;
-    }
+   
     
   return pub;
 }(BrianJogging.eyemomvent || {}));
