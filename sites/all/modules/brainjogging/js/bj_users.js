@@ -13,11 +13,13 @@ function toggle_parent_fields(){
 	$('#edit-grade-wrapper').children('label').children('span').remove();
 	$('#edit-learning-disablity-wrapper').children('label').children('span').remove();
 	$('#edit-school-wrapper').children('label').children('span').remove();
+	$('#edit-profile-expire-date-wrapper').children('label').children('span').remove();
 	
 	if($("#edit-roles option:selected").text() == 'teacher' || $("#edit-roles option:selected").text() == 'school administrator'){
 		$('#edit-profile-parent-fname-wrapper').hide();
 		$('#edit-profile-parent-lname-wrapper').hide();
 		$('#edit-profile-parent-email-wrapper').hide();
+		$('#edit-profile-expire-date-wrapper').hide();
 		//$('#edit-profile-reason-wrapper').parent('fieldset').hide();
 		$('#edit-teacher-wrapper').hide();
 		$('#edit-profile-reason-wrapper').hide();
@@ -31,7 +33,8 @@ function toggle_parent_fields(){
 		$('#edit-profile-parent-fname-wrapper').hide();
 		$('#edit-profile-parent-lname-wrapper').hide();
 		$('#edit-profile-parent-email-wrapper').hide();
-		$('#edit-profile-reason-wrapper').parent('fieldset').hide();
+		$('#edit-profile-reason-wrapper').parent('.fieldset-content').parent('fieldset').parent('div').hide();
+		$('#edit-profile-expire-date-wrapper').hide();
 		//$('#edit-school-wrapper').hide();
 	}
 	else{
@@ -58,5 +61,8 @@ function toggle_parent_fields(){
 		
 		$('#edit-learning-disablity-wrapper').show();
 		$('#edit-learning-disablity-wrapper').children('label').append('<span title="This field is required." class="form-required">*</span>');
+		
+		$('#edit-profile-expire-date-wrapper').show();
+		$('#edit-profile-expire-date-wrapper').children('label').append('<span title="This field is required." class="form-required">*</span>');
 	}
 }

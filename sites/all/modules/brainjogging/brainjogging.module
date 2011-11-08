@@ -624,7 +624,13 @@ function bj_user_details_validator(&$form, &$form_state){
     if(!(boolean)($form_state['values']['learning_disablity'])) {
       form_set_error('learning_disablity', t('The learning disablity must be mandatory for clients.'));
     }
+    $exp_date = mktime(0,0,0,$form_state['values']['profile_expire_date']['month'],$form_state['values']['profile_expire_date']['day'],$form_state['values']['profile_expire_date']['year']);
+    $today = mktime(0,0,0,date("m"),date("d")+1,date("Y"));
+    if($exp_date <= $today){
+      form_set_error('profile_expire_date', t('Expire date should be greater then today.'));
+    }
   }
+  
   $role = $form_state['values']['roles'];
   unset($form_state['values']['roles']);
   $form_state['values']['roles'][$role] = $role;
@@ -640,6 +646,27 @@ function brainjogging_is_student(){
 
 function brainjogging_user($op, &$edit, &$account, $category = NULL) {
   switch($op){
+    case 'view':
+      unset($account -> roles[2]);
+      $role = array_keys($account -> roles);
+      $role_id = $role[0];
+      
+      if(in_array($role_id,array(4,6,7,8))){
+        $school = db_result(db_query("SELECT school_name FROM {bj_school} s,{bj_user_schools} us WHERE s.sid = us.sid AND us.uid = ".$account->uid));
+        $account->content['Brainjogging Information']['bj_details'][] = array('#type' => 'user_profile_item', '#title' => 'School', '#value' => $school);
+      }
+      
+      if(in_array($role_id,array(6,7)) ){        
+        //db_query("INSERT INTO {bj_user_teachers} (uid,tid) VALUES (".$edit['uid'].",".$edit['teacher'].")");
+        //unset($edit['teacher']);
+        
+        $grade = db_result(db_query("SELECT name FROM {bj_grade} g, {bj_user_grades} ug WHERE ug.gid = g.gid AND ug.uid = ".$account->uid));
+        $account->content['Brainjogging Information']['bj_details'][] = array('#type' => 'user_profile_item', '#title' => 'Grade', '#value' => $grade);
+        //add the Learning Disabilty
+        $ld = db_result(db_query("SELECT name FROM {bj_learning_disability} ld , {bj_user_disabilities} uld WHERE ld.did = uld.did AND uld.uid = ".$account->uid));
+        $account->content['Brainjogging Information']['bj_details'][] = array('#type' => 'user_profile_item', '#title' => 'Learing Disability', '#value' => $ld);
+      }
+      break;
     case 'load':
       //add the grade
       $grade = db_result(db_query("SELECT gid FROM {bj_user_grades} WHERE uid = ".$account->uid));
