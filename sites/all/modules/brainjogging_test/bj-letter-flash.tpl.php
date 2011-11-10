@@ -88,7 +88,16 @@
       </tr>
     </table>
   </div>
+  
   <!-- Letter flash ends -->
+  <!-- Golden pot-->
+  <div id="golden_pot" style="display:none">
+    <img src="/<?php echo $vars['path']; ?>/img/gold.gif">
+  </div>
+  
+  
+  
+  <!-- Golden pot End -->
 </div>
  <script id="template-letter-flash" type="text/x-handlebars-template">
   <table id="test_table" align="center" width="40%">
