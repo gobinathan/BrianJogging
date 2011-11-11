@@ -404,7 +404,7 @@ function _decode_entities($prefix, $codepoint, $original, &$html_entities, &$exc
  * equal to the byte count.
  */
 function drupal_strlen($text) {
-  global $multibyte;
+   global $multibyte;
   if ($multibyte == UNICODE_MULTIBYTE) {
     return mb_strlen($text);
   }

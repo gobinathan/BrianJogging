@@ -1,1 +1,98 @@
 <?php
+// $Id: brainjogging_test.install,v 1.6 2010/10/12 15:05:10 MegaGrunt Exp $
+
+/**
+ * Implementation of hook_schema().
+ */
+function brainjogging_test_schema() {
+  $schema = array();
+  $schema['bj_eyemovement_test'] = array(
+    'description' => t('Maintains eyemovement  test results.'),
+    'fields' => array(      
+      't_id' => array('type' => 'serial', 'not null' => TRUE),
+      'stud_id' => array('type' => 'int', 'not null' => TRUE),
+      'teacher_id'  => array('type' => 'int','not null' => TRUE),
+      'wl_id'  => array('type' => 'int','not null' => TRUE),
+      'date'  => array('type' => 'datetime','not null' => TRUE),
+      'speed'  => array('type' => 'int','not null' => TRUE),
+      'session_id'  => array('type' => 'varchar','length'=>255,'not null' => TRUE),
+        
+    ),
+    'primary key' => array('t_id'),
+  );
+   $schema['bj_wordflash_test'] = array(
+    'description' => t('Maintains Wordflash  test results.'),
+    'fields' => array(      
+      't_id' => array('type' => 'serial', 'not null' => TRUE),
+      'stud_id' => array('type' => 'int', 'not null' => TRUE),
+      'teacher_id'  => array('type' => 'int','not null' => TRUE),
+      'date'  => array('type' => 'datetime','not null' => TRUE),
+      'tot_attempt'  => array('type' => 'int','not null' => TRUE),
+      'c_attaempt'  => array('type' => 'int','not null' => TRUE),
+      'percentage'  => array('type' => 'int','not null' => TRUE),
+      'highest_level'  => array('type' => 'int','not null' => TRUE),
+      'test_type'  => array('type' => 'int','not null' => TRUE),
+      
+    ),
+    'primary key' => array('t_id'),
+  );
+    $schema['bj_wordflash_test_missed_words'] = array(
+    'description' => t('Maintains wordflash missed words Details.'),
+    'fields' => array(      
+      't_id' => array('type' => 'int', 'not null' => TRUE),
+      'stud_id' => array('type' => 'int', 'not null' => TRUE),
+      'level'  => array('type' => 'int','not null' => TRUE),
+      'attempt'  => array('type' => 'int','not null' => TRUE),
+      'ques'  => array('type' => 'text','not null' => TRUE),
+      'ans'  => array('type' => 'text','not null' => TRUE),
+       
+    ),
+    
+  );
+    $schema['bj_letterflash_test'] = array(
+    'description' => t('Maintains letterflash  test results.'),
+    'fields' => array(      
+      't_id' => array('type' => 'serial', 'not null' => TRUE),
+      'stud_id' => array('type' => 'int', 'not null' => TRUE),
+      'teacher_id'  => array('type' => 'int','not null' => TRUE),
+      'date'  => array('type' => 'datetime','not null' => TRUE),
+      'tot_attempt'  => array('type' => 'int','not null' => TRUE),
+      'c_attaempt'  => array('type' => 'int','not null' => TRUE),
+      'highest_level'  => array('type' => 'int','not null' => TRUE),
+      'percentage'  => array('type' => 'int','not null' => TRUE),
+      'test_type'  => array('type' => 'int','not null' => TRUE),
+      
+    ),
+    'primary key' => array('t_id'),
+  );
+    $schema['bj_letterflash_test_missed_letters'] = array(
+    'description' => t('Maintains letterflash  test results.'),
+    'fields' => array(      
+      't_id' => array('type' => 'int', 'not null' => TRUE),
+      'stud_id' => array('type' => 'int', 'not null' => TRUE),
+      'level'  => array('type' => 'int','not null' => TRUE),
+      'sub_level'  => array('type' => 'int','not null' => TRUE),
+      'pos'  => array('type' => 'int','not null' => TRUE),
+      'ques'  => array('type' => 'char','not null' => TRUE),
+      'ans'  => array('type' => 'char','not null' => TRUE),
+     
+      
+    ),
+    
+  );
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function brainjogging_test_install() {
+  drupal_install_schema('brainjogging_test');
+}
+
+/**
+ * Implementation of hook_uninstall()
+ */
+function brainjogging_test_uninstall() {
+  drupal_uninstall_schema('brainjogging_test');
+}
