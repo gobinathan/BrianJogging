@@ -1,0 +1,9 @@
+name = BrainJogging Report
+description = Enables BrainJogging Report software.
+package = BrainJogging
+version = "6.x-1.0"
+core = 6.x
+dependencies[] = brainjogging
+project = "brainjogging_report"
+
+

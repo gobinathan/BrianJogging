@@ -1,0 +1,46 @@
+<?php
+
+  function brainjogging_report_menu() {
+    $items['brainjogging/general'] = array(
+    'title' => t('Date Range Selection'), 
+    'page callback' => 'general_report',
+    'page arguments' => array('create'),
+    'access callback' => 'user_is_logged_in',
+    'file' => 'general_report.inc',
+    
+  );
+   $items['brainjogging/general_report'] = array(
+    'title' => t('Date Range Selection'), 
+    'page callback' => 'general_report',
+    'page arguments' => array('list'),
+    'access callback' => 'user_is_logged_in',
+    'file' => 'general_report.inc',
+    
+  );
+     $items['brainjogging/letter_flash_missed_letters'] = array(
+    'title' => t('letter flash missed  info'), 
+    'page callback' => 'letter_flash_missed_letter_report',
+    'access callback' => 'user_is_logged_in',
+    'file' => 'letter_flash_missed_letters.inc',
+    
+  );
+   $items['brainjogging/word_flash_missed_words'] = array(
+    'title' =>t('Word flash missed  info'), 
+    'page callback' => 'word_flash_missed_word_report',
+    'access callback' => 'user_is_logged_in',
+    'file' => 'word_flash_missed_words.inc',
+    
+  );
+    $items['brainjogging/total_activity_completed'] = array(
+    'title' =>t('Copleted activity  info'), 
+    'page callback' => 'total_activity_completed_report',
+    'access callback' => 'user_is_logged_in',
+    'file' => 'total_activity_completed.inc',
+    
+  );
+    return $items;
+  }
+
+  
+
+?>
