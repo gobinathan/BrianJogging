@@ -139,4 +139,4 @@ function bj_greade_delete_confirm_submit($form, &$form_state){
   }
   $form_state['redirect'] = 'admin/brainjogging/grade';
   return;
-}
+}z

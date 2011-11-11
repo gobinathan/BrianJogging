@@ -177,7 +177,7 @@ BrianJogging.letter_flash = (function(pub) {
       pos       :new Array(),
       lev       :new Array(),
       subl      :new Array(),
-      r_size    :1,
+      r_size    :0,
       bj_lf_test : {},
       ttype  :0
     },
@@ -444,7 +444,7 @@ BrianJogging.letter_flash = (function(pub) {
     properties.bj_lf_test['res']={t_at:properties.total_attempts,c_at:correct,level:level,grade:grade};
     xmlhttp=$.ajax({
           type: 'POST',
-          url: '/brainjogging/submit/',
+          url: '/brainjogging/letter_flash/submit/',
           data: 'res='+$.toJSON(properties.bj_lf_test),
           success: function(msg){}
           });
@@ -480,6 +480,7 @@ BrianJogging.eyemomvent = (function(pub) {
         em_count=0;
         em_sp=3000;
         em_loop=1;
+        speed=0;
         res=new Array();
         bj_eye_move={};
         
@@ -488,6 +489,11 @@ BrianJogging.eyemomvent = (function(pub) {
         em_input=Drupal.settings.input1;
         
         $('#ses_wordfetch').click(function(){
+          var wd_list = $('#eye_wordlist').val();
+          if(wd_list == 0){
+            alert('select word list');
+            return false;
+          }
           bj_eye_move.wordlist = $('#eye_wordlist option:selected').val();
           $.getJSON('/brainjogging/ajax/eye_movement/' + bj_eye_move.wordlist, function(data) {
           em_input = data.words;
@@ -576,6 +582,8 @@ BrianJogging.eyemomvent = (function(pub) {
          alert("Scecond eye test end");
           
         bj_eye_move['res2']=Drupal.settings.wordlist_id2;
+        speed=1;
+        
          em_input=Drupal.settings.input3;
          em_loop++;
           em_count=0;
@@ -590,7 +598,7 @@ BrianJogging.eyemomvent = (function(pub) {
           xmlhttp=$.ajax({
           type: 'POST',
           url: '/brainjogging/eye_movement/submit',
-          data: 'res='+$.toJSON(bj_eye_move),
+          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
           success: function(msg){}
           });
            
@@ -655,7 +663,7 @@ BrianJogging.eyemomvent = (function(pub) {
           xmlhttp=$.ajax({
           type: 'POST',
           url: '/brainjogging/eye_movement/submit',
-          data: 'res='+$.toJSON(bj_eye_move),
+          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
           success: function(msg){}
           });
            
@@ -747,7 +755,7 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#eyecount').text("Final");
         }
         $('#em_init').css("display",'none');
-       var em_spe=1;
+       var em_spe=9;
        if(em_spe.length==0) {
          alert("Enter the speed");
         }
@@ -771,9 +779,10 @@ BrianJogging.eyemomvent = (function(pub) {
          alert("Enter the speed");
         }
        else{
+            speed=em_spe;
             $('#em_speed').css("display","none");
             $('#em_instuct').css("display","block");
-             $('#em_move').css("display","none");
+            $('#em_move').css("display","none");
             
             
             em_sp = em_sp/em_spe;
