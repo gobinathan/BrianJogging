@@ -52,7 +52,7 @@ function brainjogging_test_menu(){
     'access callback' => 'user_is_logged_in',
   );
   
-  $items['brainjogging/letter_flash/submit'] = array(
+  $items['brainjogging/letterflash/submit'] = array(
     'page callback' => 'letter_flash_submit',
     'page arguments' => array('list'),
     'access callback' => 'user_is_logged_in',
@@ -144,6 +144,14 @@ function brainjogging_test_eye_movement(){
 
 function brainjogging_test_letter_flash(){
   bj_add_js();
+  $lf_two_highgrade   =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='2'"));
+  $lf_three_highgrade =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='3'"));
+  $lf_four_highgrade =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='4'"));
+   drupal_add_js(array('lf_two'=> $lf_two_highgrade),'setting');
+   drupal_add_js(array('lf_three'=> $lf_three_highgrade),'setting');
+   drupal_add_js(array('lf_four'=> $lf_four_highgrade),'setting');
+ 
+  
   drupal_add_js("
     jQuery(document).ready(function () {
       init = {
@@ -183,6 +191,12 @@ function brainjogging_test_word_flash(){
   
  
   bj_add_js();
+  $wf_two_highgrade   = db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_wordflash_test where  test_type='2'"));
+  $wf_three_highgrade = db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_wordflash_test where  test_type='3'"));
+  $wf_four_highgrade  = db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_wordflash_test where  test_type='4'"));
+   drupal_add_js(array('wf_two'=> $wf_two_highgrade),'setting');
+   drupal_add_js(array('wf_three'=> $wf_three_highgrade),'setting');
+   drupal_add_js(array('wf_four'=> $wf_four_highgrade),'setting');
   drupal_add_js("
     jQuery(document).ready(function () {
       BrianJogging.wordflash.initialize();

@@ -177,7 +177,7 @@ BrianJogging.letter_flash = (function(pub) {
       pos       :new Array(),
       lev       :new Array(),
       subl      :new Array(),
-      r_size    :0,
+      r_size    :1,
       bj_lf_test : {},
       ttype  :0
     },
@@ -444,7 +444,7 @@ BrianJogging.letter_flash = (function(pub) {
     properties.bj_lf_test['res']={t_at:properties.total_attempts,c_at:correct,level:level,grade:grade};
     xmlhttp=$.ajax({
           type: 'POST',
-          url: '/brainjogging/letter_flash/submit/',
+          url: '/brainjogging/letterflash/submit/',
           data: 'res='+$.toJSON(properties.bj_lf_test),
           success: function(msg){}
           });
@@ -457,8 +457,32 @@ BrianJogging.letter_flash = (function(pub) {
       window.location = "/brainjogging/test/dashboard";
     });
     
+    var lf_grade_compare=0;
+    if(type == 2){
+     lf_grade_compare = Drupal.settings.lf_two;
+    }
+     if(type == 3){
+     lf_grade_compare = Drupal.settings.lf_three;
+    }
+     if(type == 4){
+     lf_grade_compare = Drupal.settings.lf_three;
+    }
+$('#result_container').show();
+   alert(grade);
+   alert(lf_grade_compare);
+   if(lf_grade_compare =="" && grade > 50)
+   {
+    $('#result_container').hide();
+    $('#congrats').show();
+   }
+    if(grade > 50 && grade > lf_grade_compare )
+   {
+    $('#result_container').hide();
+    $('#congrats').show();
+   }
+    
     //show the results
-    $('#result_container').show();
+    
     
     //$('#letter_flash_div').children().each(function(){
     //  $(this).remove(); 
@@ -480,7 +504,6 @@ BrianJogging.eyemomvent = (function(pub) {
         em_count=0;
         em_sp=3000;
         em_loop=1;
-        speed=0;
         res=new Array();
         bj_eye_move={};
         
@@ -489,11 +512,6 @@ BrianJogging.eyemomvent = (function(pub) {
         em_input=Drupal.settings.input1;
         
         $('#ses_wordfetch').click(function(){
-          var wd_list = $('#eye_wordlist').val();
-          if(wd_list == 0){
-            alert('select word list');
-            return false;
-          }
           bj_eye_move.wordlist = $('#eye_wordlist option:selected').val();
           $.getJSON('/brainjogging/ajax/eye_movement/' + bj_eye_move.wordlist, function(data) {
           em_input = data.words;
@@ -582,8 +600,6 @@ BrianJogging.eyemomvent = (function(pub) {
          alert("Scecond eye test end");
           
         bj_eye_move['res2']=Drupal.settings.wordlist_id2;
-        speed=1;
-        
          em_input=Drupal.settings.input3;
          em_loop++;
           em_count=0;
@@ -598,7 +614,7 @@ BrianJogging.eyemomvent = (function(pub) {
           xmlhttp=$.ajax({
           type: 'POST',
           url: '/brainjogging/eye_movement/submit',
-          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
+          data: 'res='+$.toJSON(bj_eye_move),
           success: function(msg){}
           });
            
@@ -663,7 +679,7 @@ BrianJogging.eyemomvent = (function(pub) {
           xmlhttp=$.ajax({
           type: 'POST',
           url: '/brainjogging/eye_movement/submit',
-          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
+          data: 'res='+$.toJSON(bj_eye_move),
           success: function(msg){}
           });
            
@@ -755,7 +771,7 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#eyecount').text("Final");
         }
         $('#em_init').css("display",'none');
-       var em_spe=9;
+       var em_spe=1;
        if(em_spe.length==0) {
          alert("Enter the speed");
         }
@@ -779,10 +795,9 @@ BrianJogging.eyemomvent = (function(pub) {
          alert("Enter the speed");
         }
        else{
-            speed=em_spe;
             $('#em_speed').css("display","none");
             $('#em_instuct').css("display","block");
-            $('#em_move').css("display","none");
+             $('#em_move').css("display","none");
             
             
             em_sp = em_sp/em_spe;
