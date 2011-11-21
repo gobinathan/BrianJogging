@@ -15,7 +15,7 @@ function brainjogging_test_theme(){
       'template'  => 'bj-letter-flash',
     ),
     'bj_word_flash' => array(
-      'arguments' => array('vars' => NULL),
+      'arguments' => array('vars' => NULL, 'varpath'=>NULL),
       'template'  => 'bj-word-flash',
     ),
   );
@@ -143,14 +143,16 @@ function brainjogging_test_eye_movement(){
 }
 
 function brainjogging_test_letter_flash(){
+  global $user;
   bj_add_js();
-  $lf_two_highgrade   =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='2'"));
-  $lf_three_highgrade =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='3'"));
-  $lf_four_highgrade =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='4'"));
-   drupal_add_js(array('lf_two'=> $lf_two_highgrade),'setting');
-   drupal_add_js(array('lf_three'=> $lf_three_highgrade),'setting');
-   drupal_add_js(array('lf_four'=> $lf_four_highgrade),'setting');
- 
+  if(brainjogging_is_student()){
+  $lf_two_highgrade   =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='2' and stud_id='".$user -> uid."'"));
+  $lf_three_highgrade =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='3' and stud_id='".$user -> uid."'"));
+  $lf_four_highgrade =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='4'  and stud_id='".$user -> uid."'"));
+  drupal_add_js(array('lf_two'=> $lf_two_highgrade),'setting');
+  drupal_add_js(array('lf_three'=> $lf_three_highgrade),'setting');
+  drupal_add_js(array('lf_four'=> $lf_four_highgrade),'setting');
+  }
   
   drupal_add_js("
     jQuery(document).ready(function () {
@@ -170,6 +172,7 @@ function brainjogging_test_letter_flash(){
 }
 
 function brainjogging_test_word_flash(){
+  global $user;
   $relativity = array();
   $relativity_res = db_query("SELECT nid, title FROM {node} WHERE type = 'word_list_category' AND status = 1 ORDER BY title");
   while($obj = db_fetch_object($relativity_res)){
@@ -189,21 +192,26 @@ function brainjogging_test_word_flash(){
    $relativity[$row->c_id]['childs'][] = $row; 
   }
   
- 
+  $user_name=$user->profile_first_name;
+  drupal_add_js(array('uname'=> $user_name),'setting');
   bj_add_js();
-  $wf_two_highgrade   = db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_wordflash_test where  test_type='2'"));
-  $wf_three_highgrade = db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_wordflash_test where  test_type='3'"));
-  $wf_four_highgrade  = db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_wordflash_test where  test_type='4'"));
-   drupal_add_js(array('wf_two'=> $wf_two_highgrade),'setting');
-   drupal_add_js(array('wf_three'=> $wf_three_highgrade),'setting');
-   drupal_add_js(array('wf_four'=> $wf_four_highgrade),'setting');
+  if(brainjogging_is_student()){
+  $wf_two_highgrade   = db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_wordflash_test where  test_type='2' and stud_id='".$user -> uid."'"));
+  $wf_three_highgrade = db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_wordflash_test where  test_type='3' and stud_id='".$user -> uid."'"));
+  $wf_four_highgrade  = db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_wordflash_test where  test_type='4' and stud_id='".$user -> uid."'"));
+  drupal_add_js(array('wf_two'=> $wf_two_highgrade),'setting');
+  drupal_add_js(array('wf_three'=> $wf_three_highgrade),'setting');
+  drupal_add_js(array('wf_four'=> $wf_four_highgrade),'setting');
+  }
   drupal_add_js("
     jQuery(document).ready(function () {
       BrianJogging.wordflash.initialize();
     });",
     'inline'
   );
-  return theme('bj_word_flash', $relativity);
+  
+  return theme('bj_word_flash',$relativity,array('path'=>drupal_get_path('module', 'brainjogging_test')));
+ 
 }
 
 
@@ -231,9 +239,13 @@ function brainjogging_test_get_eyemove_wordlist($nid){
 function bj_add_js(){
   $path = drupal_get_path('module', 'brainjogging_test');
   drupal_add_css($path . '/css/bj_test_style.css', 'module', 'all', FALSE);
+  drupal_add_css($path . '/css/fireworks.css', 'module', 'all', FALSE);
   drupal_add_js($path . '/js/libs/handlebars.1.0.0.beta.3.js');
   drupal_add_js($path . '/js/libs/jquery_plugins.js');
   drupal_add_js($path . '/js/application.js');
+  drupal_add_js($path . '/js/libs/soundmanager2-nodebug-jsmin.js');
+  drupal_add_js($path . '/js/libs/fireworks.js');
+  
 }
 
 function brainjogging_test_user($op, &$edit, &$account, $category = NULL) {

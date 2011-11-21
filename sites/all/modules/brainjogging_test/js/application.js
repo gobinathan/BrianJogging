@@ -14,7 +14,7 @@ BrianJogging.wordflash = (function(pub) {
     showSetting();
   };
   
-  showSetting = function(){    
+  showSetting = function(){
     $('#wf_settings').slideDown('slow');
     $('input[name="wf_settings_fsize"]').each(function(index) {
       $(this).click(function() {
@@ -47,7 +47,7 @@ BrianJogging.wordflash = (function(pub) {
       });      
     });
     
-    $('#wf_begin_ok').click(function(){      
+    $('#wf_begin_ok').click(function(){
       beginExercise();
     });
     
@@ -111,6 +111,8 @@ BrianJogging.wordflash = (function(pub) {
    if(results.status.wrong == 4  || wf.level == 20){
     $.after(2000,function(){
       showResult();
+     
+     
     });
    }else{
     wf.attempts++; 
@@ -118,6 +120,7 @@ BrianJogging.wordflash = (function(pub) {
   };
   
   showResult = function(){
+    
     var tot_atm=results.status.wrong+results.status.correct;
     results["res"]={res:wf};
     results["pers"]={perecent:Math.ceil((results.status.correct/wf.attempts) * 100 )};
@@ -132,7 +135,7 @@ BrianJogging.wordflash = (function(pub) {
     
   res = '<table border="1" width="100%" cellpadding="0" cellspacing="0">';
   res += '<tr><td align="center" colspan="3">Word Flash - '+ wf.ftype_text +' - Result</td></tr>';
-  res += '<tr><td>Name :</td><td colspan="2"> XXX</td></tr>';
+  res += '<tr><td>Name :</td><td colspan="2"> '+Drupal.settings.uname+'</td></tr>';
   res += '<tr><td>Date :</td><td colspan="2"> '+ new Date() +'</td></tr>';
   res += '<tr><td align="center">Attempts</td><td align="center">Success</td><td align="center">Grade</td></tr>';
   res += '<tr><td align="center">'+ wf.attempts +'</td><td align="center">'+ results.status.correct +'</td><td align="center">'+ Math.ceil((results.status.correct/wf.attempts) * 100 ) +'%</td></tr>';
@@ -147,8 +150,35 @@ BrianJogging.wordflash = (function(pub) {
   $('#wf_mm').click(function(){
     window.location = "/brainjogging/test/dashboard";
   });
-  }
+  var per=Math.ceil((results.status.correct/wf.attempts) * 100 );
+  var lf_grade_compare=0;
+    if(wf.ftype == 2){
+     lf_grade_compare = Drupal.settings.wf_two;
+    }
+     if(wf.ftype == 3){
+     lf_grade_compare = Drupal.settings.wf_three;
+    }
+     if(wf.ftype == 4){
+     lf_grade_compare = Drupal.settings.wf_three;
+    }
   
+
+  if(lf_grade_compare =="" && per > 50)
+   {
+    var r=4+parseInt(Math.random()*16);for(var i=r; i--;){setTimeout('createFirework(30,75,6,7,null,null,null,null,Math.random()>0.5,true)',(i+1)*(1+parseInt(Math.random()*1000)));}
+    $("#congrats").fadeIn('slow');
+    setTimeout(function(){ $("#congrats").fadeOut() }, 5000);
+   }
+   
+  if(per > 50 && per > lf_grade_compare ){
+    var r=4+parseInt(Math.random()*16);for(var i=r; i--;){setTimeout('createFirework(30,75,6,7,null,null,null,null,Math.random()>0.5,true)',(i+1)*(1+parseInt(Math.random()*1000)));}
+    $("#congrats").fadeIn('slow');
+    setTimeout(function(){ $("#congrats").fadeOut() }, 5000);
+   }
+  
+  }
+     
+     
   return pub;
 }(BrianJogging.wordflash || {}));
 
@@ -467,19 +497,21 @@ BrianJogging.letter_flash = (function(pub) {
      if(type == 4){
      lf_grade_compare = Drupal.settings.lf_three;
     }
-$('#result_container').show();
-   alert(grade);
-   alert(lf_grade_compare);
+     
+  $('#result_container').show();
    if(lf_grade_compare =="" && grade > 50)
    {
-    $('#result_container').hide();
-    $('#congrats').show();
+    var r=4+parseInt(Math.random()*16);for(var i=r; i--;){setTimeout('createFirework(30,75,6,7,null,null,null,null,Math.random()>0.5,true)',(i+1)*(1+parseInt(Math.random()*1000)));}
+    $("#congrats").fadeIn('slow');
+    setTimeout(function(){ $("#congrats").fadeOut() }, 5000);
    }
-    if(grade > 50 && grade > lf_grade_compare )
-   {
-    $('#result_container').hide();
-    $('#congrats').show();
+   
+  if(grade > 50 && grade > lf_grade_compare ){
+    var r=4+parseInt(Math.random()*16);for(var i=r; i--;){setTimeout('createFirework(30,75,6,7,null,null,null,null,Math.random()>0.5,true)',(i+1)*(1+parseInt(Math.random()*1000)));}
+    $("#congrats").fadeIn('slow');
+    setTimeout(function(){ $("#congrats").fadeOut() }, 5000);
    }
+    
     
     //show the results
     
@@ -771,7 +803,7 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#eyecount').text("Final");
         }
         $('#em_init').css("display",'none');
-       var em_spe=1;
+       var em_spe=9;
        if(em_spe.length==0) {
          alert("Enter the speed");
         }
