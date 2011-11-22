@@ -322,7 +322,7 @@ function xmlrpc_request($method, $args) {
   $xmlrpc_request->method = $method;
   $xmlrpc_request->args = $args;
   $xmlrpc_request->xml = <<<EOD
-<?phpxml version="1.0"?>
+<?xml version="1.0"?>
 <methodCall>
 <methodName>{$xmlrpc_request->method}</methodName>
 <params>

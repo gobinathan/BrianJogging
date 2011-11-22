@@ -1,6 +1,6 @@
 <?php
 ?>
-  <div class="node<?phpphp if ($sticky) { print " sticky"; } ?><?php if (!$status) { print " node-unpublished"; } ?>">
+  <div class="node<?php if ($sticky) { print " sticky"; } ?><?php if (!$status) { print " node-unpublished"; } ?>">
     <?php if ($picture) {
       print $picture;
     }?>
