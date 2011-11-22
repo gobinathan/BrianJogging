@@ -20,6 +20,7 @@
   );
    $items['brainjogging/report/general_report'] = array(
     'page callback' => 'general_report',
+    'title' => t('General Report'),
     'type' => MENU_NORMAL_ITEM,
     'page arguments' => array('list'),
     'access arguments' =>array('bj admin reports'),
@@ -37,6 +38,7 @@
   );
      $items['brainjogging/report/letter_flash_missed_letters_report'] = array(
     'type' => MENU_NORMAL_ITEM,
+    'title' => t('Letter flash missed  info'), 
     'page callback' => 'letter_flash_missed_letter_report',
     'page arguments' => array('list'),
     'access arguments' => array('bj common reports'),
@@ -53,6 +55,7 @@
   );
     $items['brainjogging/report/word_flash_missed_words_report'] = array(
     'type' => MENU_NORMAL_ITEM,
+    'title' =>t('Word flash '),
     'page callback' => 'word_flash_missed_word_report',
     'page arguments' => array('list'),
     'access arguments' => array('bj common reports'),
@@ -69,6 +72,7 @@
   );
     $items['brainjogging/report/total_activity_completed_report'] = array(
     'type' => MENU_NORMAL_ITEM,
+    'title' =>t('Completed activity '),
     'page callback' => 'total_activity_completed_report',
     'page arguments' => array('list'),
     'access arguments' => array('bj common reports'),
@@ -85,6 +89,7 @@
   );
     $items['brainjogging/report/eye_move_wordlist_report'] = array(
     'type' => MENU_NORMAL_ITEM,
+    'title' =>t('Eye Movement'),
     'page callback' => 'eye_move_wordlist_report',
     'page arguments' => array('list'),
     'access arguments' => array('bj common reports'),
@@ -101,6 +106,7 @@
   );
     $items['brainjogging/report/lf_client_response_report'] = array(
     'type' => MENU_NORMAL_ITEM,
+    'title' =>t('Letter Flash Client Response  '), 
     'page callback' => 'lf_client_response_report',
     'page arguments' => array('list'),
     'access arguments' => array('bj common reports'),
