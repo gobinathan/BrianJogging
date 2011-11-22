@@ -89,8 +89,8 @@ function bj_eye_move_wordlist_list(){
   );
   
   $header1 = array(
-  array('data' => t('Speed')),
   array('data' => t('WordList Name')),
+  array('data' => t('Speed')),
   array('data' => t('Date & Time')),
    );
 
@@ -161,7 +161,7 @@ function bj_eyemove_wordlist_report_form_submit(&$form,&$form_state){
 
     $_SESSION['bj_general'] = $bj_user_general;
     $_SESSION['eye_move']   = $eye_move_wordlist;
-    $form_state['redirect'] = 'admin/brainjogging/report/eye_move_wordlist_report/%';  
+    $form_state['redirect'] = 'brainjogging/report/eye_move_wordlist_report';  
 }
 
 }

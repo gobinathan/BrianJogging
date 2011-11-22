@@ -323,7 +323,7 @@ function bj_general_report_form_submit(&$form,&$form_state){
         //word flash end
        
          $_SESSION['bj_general'] = $bj_user_general;
-         $form_state['redirect'] = 'admin/brainjogging/report/general_report/%';
+         $form_state['redirect'] = 'brainjogging/report/general_report';
  
     } 
 }

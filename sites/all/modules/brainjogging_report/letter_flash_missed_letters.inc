@@ -231,7 +231,7 @@ function bj_lfmissed_report_form_submit(&$form,&$form_state){
         }
          $_SESSION['bj_general'] = $bj_user_general;
          $_SESSION['lf_missed'] = $letter_flash_missed;
-         $form_state['redirect'] = 'admin/brainjogging/report/letter_flash_missed_letters_report/%';  
+         $form_state['redirect'] = 'brainjogging/report/letter_flash_missed_letters_report';  
 }
 
 }
