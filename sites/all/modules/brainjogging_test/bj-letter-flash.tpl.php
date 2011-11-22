@@ -1,4 +1,15 @@
-<div id="container">  
+<div id="container">
+  
+  
+<div id="fireworks-template">
+ <div id="fw" class="firework"></div>
+ <div id="fp" class="fireworkParticle"><img src="/<?php echo $vars['path']; ?>/img/rainbow.gif" alt="" /></div>
+</div>
+
+<div id="fireContainer"></div>
+
+
+  
   <div id="letter_flash_div" style="display:none">
     <!-- Letter Flash Control Panel -->
     <div id="lf_cp">
@@ -64,7 +75,9 @@
     <table border="1"  id="letter_res" cellpadding="0" cellspacing="0">
       <td align="center" colspan="4" style="font-weight:bold;">Letter Flash Result</td><tr>
       <td colspan="2">Name</td>
-      <td colspan="2">XXX</td>
+      <td colspan="2">
+        <?php global $user; echo $user->profile_first_name; ?>
+        </td>
       <tr>
       <td colspan="2">Date</td>
       <td colspan="2"><?php echo  Date('Y-m-d'); ?></td>
@@ -88,16 +101,10 @@
       </tr>
     </table>
   </div>
-  
-  <!-- Letter flash ends -->
-  <!-- Golden pot-->
-  <div id="golden_pot" style="display:none">
+  <div id="congrats" style="display:none;width:400px; margin:0 auto">
     <img src="/<?php echo $vars['path']; ?>/img/gold.gif">
   </div>
-  
-  
-  
-  <!-- Golden pot End -->
+  <!-- Letter flash ends -->
 </div>
  <script id="template-letter-flash" type="text/x-handlebars-template">
   <table id="test_table" align="center" width="40%">

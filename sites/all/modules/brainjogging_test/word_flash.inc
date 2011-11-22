@@ -1,6 +1,10 @@
 <?php
 
 function word_flash_submit($args){
+  global $user;
+   $tid= db_result(db_query("SELECT tid  FROM {bj_user_teachers} WHERE uid = '%d'", $user -> uid));
+  $teacher=user_load($tid);
+  $teacher_id  = $teacher->uid;
  $date = date('Y-m-d H:i:s');
  $rese   = $_POST["res"];
  
@@ -24,7 +28,7 @@ function word_flash_submit($args){
  
  
  $arr[3][1]['attempts']+$arr[1][2][0];
- $my_res=db_query("INSERT INTO bj_wordflash_test VALUES('','','','$date',".$arr[5][1][0].",".$arr[1][2][0].",".$arr[4][1][0].",".$arr[3][1]['level'].",".$arr[3][1]['ftype'].")");
+ $my_res=db_query("INSERT INTO bj_wordflash_test VALUES('','".$user->uid."','$teacher_id','$date',".$arr[5][1][0].",".$arr[1][2][0].",".$arr[4][1][0].",".$arr[3][1]['level'].",".$arr[3][1]['ftype'].")");
  if($my_res){ 
   $id=mysql_insert_id();
   $f_count=count($arr[2]);

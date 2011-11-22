@@ -1,5 +1,12 @@
 <div id="container">
   <!-- Words flash starts -->
+  <div id="fireworks-template">
+ <div id="fw" class="firework"></div>
+ <div id="fp" class="fireworkParticle"><img src="/<?php echo $varpath['path']; ?>/img/rainbow.gif" alt="" /></div>
+</div>
+
+<div id="fireContainer"></div>
+
   <div id="words_flash_div" style="display:none">
     <div id="wf_settings" style="display:none">
       <div>
@@ -16,6 +23,9 @@
        <select id="wf_settings_wl">        
         <option value="0">-Select-</option>
         <?php
+        
+   
+      
         foreach ($vars as $cat => $wlist){
           if(count($wlist['childs']) > 0){
             printf('<optgroup label="%s">', $wlist['title']);
@@ -53,6 +63,10 @@
       <div id="wf_words"></div><br>
       <div><input type="text" size="50" id="wf_answer"></div>
     </div>
+  </div>
+  
+  <div id="congrats" style="display:none;width:400px; margin:0 auto">
+    <img src="/<?php echo $varpath['path']; ?>/img/gold.gif">
   </div>
   <!-- Words flash ends -->
  </div>
