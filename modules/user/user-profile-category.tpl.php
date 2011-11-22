@@ -28,6 +28,6 @@
   <h3><?php print $title; ?></h3>
 <?php endif; ?>
 
-<dl<?php print $attributes; ?>>
+<dl<?phpphp print $attributes; ?>>
   <?php print $profile_items; ?>
 </dl>

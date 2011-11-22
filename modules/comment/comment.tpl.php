@@ -25,7 +25,7 @@
  * @see theme_comment()
  */
 ?>
-<div class="comment<?php print ($comment->new) ? ' comment-new' : ''; print ' '. $status ?> clear-block">
+<div class="comment<?phpphp print ($comment->new) ? ' comment-new' : ''; print ' '. $status ?> clear-block">
   <?php print $picture ?>
 
   <?php if ($comment->new): ?>

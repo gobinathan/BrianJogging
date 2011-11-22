@@ -1,6 +1,6 @@
 <?php
 ?>
-  <div class="comment<?php print ' '. $status; ?>">
+  <div class="comment<?phpphp print ' '. $status; ?>">
     <?php if ($picture) {
     print $picture;
   } ?>

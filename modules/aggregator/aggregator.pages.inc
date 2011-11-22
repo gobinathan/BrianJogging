@@ -374,7 +374,7 @@ function theme_aggregator_page_rss($feeds, $category = NULL) {
   $url = url((isset($category) ? 'aggregator/categories/'. $category->cid : 'aggregator'), array('absolute' => TRUE));
   $description = isset($category) ? t('@site_name - aggregated feeds in category @title', array('@site_name' => $site_name, '@title' => $category->title)) : t('@site_name - aggregated feeds', array('@site_name' => $site_name));
 
-  $output = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+  $output = "<?phpxml version=\"1.0\" encoding=\"utf-8\"?>\n";
   $output .= "<rss version=\"2.0\">\n";
   $output .= format_rss_channel(t('@site_name aggregator', array('@site_name' => $site_name)), $url, $description, $items);
   $output .= "</rss>\n";
@@ -417,7 +417,7 @@ function theme_aggregator_page_opml($feeds) {
 
   drupal_set_header('Content-Type: text/xml; charset=utf-8');
 
-  $output = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+  $output = "<?phpxml version=\"1.0\" encoding=\"utf-8\"?>\n";
   $output .= "<opml version=\"1.1\">\n";
   $output .= "<head>\n";
   $output .= '<title>'. check_plain(variable_get('site_name', 'Drupal')) ."</title>\n";

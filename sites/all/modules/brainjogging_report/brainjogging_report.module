@@ -5,9 +5,7 @@
     $items['admin/brainjogging/report'] = array(
    'title' => 'Reports',
    'type' => MENU_NORMAL_ITEM,
-   'page callback' => 'general_report',
-   'page arguments' => array('create'),
-   'access callback' => 'check_user',
+   'access arguments' => array('bj common reports'),
    
   
   );
@@ -15,7 +13,7 @@
     'title' => t('General Report'), 
     'page callback' => 'general_report',
     'page arguments' => array('create'),
-    'access callback' => 'check_user',
+    'access arguments' => array('bj admin reports'),
     'type' => MENU_LOCAL_TASK,
     'file' => 'general_report.inc',
     
@@ -23,16 +21,17 @@
    $items['admin/brainjogging/report/general_report/%'] = array(
     'page callback' => 'general_report',
     'page arguments' => array('list'),
-    'access callback' => 'check_user',
+    'access arguments' =>array('bj admin reports'),
+    'weight'=> 1,
     'file' => 'general_report.inc',
     
   );
      $items['admin/brainjogging/report/letter_flash_missed_letters'] = array(
-    'type' => MENU_LOCAL_TASK,
-    'title' => t('letter flash missed  info'), 
+    
+    'title' => t('Letter flash missed  info'), 
     'page callback' => 'letter_flash_missed_letter_report',
     'page arguments' => array('create'),
-    'access callback' => 'check_user',
+    'access arguments' => array('bj common reports'),
     'file' => 'letter_flash_missed_letters.inc',
     
   );
@@ -40,71 +39,71 @@
     
     'page callback' => 'letter_flash_missed_letter_report',
     'page arguments' => array('list'),
-    'access callback' => 'check_user',
+    'access arguments' => array('bj common reports'),
     'file' => 'letter_flash_missed_letters.inc',
     
   );
    $items['admin/brainjogging/report/word_flash_missed_words'] = array(
-    'type' => MENU_LOCAL_TASK,
-    'title' =>t('Word flash missed  info'), 
+    
+    'title' =>t('Word flash '), 
     'page callback' => 'word_flash_missed_word_report',
     'page arguments' => array('create'),
-    'access callback' => 'check_user',
+    'access arguments' => array('bj common reports'),
     'file' => 'word_flash_missed_words.inc',
     
   );
     $items['admin/brainjogging/report/word_flash_missed_words_report/%'] = array(
     'page callback' => 'word_flash_missed_word_report',
     'page arguments' => array('list'),
-    'access callback' => 'check_user',
+    'access arguments' => array('bj common reports'),
     'file' => 'word_flash_missed_words.inc',
     
   );
     $items['admin/brainjogging/report/total_activity_completed'] = array(
-    'type' => MENU_LOCAL_TASK,
-    'title' =>t('Completed activity  info'), 
+    
+    'title' =>t('Completed activity '), 
     'page callback' => 'total_activity_completed_report',
     'page arguments' => array('create'),
-    'access callback' => 'check_user',
+    'access arguments' => array('bj common reports'),
     'file' => 'total_activity_completed.inc',
     
   );
     $items['admin/brainjogging/report/total_activity_completed_report/%'] = array(
     'page callback' => 'total_activity_completed_report',
     'page arguments' => array('list'),
-    'access callback' => 'check_user',
+    'access arguments' => 'bj common reports',
     'file' => 'total_activity_completed.inc',
     
   );
  $items['admin/brainjogging/report/eye_move_wordlist'] = array(
-  'type' => MENU_LOCAL_TASK,
-    'title' =>t('Eye Movement Wordlist  info'), 
+  
+    'title' =>t('Eye Movement'), 
     'page callback' => 'eye_move_wordlist_report',
     'page arguments' => array('create'),
-    'access callback' => 'check_user',
+    'access arguments' => array('bj common reports'),
     'file' => 'eye_move_wordlist.inc',
     
   );
     $items['admin/brainjogging/report/eye_move_wordlist_report/%'] = array(
     'page callback' => 'eye_move_wordlist_report',
     'page arguments' => array('list'),
-    'access callback' => 'check_user',
+    'access arguments' => array('bj common reports'),
     'file' => 'eye_move_wordlist.inc',
     
   );
     $items['admin/brainjogging/report/lf_client_response'] = array(
       
-    'title' =>t('Letter Flash Client Response  info'), 
+    'title' =>t('Letter Flash Client Response  '), 
     'page callback' => 'lf_client_response_report',
     'page arguments' => array('create'),
-    'access callback' => 'check_user',
+    'access arguments' => array('bj common reports'),
     'file' => 'lf_client_response.inc',
     
   );
     $items['admin/brainjogging/report/lf_client_response_report/%'] = array(
     'page callback' => 'lf_client_response_report',
     'page arguments' => array('list'),
-    'access callback' => 'check_user',
+    'access arguments' => array('bj common reports'),
     'file' => 'lf_client_response.inc',
     
   );
@@ -113,15 +112,8 @@
     return $items;
   }
 
-  function check_user() { 	
-	global $user; 	 	
-  if(in_array('site administrator',$user->roles) || in_array('teacher',$user->roles) )
-    {
-			
-		return TRUE; 	
-	} 	 	
- 
-	return FALSE; 
+  function brainjogging_report_perm() { 	
+  return array('bj admin reports','bj common reports');
 } 
 
 ?>

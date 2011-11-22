@@ -44,13 +44,13 @@ function bj_general_report_form(){
    '#weight' => 0,
    '#title' => t('Select user'), 
    '#default_value' => $node->body,
-   '#options' => bj_get_user(),
+   '#options' => bj_general_report_get_user(),
    
 
     );
   return $form;
 }
-function bj_get_user(){
+function bj_general_report_get_user(){
   global $user;
  
     if(in_array('site administrator',$user->roles))
@@ -219,10 +219,10 @@ function bj_general_report_form_submit(&$form,&$form_state){
 	 
 	 
         $bj_user_general['lf']['two']['lf_total_activity']  = db_result(db_query("SELECT COUNT(*) FROM {bj_letterflash_test} where date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type='2' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['lf']['two']['time']['fiveam_elevenam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 AM' and '11:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '2' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['lf']['two']['time']['elevenam_fivepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '11:01:01 AM' and '05:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '2' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['lf']['two']['time']['fivepm_ninepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 PM' and '09:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '2' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['lf']['two']['time']['ninepm_fiveam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '09:01:01 PM' and '05:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '2' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['lf']['two']['time']['fiveam_elevenam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 AM' and '10:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '2' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['lf']['two']['time']['elevenam_fivepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '11:01:01 AM' and '16:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '2' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['lf']['two']['time']['fivepm_ninepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '17:01:01 PM' and '20:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '2' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['lf']['two']['time']['ninepm_fiveam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '21:01:01 PM' and '04:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '2' AND stud_id= %d ",$user -> uid));
          $bj_two_letter_high        = db_fetch_array(db_query("SELECT MAX(highest_level) high_level,MAX(percentage) high_grade FROM {bj_letterflash_test} where date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type='2' AND stud_id= %d ",$user -> uid));
          $bj_user_general['lf']['two']['high_level']        = round($bj_two_letter_high ['high_level']);
          $bj_user_general['lf']['two']['high_grade']        = round($bj_two_letter_high ['high_grade'])."%";
@@ -236,10 +236,10 @@ function bj_general_report_form_submit(&$form,&$form_state){
          //two letter flash end
          //three letter flash
         $bj_user_general['lf']['three']['lf_total_activity']  = db_result(db_query("SELECT COUNT(*) FROM {bj_letterflash_test} where date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type='3' AND stud_id= %d ",$user -> uid));
-	$bj_user_general['lf']['three']['time']['fiveam_elevenam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 AM' and '11:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '3' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['lf']['three']['time']['elevenam_fivepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '11:01:01 AM' and '05:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '3' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['lf']['three']['time']['fivepm_ninepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 PM' and '09:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '3' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['lf']['three']['time']['ninepm_fiveam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '09:01:01 PM' and '05:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '3' AND stud_id= %d ",$user -> uid));
+	$bj_user_general['lf']['three']['time']['fiveam_elevenam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 AM' and '10:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '3' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['lf']['three']['time']['elevenam_fivepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '11:01:01 AM' and '16:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '3' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['lf']['three']['time']['fivepm_ninepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '17:01:01 PM' and '20:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '3' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['lf']['three']['time']['ninepm_fiveam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '21:01:01 PM' and '04:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '3' AND stud_id= %d ",$user -> uid));
          $bj_three_letter_high        = db_fetch_array(db_query("SELECT MAX(highest_level) high_level,MAX(percentage) high_grade FROM {bj_letterflash_test} where date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type='3' AND stud_id= %d ",$user -> uid));
          $bj_user_general['lf']['three']['high_level']        =round($bj_three_letter_high ['high_level']);
          $bj_user_general['lf']['three']['high_grade']        =round($bj_three_letter_high ['high_grade'])."%";
@@ -252,10 +252,10 @@ function bj_general_report_form_submit(&$form,&$form_state){
          //three letter flash end
           //three letter flash
         $bj_user_general['lf']['four']['lf_total_activity']  = db_result(db_query("SELECT COUNT(*) FROM {bj_letterflash_test} where date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type='4' AND stud_id= %d ",$user -> uid));
-	$bj_user_general['lf']['four']['time']['fiveam_elevenam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 AM' and '11:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '4' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['lf']['four']['time']['elevenam_fivepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '11:01:01 AM' and '05:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '4' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['lf']['four']['time']['fivepm_ninepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 PM' and '09:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '4' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['lf']['four']['time']['ninepm_fiveam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '09:01:01 PM' and '05:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '4' AND stud_id= %d ",$user -> uid));
+	$bj_user_general['lf']['four']['time']['fiveam_elevenam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 AM' and '10:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '4' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['lf']['four']['time']['elevenam_fivepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '11:01:01 AM' and '16:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '4' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['lf']['four']['time']['fivepm_ninepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '17:01:01 PM' and '20:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '4' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['lf']['four']['time']['ninepm_fiveam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_letterflash_test` WHERE DATE_FORMAT(date,'%r') between '21:01:01 PM' and '04:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."'  AND test_type = '4' AND stud_id= %d ",$user -> uid));
          $bj_four_letter_high        = db_fetch_array(db_query("SELECT MAX(highest_level) high_level,MAX(percentage) high_grade FROM {bj_letterflash_test} where date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type='4' AND stud_id= %d ",$user -> uid));
          $bj_user_general['lf']['four']['high_level']        = round($bj_four_letter_high ['high_level']);
          $bj_user_general['lf']['four']['high_grade']        = round($bj_four_letter_high ['high_grade'])."%";
@@ -271,10 +271,10 @@ function bj_general_report_form_submit(&$form,&$form_state){
      //word flash
         
         //two word flash
-        $bj_user_general['wf']['two']['time']['fiveam_elevenam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 AM' and '11:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '2' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['wf']['two']['time']['elevenam_fivepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '11:01:01 AM' and '05:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '2' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['wf']['two']['time']['fivepm_ninepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 PM' and '09:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '2' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['wf']['two']['time']['ninepm_fiveam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '09:01:01 PM' and '05:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '2' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['wf']['two']['time']['fiveam_elevenam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 AM' and '10:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '2' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['wf']['two']['time']['elevenam_fivepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '11:01:01 AM' and '16:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '2' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['wf']['two']['time']['fivepm_ninepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '17:01:01 PM' and '20:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '2' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['wf']['two']['time']['ninepm_fiveam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '21:01:01 PM' and '04:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '2' AND stud_id= %d ",$user -> uid));
         $bj_user_general['wf']['two']['wf_total_activity']  = db_result(db_query("SELECT COUNT(*) FROM {bj_wordflash_test} where date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type='2'"));
          $bj_two_word_high        = db_fetch_array(db_query("SELECT MAX(highest_level) high_level,MAX(percentage) high_grade FROM {bj_wordflash_test} where date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type='2' AND stud_id= %d ",$user -> uid));
          $bj_user_general['wf']['two']['high_level']        = round($bj_two_word_high ['high_level']);
@@ -289,10 +289,10 @@ function bj_general_report_form_submit(&$form,&$form_state){
          //two word flash end
          //three word flash
         $bj_user_general['wf']['three']['wf_total_activity']  = db_result(db_query("SELECT COUNT(*) FROM {bj_wordflash_test} where date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type='3' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['wf']['three']['time']['fiveam_elevenam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 AM' and '11:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '3' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['wf']['three']['time']['elevenam_fivepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '11:01:01 AM' and '05:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '3' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['wf']['three']['time']['fivepm_ninepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 PM' and '09:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '3' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['wf']['three']['time']['ninepm_fiveam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '09:01:01 PM' and '05:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '3' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['wf']['three']['time']['fiveam_elevenam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 AM' and '10:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '3' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['wf']['three']['time']['elevenam_fivepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '11:01:01 AM' and '16:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '3' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['wf']['three']['time']['fivepm_ninepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '17:01:01 PM' and '20:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '3' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['wf']['three']['time']['ninepm_fiveam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '21:01:01 PM' and '04:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '3' AND stud_id= %d ",$user -> uid));
          $bj_three_word_high        = db_fetch_array(db_query("SELECT MAX(highest_level) high_level,MAX(percentage) high_grade FROM {bj_wordflash_test} where date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type='3' AND stud_id= %d ",$user -> uid));
          $bj_user_general['wf']['three']['high_level']        = round($bj_three_word_high ['high_level']);
          $bj_user_general['wf']['three']['high_grade']        = round($bj_three_word_high ['high_grade'])."%";
@@ -306,10 +306,10 @@ function bj_general_report_form_submit(&$form,&$form_state){
           //three word flash
 	 
         $bj_user_general['wf']['four']['wf_total_activity']  = db_result(db_query("SELECT COUNT(*) FROM {bj_wordflash_test} where date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type='4' AND stud_id= %d ",$user -> uid));
-	$bj_user_general['wf']['four']['time']['fiveam_elevenam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 AM' and '11:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '4' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['wf']['four']['time']['elevenam_fivepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '11:01:01 AM' and '05:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '4' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['wf']['four']['time']['fivepm_ninepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 PM' and '09:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '4' AND stud_id= %d ",$user -> uid));
-        $bj_user_general['wf']['four']['time']['ninepm_fiveam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '09:01:01 PM' and '05:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '4' AND stud_id= %d ",$user -> uid));
+	$bj_user_general['wf']['four']['time']['fiveam_elevenam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '05:01:01 AM' and '10:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '4' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['wf']['four']['time']['elevenam_fivepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '11:01:01 AM' and '16:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '4' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['wf']['four']['time']['fivepm_ninepm_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '17:01:01 PM' and '20:59:59 PM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '4' AND stud_id= %d ",$user -> uid));
+        $bj_user_general['wf']['four']['time']['ninepm_fiveam_activity']=db_result(db_query("SELECT COUNT(*) from `bj_wordflash_test` WHERE DATE_FORMAT(date,'%r') between '21:01:01 PM' and '04:59:59 AM' and date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type = '4' AND stud_id= %d ",$user -> uid));
          $bj_four_word_high        = db_fetch_array(db_query("SELECT MAX(highest_level) high_level,MAX(percentage) high_grade FROM {bj_wordflash_test} where date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND test_type='4' AND stud_id= %d ",$user -> uid));
          $bj_user_general['wf']['four']['high_level']        = round($bj_four_word_high ['high_level']);
          $bj_user_general['wf']['four']['high_grade']        = round($bj_four_word_high ['high_grade'])."%";
@@ -321,15 +321,10 @@ function bj_general_report_form_submit(&$form,&$form_state){
          $bj_user_general['wf']['four']['per_sevenday_activity']= round($bj_user_general['wf']['four']['per_day_activity']*7,2);
          //three word flash end
         //word flash end
-        
-        
-        
-        
-        
+       
          $_SESSION['bj_general'] = $bj_user_general;
          $form_state['redirect'] = 'admin/brainjogging/report/general_report/%';
-  //drupal_goto('brainjogging/general_report');
-//return  $bj_user_general;
+ 
     } 
 }
 function bj_add_date_js(){

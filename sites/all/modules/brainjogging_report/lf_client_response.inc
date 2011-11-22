@@ -43,13 +43,10 @@ function bj_lf_client_response_report_form(){
    '#weight' => 0,
    '#title' => t('Select user'), 
    '#default_value' => $node->body,
-   '#options' => bj_get_user(),
-   
-
     ); 
   return $form;
 }
-function bj_get_user(){
+function bj_lf_client_response_get_user(){
   global $user;
  
     if(in_array('site administrator',$user->roles))
@@ -93,10 +90,11 @@ function bj_lf_client_response_list(){
   );
 
   $rows[] = array($bj['general']['first_name'],$bj['general']['last_name'],$bj['general']['start_date'],$bj['general']['user_id'],$bj['general']['school_name'],$bj['general']['teacher_name'],$bj['general']['report_date']);
-   
-  foreach($lf_client_response['lf']  as $key => $lf)
-  {
-  $rows1[]=array($lf['ques'],$lf['ans']);
+  if(is_array($lf_client_response['lf'])){
+    foreach($lf_client_response['lf']  as $key => $lf)
+    {
+    $rows1[]=array($lf['ques'],$lf['ans']);
+    }
   }
 
   if(!$rows) {
@@ -145,7 +143,7 @@ function bj_lf_client_response_report_form_submit(&$form,&$form_state){
       $lf_client_response =array();
       $res = db_query("select t2.t_id, group_concat(t1.ques separator ', ') as ques, group_concat(t1.ans separator ', ') as ans   from `bj_letterflash_test_missed_letters` t1, bj_letterflash_test t2   
 		       WHERE  t2.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND t2.stud_id = '".$user -> uid."' AND t1.t_id = t2.t_id group by t1.t_id,t1.sub_level ");
-          while($lf_client_response['lf'][]=db_fetch_array($res)){
+      while($lf_client_response['lf'][]=db_fetch_array($res)){
        }
     $_SESSION['bj_general'] = $bj_user_general;
     $_SESSION['lf_client_response'] = $lf_client_response;

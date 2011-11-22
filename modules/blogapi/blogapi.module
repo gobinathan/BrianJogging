@@ -825,7 +825,7 @@ function blogapi_rsd() {
 
   drupal_set_header('Content-Type: application/rsd+xml; charset=utf-8');
   print <<<__RSD__
-<?xml version="1.0"?>
+<?phpxml version="1.0"?>
 <rsd version="1.0" xmlns="http://archipelago.phrasewise.com/rsd">
   <service>
     <engineName>Drupal</engineName>

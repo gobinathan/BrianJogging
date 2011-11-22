@@ -42,14 +42,14 @@ function bj_wfmissed_report_form(){
    '#weight' => 0,
    '#title' => t('Select user'), 
    '#default_value' => $node->body,
-   '#options' => bj_get_user(),
+   '#options' => bj_wf_report_get_user(),
    
 
     );
     
   return $form;
 }
-function bj_get_user(){
+function bj_wf_report_get_user(){
   global $user;
  
     if(in_array('site administrator',$user->roles))
@@ -77,14 +77,7 @@ function bj_wf_report_list(){
     $bj        = $_SESSION['bj_general'];
     $wf_missed = $_SESSION['wf_missed'];
  
-    //echo "<pre>";
-    // print_r($bj['general']['first_name']);
-    // print_r($wf_missed);
-    // 
-    // exit();
-  $limit = 2;
-  
-  
+ 
   $header = array(
     array('data' => t('First Name')),
 	  array('data' => t('Last Name')),
@@ -104,17 +97,17 @@ function bj_wf_report_list(){
   );
    
 	
-		$rows[] = array($bj['general']['first_name'],$bj['general']['last_name'],$bj['general']['start_date'],$bj['general']['user_id'],$bj['general']['school_name'],$bj['general']['teacher_name'],$bj['general']['report_date']);
-                
-            foreach($wf_missed['missed_words']  as $wf)
-            {
-                $rows1[]=array($wf['ques'],$wf['ans']);
-              
+	    $rows[] = array($bj['general']['first_name'],$bj['general']['last_name'],$bj['general']['start_date'],$bj['general']['user_id'],$bj['general']['school_name'],$bj['general']['teacher_name'],$bj['general']['report_date']);
+            if(is_array($wf_missed['missed_words'])){   
+                foreach($wf_missed['missed_words']  as $wf)
+                {
+                    if($wf['ans']){
+                    $rows1[]=array($wf['ques'],$wf['ans']);
+                    }
+                  
+                }
             }
-            //  echo "<pre>";
-            //print_r($lf_missed);
-            //exit;
-            
+                     
  
 	if(!$rows) {
 	    $rows[] = array(
@@ -164,9 +157,9 @@ function bj_wfmissed_report_form_submit(&$form,&$form_state){
         $bj_user_general['general']['date_from']       = $from_d;
         $bj_user_general['general']['date_to']         = $to_d;
         $word_flash_missed=array();
-        $res =db_query("SELECT t1.ques,t1.ans FROM bj_wordflash_test_missed_words t1, bj_wordflash_test t2 where t2.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' and t1.t_id=t2.t_id  AND t2.stud_id ='".$user -> uid."'  LIMIT 10");
+        $res =db_query("SELECT t1.ques,t1.ans FROM bj_wordflash_test_missed_words t1, bj_wordflash_test t2 where t2.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' and t1.t_id=t2.t_id  AND t2.stud_id ='".$user -> uid."'  LIMIT 15");
         
-        echo "SELECT t1.ques,t1.ans FROM bj_wordflash_test_missed_words t1, bj_wordflash_test t2 where t2.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' and t1.t_id=t2.t_id  AND t2.stud_id ='".$user -> uid."'  LIMIT 10";
+        
        while($word_flash_missed['missed_words'][]=db_fetch_array($res)){
             
         }
@@ -176,9 +169,7 @@ function bj_wfmissed_report_form_submit(&$form,&$form_state){
        $_SESSION['wf_missed'] = $word_flash_missed;
        $form_state['redirect'] = 'admin/brainjogging/report/word_flash_missed_words_report/%'; 
      
-   //print_r($word_flash_missed);
-   //exit;
-}
+   }
 
 }
 function bj_add_date_js(){

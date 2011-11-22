@@ -42,14 +42,14 @@ function bj_total_activity_report_form(){
    '#weight' => 0,
    '#title' => t('Select user'), 
    '#default_value' => $node->body,
-   '#options' => bj_get_user(),
+   '#options' => bj_total_activity_report_get_user(),
    
 
     );
     
   return $form;
 }
-function bj_get_user(){
+function bj_total_activity_report_get_user(){
   global $user;
  
     if(in_array('site administrator',$user->roles))
@@ -76,13 +76,6 @@ function bj_total_activity_report_list(){
         
     $bj             = $_SESSION['bj_general'];
     $total_activity = $_SESSION['total_activity'];
-  
-    //echo "<pre>";
-    // print_r($bj['general']['first_name']);
-    // print_r($total_activity);
-    // 
-    // exit();
-  $limit = 2;
   
   
   $header = array(
@@ -122,26 +115,28 @@ function bj_total_activity_report_list(){
   );
    
 	
-		$rows[] = array($bj['general']['first_name'],$bj['general']['last_name'],$bj['general']['start_date'],$bj['general']['user_id'],$bj['general']['school_name'],$bj['general']['teacher_name'],$bj['general']['report_date']);
-                
-            foreach($total_activity['eye_movement']  as $key => $eye)
-            {
-                $rows1[]=array($eye['title'],$eye['speed'],$eye['date']);
-              
+	    $rows[] = array($bj['general']['first_name'],$bj['general']['last_name'],$bj['general']['start_date'],$bj['general']['user_id'],$bj['general']['school_name'],$bj['general']['teacher_name'],$bj['general']['report_date']);
+             if(is_array($total_activity['eye_movement'])) {  
+                foreach($total_activity['eye_movement']  as $key => $eye)
+                {
+                    $rows1[]=array($eye['title'],$eye['speed'],$eye['date']);
+                  
+                }
             }
-             foreach($total_activity['letter_flash']  as $key => $lf)
-            {
-                $rows2[]=array($lf['highest_level'],$lf['percentage'],$lf['date']);
-              
+            if(is_array($total_activity['letter_flash'])){
+                foreach($total_activity['letter_flash']  as $key => $lf)
+                {
+                   $rows2[]=array($lf['highest_level'],$lf['percentage'],$lf['date']);
+                }
             }
-             foreach($total_activity['word_flash']  as $key => $wf)
-            {
-                $rows3[]=array($wf['highest_level'],$wf['percentage'],$wf['date']);
-              
+            if(is_array($total_activity['word_flash'])){
+                foreach($total_activity['word_flash']  as $key => $wf)
+               {
+                   $rows3[]=array($wf['highest_level'],$wf['percentage'],$wf['date']);
+                 
+               }
             }
-            //  echo "<pre>";
-            //print_r($lf_missed);
-            //exit;
+           
             
  
 	if(!$rows) {
@@ -196,7 +191,7 @@ function bj_total_activity_report_form_submit(&$form,&$form_state){
         $total_activity_completed=array();
         $res = db_query("SELECT t2.title, t1.speed, DATE_FORMAT(t1.date,'%e-%m-%Y, %h:%m:%s') as date FROM `bj_eyemovement_test` t1, node t2 WHERE t1.wl_id = t2.vid AND t1.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND stud_id ='".$user -> uid."'");
         
-       // echo "SELECT t2.title, t1.speed, DATE_FORMAT(t1.date,'%e-%m-%Y, %h:%m:%s') as date FROM `bj_eyemovement_test` t1, node t2 WHERE t1.wl_id = t2.vid AND t1.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']." ' AND stud_id= %d ",$user -> uid;
+       
        while($total_activity_completed['eye_movement'][]=db_fetch_array($res)){
             
         }
@@ -215,8 +210,7 @@ function bj_total_activity_report_form_submit(&$form,&$form_state){
        while($total_activity_completed['word_flash'][]=db_fetch_array($res1)){
             
         }
-   //print_r($total_activity_completed);
-   //exit;
+   
     $_SESSION['bj_general'] = $bj_user_general;
     $_SESSION['total_activity'] = $total_activity_completed;
     $form_state['redirect'] = 'admin/brainjogging/report/total_activity_completed_report/%';  

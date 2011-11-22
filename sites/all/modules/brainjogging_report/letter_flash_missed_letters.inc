@@ -42,14 +42,14 @@ function bj_lfmissed_report_form(){
    '#weight' => 0,
    '#title' => t('Select user'), 
    '#default_value' => $node->body,
-   '#options' => bj_get_user(),
+   '#options' => bj_lf_report_get_user(),
    
 
     );
     
   return $form;
 }
-function bj_get_user(){
+function bj_lf_report_get_user(){
   global $user;
  
     if(in_array('site administrator',$user->roles))
@@ -114,30 +114,29 @@ function bj_lf_report_list(){
     array('data' => t('Possition Left')),
     array('data' => t('Possition Left Center')),
     array('data' => t('Possition Right Center')),
-	  array('data' => t('Possition Right')),
+    array('data' => t('Possition Right')),
    
   );
   
 	
-		$rows[] = array($bj['general']['first_name'],$bj['general']['last_name'],$bj['general']['start_date'],$bj['general']['user_id'],$bj['general']['school_name'],$bj['general']['teacher_name'],$bj['general']['report_date']);
-                
-            foreach($lf_missed['letter_percentage']  as $lf)
-            {
-                $rows1[]=array($lf['ans'],round($lf['percent']).'%');
-              
+	    $rows[] = array($bj['general']['first_name'],$bj['general']['last_name'],$bj['general']['start_date'],$bj['general']['user_id'],$bj['general']['school_name'],$bj['general']['teacher_name'],$bj['general']['report_date']);
+            if(is_array($lf_missed['letter_percentage'])){   
+                foreach($lf_missed['letter_percentage']  as $lf)
+                {
+                    $rows1[]=array($lf['ans'],round($lf['percent']).'%');
+                  
+                }
             }
-           
-               
-               foreach($lf_missed['common_mistakes']  as $cm)
-            {
-                $rows2[]=array($cm['ques'],$cm['ans']);
-              
-            } 
-           
+           if(is_array($lf_missed['common_mistakes'])){
+                foreach($lf_missed['common_mistakes']  as $cm)
+                {
+                    $rows2[]=array($cm['ques'],$cm['ans']);
+                  
+                } 
+            }
                 $rows3[]=array(round($lf_missed['pos']['type2'][1]['percent'])."%",round($lf_missed['pos']['type2'][0]['percent'])."%");
-              
                 $rows4[]=array(round($lf_missed['pos']['type3'][2]['percent'])."%",round($lf_missed['pos']['type3'][1]['percent'])."%",round($lf_missed['pos']['type3'][0]['percent'])."%");
-                 $rows5[]=array(round($lf_missed['pos']['type4'][3]['percent'])."%",round($lf_missed['pos']['type4'][2]['percent'])."%",round($lf_missed['pos']['type4'][1]['percent'])."%",round($lf_missed['pos']['type4'][0]['percent'])."%");
+                $rows5[]=array(round($lf_missed['pos']['type4'][3]['percent'])."%",round($lf_missed['pos']['type4'][2]['percent'])."%",round($lf_missed['pos']['type4'][1]['percent'])."%",round($lf_missed['pos']['type4'][0]['percent'])."%");
  
 	if(!$rows) {
 	    $rows[] = array(
@@ -215,10 +214,7 @@ function bj_lfmissed_report_form_submit(&$form,&$form_state){
             
         }
         
-        //echo "SELECT t1.pos, count( t1.pos ) AS ansCount, count( t1.pos ) / (SELECT count( t1.pos ) FROM bj_letterflash_test_missed_letters t1, bj_letterflash_test t2 WHERE t2.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND t2.test_type = '3' AND t1.t_id = t2.t_id ) *100 AS percent
-        //FROM bj_letterflash_test_missed_letters t1, bj_letterflash_test t2  WHERE t2.test_type = '3'  AND t2.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' and t1.t_id=t2.t_id  AND t2.stud_id='".$user -> uid."' GROUP BY t1.pos  ORDER BY t1.pos DESC  ";
-        //exit;
-       $res2=db_query("SELECT t1.pos, count( t1.pos ) AS ansCount, count( t1.pos ) / (SELECT count( t1.pos ) FROM bj_letterflash_test_missed_letters t1, bj_letterflash_test t2 WHERE t2.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND t2.test_type = '2' AND t1.t_id = t2.t_id ) *100 AS percent
+        $res2=db_query("SELECT t1.pos, count( t1.pos ) AS ansCount, count( t1.pos ) / (SELECT count( t1.pos ) FROM bj_letterflash_test_missed_letters t1, bj_letterflash_test t2 WHERE t2.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND t2.test_type = '2' AND t1.t_id = t2.t_id ) *100 AS percent
         FROM bj_letterflash_test_missed_letters t1, bj_letterflash_test t2  WHERE t2.test_type = '2'  AND t2.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' and t1.t_id=t2.t_id  AND t2.stud_id='".$user -> uid."' GROUP BY t1.pos  ORDER BY t1.pos DESC   ");
         while($letter_flash_missed['pos']['type2'][]=db_fetch_array($res2)){
             
@@ -233,10 +229,6 @@ function bj_lfmissed_report_form_submit(&$form,&$form_state){
         while($letter_flash_missed['pos']['type4'][]=db_fetch_array($res4)){
          
         }
-        //echo "<pre>";
-        //print_r($letter_flash_missed);
-        //exit;
-       
          $_SESSION['bj_general'] = $bj_user_general;
          $_SESSION['lf_missed'] = $letter_flash_missed;
          $form_state['redirect'] = 'admin/brainjogging/report/letter_flash_missed_letters_report/%';  

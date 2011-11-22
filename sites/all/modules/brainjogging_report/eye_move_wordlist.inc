@@ -3,7 +3,7 @@ function eye_move_wordlist_report($args){
   
   switch($args){
     case 'list':
-      return bj_eyemove_wordlist_list();
+      return bj_eye_move_wordlist_list();
       break;
     case 'create':
       return  drupal_get_form('bj_eyemove_wordlist_report_form');
@@ -43,13 +43,13 @@ function bj_eyemove_wordlist_report_form(){
    '#weight' => 0,
    '#title' => t('Select user'), 
    '#default_value' => $node->body,
-   '#options' => bj_get_user(),
+   '#options' => bj_eye_move_wordlist_report_get_user(),
     );
     
   return $form;
 }
 
-function bj_get_user(){
+function bj_eye_move_wordlist_report_get_user(){
   global $user;
  
     if(in_array('site administrator',$user->roles))
@@ -72,7 +72,7 @@ function bj_get_user(){
   
   
 }
-function bj_eyemove_wordlist_list(){
+function bj_eye_move_wordlist_list(){
         
   $bj             = $_SESSION['bj_general'];
   $eye_move       = $_SESSION['eye_move'];
@@ -96,9 +96,11 @@ function bj_eyemove_wordlist_list(){
 
   $rows[] = array($bj['general']['first_name'],$bj['general']['last_name'],$bj['general']['start_date'],$bj['general']['user_id'],$bj['general']['school_name'],$bj['general']['teacher_name'],$bj['general']['report_date']);
   
-  foreach($eye_move['eye_movement']  as $key => $eye)
-  {
-    $rows1[]=array($eye['title'],$eye['speed'],$eye['date']);
+  if(is_array($eye_move['eye_movement'])){
+    foreach($eye_move['eye_movement']  as $key => $eye)
+    {
+      $rows1[]=array($eye['title'],$eye['speed'],$eye['date']);
+    }
   }
             
 

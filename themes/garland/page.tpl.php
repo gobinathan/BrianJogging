@@ -11,7 +11,7 @@
       <?php print phptemplate_get_ie_styles(); ?>
     <![endif]-->
   </head>
-  <body<?php print phptemplate_body_class($left, $right); ?>>
+  <body<?phpphp print phptemplate_body_class($left, $right); ?>>
 
 <!-- Layout -->
   <div id="header-region" class="clear-block"><?php print $header; ?></div>
