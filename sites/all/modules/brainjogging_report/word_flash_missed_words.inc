@@ -167,7 +167,7 @@ function bj_wfmissed_report_form_submit(&$form,&$form_state){
      
        $_SESSION['bj_general'] = $bj_user_general;
        $_SESSION['wf_missed'] = $word_flash_missed;
-       $form_state['redirect'] = 'admin/brainjogging/report/word_flash_missed_words_report/%'; 
+       $form_state['redirect'] = 'brainjogging/report/word_flash_missed_words_report'; 
      
    }
 

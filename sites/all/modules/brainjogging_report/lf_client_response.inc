@@ -43,6 +43,7 @@ function bj_lf_client_response_report_form(){
    '#weight' => 0,
    '#title' => t('Select user'), 
    '#default_value' => $node->body,
+   '#options'=>bj_lf_client_response_get_user(),
     ); 
   return $form;
 }
@@ -142,12 +143,12 @@ function bj_lf_client_response_report_form_submit(&$form,&$form_state){
       $bj_user_general['general']['date_to']         = $to_d;
       $lf_client_response =array();
       $res = db_query("select t2.t_id, group_concat(t1.ques separator ', ') as ques, group_concat(t1.ans separator ', ') as ans   from `bj_letterflash_test_missed_letters` t1, bj_letterflash_test t2   
-		       WHERE  t2.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND t2.stud_id = '".$user -> uid."' AND t1.t_id = t2.t_id group by t1.t_id,t1.sub_level ");
+		       WHERE  t2.date BETWEEN '".$bj_user_general['general']['date_from']."' AND '".$bj_user_general['general']['date_to']."' AND t2.stud_id = '".$user -> uid."' AND t1.t_id = t2.t_id group by t1.t_id,t1.sub_level  LIMIT 15");
       while($lf_client_response['lf'][]=db_fetch_array($res)){
        }
     $_SESSION['bj_general'] = $bj_user_general;
     $_SESSION['lf_client_response'] = $lf_client_response;
-    $form_state['redirect'] = 'admin/brainjogging/report/lf_client_response_report/%';  
+    $form_state['redirect'] = 'brainjogging/report/lf_client_response_report';  
 }
 
 }

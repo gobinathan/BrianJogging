@@ -213,7 +213,7 @@ function bj_total_activity_report_form_submit(&$form,&$form_state){
    
     $_SESSION['bj_general'] = $bj_user_general;
     $_SESSION['total_activity'] = $total_activity_completed;
-    $form_state['redirect'] = 'admin/brainjogging/report/total_activity_completed_report/%';  
+    $form_state['redirect'] = 'brainjogging/report/total_activity_completed_report';  
 }
 
 }
