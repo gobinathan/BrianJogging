@@ -545,12 +545,19 @@ BrianJogging.eyemomvent = (function(pub) {
         em_input=Drupal.settings.input1;
         
         $('#ses_wordfetch').click(function(){
+          var eye_list=$('#eye_wordlist').val();
+         
+          if(eye_list==0){
+            alert("select the word lilst");
+            return false;
+          }
+          else{
           bj_eye_move.wordlist = $('#eye_wordlist option:selected').val();
           $.getJSON('/brainjogging/ajax/eye_movement/' + bj_eye_move.wordlist, function(data) {
           em_input = data.words;
-          
-           
+         
         });
+          }
           pub.eye_word_next();  
       return true;
     });
@@ -650,7 +657,7 @@ BrianJogging.eyemomvent = (function(pub) {
           data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
           success: function(msg){}
           });
-            return false;
+            
            window.location='/brainjogging/test/dashboard/emset';
            return true;
           }
@@ -715,7 +722,7 @@ BrianJogging.eyemomvent = (function(pub) {
           data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
           success: function(msg){}
           });
-           return false;
+           
            window.location='/brainjogging/test/dashboard/emset';
            return true;
           }
@@ -724,7 +731,7 @@ BrianJogging.eyemomvent = (function(pub) {
           em_count=0;
           em_tip_top=20;
           
-          pub.em_speed();
+          pub.em_speed1();
           return false;
          
           
