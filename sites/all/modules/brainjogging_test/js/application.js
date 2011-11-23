@@ -654,12 +654,10 @@ BrianJogging.eyemomvent = (function(pub) {
           xmlhttp=$.ajax({
           type: 'POST',
           url: '/brainjogging/eye_movement/submit',
-          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
-          success: function(msg){}
+          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed
           });
-            
-           window.location='/brainjogging/test/dashboard/emset';
-           return true;
+          window.location='/brainjogging/test/dashboard/emset';
+           
           }
         
           em_loop++;
@@ -668,13 +666,8 @@ BrianJogging.eyemomvent = (function(pub) {
           
           pub.em_speed();
           return false;
-         
-          
-          
-         
-          
+       
         }
-        
       
        if(em_pos1 == 0){
         $("#em_letter").css("right", ''); 
@@ -684,15 +677,14 @@ BrianJogging.eyemomvent = (function(pub) {
         $("#em_letter").css("right", '10px')
        }
        $("#em_letter").css("top", em_tip_top);
-       
-     
        $.after(em_sp,function(){
         pub.em_flash();
         });
        em_count++;
        return true;
     }
-        pub.em_flash1 = function() {
+    
+  pub.em_flash1 = function() {
        $('#em_move').html(em_input[em_count]);
        var em_end =screen.width;
        em_pos1 += em_end-210;
@@ -711,20 +703,15 @@ BrianJogging.eyemomvent = (function(pub) {
           }
         }
        if(em_count==em_input.length) {
-       
-      
-     
          if(em_loop==1)
           {            
           xmlhttp=$.ajax({
           type: 'POST',
           url: '/brainjogging/eye_movement/submit',
-          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
-          success: function(msg){}
+          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed
           });
+          window.location='/brainjogging/test/dashboard/emset';
            
-           window.location='/brainjogging/test/dashboard/emset';
-           return true;
           }
         
           em_loop++;
@@ -733,14 +720,7 @@ BrianJogging.eyemomvent = (function(pub) {
           
           pub.em_speed1();
           return false;
-         
-          
-          
-         
-          
         }
-        
-      
        if(em_pos1 == 0){
         $("#em_letter").css("right", ''); 
         $("#em_letter").css("left", '10px');        
@@ -749,8 +729,6 @@ BrianJogging.eyemomvent = (function(pub) {
         $("#em_letter").css("right", '10px')
        }
        $("#em_letter").css("top", em_tip_top);
-       
-     
        $.after(em_sp,function(){
         pub.em_flash1();
         });
@@ -840,10 +818,7 @@ BrianJogging.eyemomvent = (function(pub) {
             $('#em_speed').css("display","none");
             $('#em_instuct').css("display","block");
              $('#em_move').css("display","none");
-            
-            
             em_sp = em_sp/em_spe;
-            
         }
        
     }
