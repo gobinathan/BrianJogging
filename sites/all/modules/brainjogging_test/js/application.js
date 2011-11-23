@@ -650,7 +650,7 @@ BrianJogging.eyemomvent = (function(pub) {
           data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
           success: function(msg){}
           });
-           
+            return false;
            window.location='/brainjogging/test/dashboard/emset';
            return true;
           }
@@ -715,7 +715,7 @@ BrianJogging.eyemomvent = (function(pub) {
           data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
           success: function(msg){}
           });
-           
+           return false;
            window.location='/brainjogging/test/dashboard/emset';
            return true;
           }
