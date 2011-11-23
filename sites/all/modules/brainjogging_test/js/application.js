@@ -536,6 +536,7 @@ BrianJogging.eyemomvent = (function(pub) {
         em_count=0;
         em_sp=3000;
         em_loop=1;
+        speed=0;
         res=new Array();
         bj_eye_move={};
         
@@ -646,10 +647,10 @@ BrianJogging.eyemomvent = (function(pub) {
           xmlhttp=$.ajax({
           type: 'POST',
           url: '/brainjogging/eye_movement/submit',
-          data: 'res='+$.toJSON(bj_eye_move),
+          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
           success: function(msg){}
           });
-           return false;
+           
            window.location='/brainjogging/test/dashboard/emset';
            return true;
           }
@@ -711,10 +712,10 @@ BrianJogging.eyemomvent = (function(pub) {
           xmlhttp=$.ajax({
           type: 'POST',
           url: '/brainjogging/eye_movement/submit',
-          data: 'res='+$.toJSON(bj_eye_move),
+          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
           success: function(msg){}
           });
-           return false;
+           
            window.location='/brainjogging/test/dashboard/emset';
            return true;
           }
@@ -808,6 +809,7 @@ BrianJogging.eyemomvent = (function(pub) {
          alert("Enter the speed");
         }
        else{
+        speed=em_spe;
             $('#em_speed').css("display","none");
             $('#em_instuct').css("display","block");
              $('#em_move').css("display","none");
@@ -827,6 +829,7 @@ BrianJogging.eyemomvent = (function(pub) {
          alert("Enter the speed");
         }
        else{
+        speed=em_spe;
             $('#em_speed').css("display","none");
             $('#em_instuct').css("display","block");
              $('#em_move').css("display","none");
