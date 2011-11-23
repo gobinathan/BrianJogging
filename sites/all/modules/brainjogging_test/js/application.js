@@ -654,9 +654,12 @@ BrianJogging.eyemomvent = (function(pub) {
           xmlhttp=$.ajax({
           type: 'POST',
           url: '/brainjogging/eye_movement/submit',
-          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed
+          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
+          success:function(){
+            window.location='/brainjogging/test/dashboard/emset';
+          }
           });
-          window.location='/brainjogging/test/dashboard/emset';
+          
            
           }
         
@@ -708,9 +711,12 @@ BrianJogging.eyemomvent = (function(pub) {
           xmlhttp=$.ajax({
           type: 'POST',
           url: '/brainjogging/eye_movement/submit',
-          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed
+          data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
+          success :function(){
+             window.location='/brainjogging/test/dashboard/emset';
+          }
           });
-          window.location='/brainjogging/test/dashboard/emset';
+         
            
           }
         
