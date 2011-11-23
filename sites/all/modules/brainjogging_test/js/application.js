@@ -789,7 +789,7 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#eyecount').text("Final");
         }
         $('#em_init').css("display",'none');
-       var em_spe=9;
+       var em_spe=1;
        if(em_spe.length==0) {
          alert("Enter the speed");
         }
