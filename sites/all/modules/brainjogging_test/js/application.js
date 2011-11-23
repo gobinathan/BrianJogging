@@ -649,7 +649,7 @@ BrianJogging.eyemomvent = (function(pub) {
           data: 'res='+$.toJSON(bj_eye_move),
           success: function(msg){}
           });
-           
+           return false;
            window.location='/brainjogging/test/dashboard/emset';
            return true;
           }
@@ -714,7 +714,7 @@ BrianJogging.eyemomvent = (function(pub) {
           data: 'res='+$.toJSON(bj_eye_move),
           success: function(msg){}
           });
-           
+           return false;
            window.location='/brainjogging/test/dashboard/emset';
            return true;
           }
@@ -803,7 +803,7 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#eyecount').text("Final");
         }
         $('#em_init').css("display",'none');
-       var em_spe=1;
+       var em_spe=9;
        if(em_spe.length==0) {
          alert("Enter the speed");
         }
