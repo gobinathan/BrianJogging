@@ -2,7 +2,9 @@
 function eye_movement_submit($args){
   global $user;
   
-  
+  $date = date('Y-m-d H:i:s');
+  $rese   = $_POST["res"];
+  $speed  = $_POST["speed"];
   
   $tid= db_result(db_query("SELECT tid  FROM {bj_user_teachers} WHERE uid = '%d'", $user -> uid));
   $teacher=user_load($tid);
@@ -10,10 +12,8 @@ function eye_movement_submit($args){
  
   
   
-  $date = date('Y-m-d H:i:s');
-  $rese   = $_POST["res"];
-  $speed  = $_POST["speed"];
-  //$rese='{"res":"4","res1":"5","res2":"9","speed":1}';
+  
+  
   
   $result = json_decode($rese);
   
