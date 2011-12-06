@@ -24,6 +24,8 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
        '#weight' => 1,
       '#required' => TRUE
     );
+      
+      
     $form['category_id'] = array(
       '#type' => 'select', 
       '#title' => t('Category'), 
@@ -39,6 +41,7 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
       '#default_value' => brainjogging_wordlist_get_update_disability($form['nid']['#value']),
       '#required' => TRUE,
       '#weight' => -4,
+      '#multiple' => true, 
       '#options' => brainjogging_wordlist_get_disability(),
       '#description' => t('select the disability level for this world list'),
     );
@@ -73,6 +76,7 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
       '#options' => array(0=>t('Basic'), 1=>t('Phrases')),
 
     );
+ 
  
   }
   if( $form_id == "word_list_category_node_form"){   
@@ -110,6 +114,7 @@ function brainjogging_wordlist_get_instruction($nid){
 }
 
 function brainjogging_wordlist_get_update_disability($nid){
+ 
   if($nid){
     return db_result(db_query("SELECT disability FROM {bj_wordlist_relativity} WHERE wl_id = %d",$nid));    
   }
@@ -165,15 +170,21 @@ function brainjogging_wordlist_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
     
     case 'insert':
       if($node->type == 'word_list'){
+        
+        $count_d =count($node->disability);
+        
+        for($i=1;$i<=$count_d;$i++)
+        {
         db_query("INSERT INTO {bj_wordlist_relativity} (c_id,wl_id,type,level,disability,age,instruction)
                  VALUES(%d, %d, %d, %d, %d, '%s', '%s')",
                  $node->category_id,
                  $node->nid,
                  $node->wordlist_type,
                  $node->wordlist_level,                 
-                 $node->disability,
+                 $node->disability[$i],
                  $node->age,
                  $node->instruction);
+        }
       }
       break;
     
