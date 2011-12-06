@@ -529,10 +529,18 @@ BrianJogging.eyemomvent = (function(pub) {
     pub.initialize = function(){        
         $('#header').hide();
         $('#admin-menu').hide();
-        $('#eye_moment').show();        
+        $('#eye_moment').show();
+         $('input[name="wf_settings_fsize"]').each(function(index) {
+      $(this).click(function() {
+        $('#wf_settings_font').css('font-size', $(this).val());
+         $('#em_letter').css('font-size', $(this).val());
+        
+      });
+    });
+        
         em_pos1 = 0;
-        em_max=300;
-        em_tip_top=20;
+        em_max=500;
+        em_tip_top=0;
         em_count=0;
         em_sp=3000;
         em_loop=1;
@@ -566,8 +574,8 @@ BrianJogging.eyemomvent = (function(pub) {
           window.location = "/brainjogging/test/dashboard/emset";
         });
          $('#ses_next').click(function(){
-         $('#ses_menu').slideUp("slow");
-         $('#ses_wordlist').css("display",'block');
+         $('#ses_menu').hide();
+         $('#ses_wordlist').slideDown('slow');
          
         });
         $('#speed').keypress(function(evt){
@@ -612,14 +620,15 @@ BrianJogging.eyemomvent = (function(pub) {
        if (em_pos1 > em_end) {
            em_pos1 = 0;
         }
-       if(em_count%2==0) { 
+      
+       
          if(em_tip_top<em_max) {
           em_tip_top+=50;
           }
           else{
           em_tip_top=20;
           }
-        }
+       
        if(em_count==em_input.length) {
        
        if(em_loop==1)
@@ -630,7 +639,7 @@ BrianJogging.eyemomvent = (function(pub) {
           em_input=Drupal.settings.input2;
           em_loop++;
           em_count=0;
-          em_tip_top=20;
+          em_tip_top=0;
           pub.em_count();
           return false;
            
@@ -643,7 +652,7 @@ BrianJogging.eyemomvent = (function(pub) {
          em_input=Drupal.settings.input3;
          em_loop++;
           em_count=0;
-          em_tip_top=20;
+          em_tip_top=0;
          pub.em_count();
          return false;
          
@@ -656,16 +665,17 @@ BrianJogging.eyemomvent = (function(pub) {
           url: '/brainjogging/eye_movement/submit',
           data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
           success:function(){
-            window.location='/brainjogging/test/dashboard/emset';
+          window.location='/brainjogging/test/dashboard/emset';
+          return true;
           }
           });
-          
+                  
            
           }
         
           em_loop++;
           em_count=0;
-          em_tip_top=20;
+          em_tip_top=0;
           
           pub.em_speed();
           return false;
@@ -674,10 +684,10 @@ BrianJogging.eyemomvent = (function(pub) {
       
        if(em_pos1 == 0){
         $("#em_letter").css("right", ''); 
-        $("#em_letter").css("left", '10px');        
+        $("#em_letter").css("left", '0px');        
        }else{
         $("#em_letter").css("left", ''); 
-        $("#em_letter").css("right", '10px')
+        $("#em_letter").css("right", '0px')
        }
        $("#em_letter").css("top", em_tip_top);
        $.after(em_sp,function(){
@@ -712,27 +722,27 @@ BrianJogging.eyemomvent = (function(pub) {
           type: 'POST',
           url: '/brainjogging/eye_movement/submit',
           data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
-          success :function(){
-             window.location='/brainjogging/test/dashboard/emset';
-          }
+          success :function(){         }
+          
           });
-         
-           
+          
+         window.location='/brainjogging/test/dashboard/emset';
+           return true;
           }
         
           em_loop++;
           em_count=0;
-          em_tip_top=20;
+          em_tip_top=0;
           
           pub.em_speed1();
           return false;
         }
        if(em_pos1 == 0){
         $("#em_letter").css("right", ''); 
-        $("#em_letter").css("left", '10px');        
+        $("#em_letter").css("left", '0px');        
        }else{
         $("#em_letter").css("left", ''); 
-        $("#em_letter").css("right", '10px')
+        $("#em_letter").css("right", '0px');
        }
        $("#em_letter").css("top", em_tip_top);
        $.after(em_sp,function(){
@@ -743,8 +753,8 @@ BrianJogging.eyemomvent = (function(pub) {
     }
     
     pub.em_next = function() {
-        $('#em_init').slideUp('slow');
-        $('#em_instuct').css("display","block");
+        $('#em_init').hide()
+        $('#em_instuct').slideDown('slow');
         $('#em_speed').show();
         $('#em_speed').css("position",'relative');
         $('#em_speed').css("width",500);
@@ -795,7 +805,7 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#eyecount').text("Final");
         }
         $('#em_init').css("display",'none');
-       var em_spe=1;
+       var em_spe=9;
        if(em_spe.length==0) {
          alert("Enter the speed");
         }
