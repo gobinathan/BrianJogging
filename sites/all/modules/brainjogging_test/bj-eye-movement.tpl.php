@@ -1,8 +1,8 @@
-<div id="container">
+<div id="container" >
    <?php if($_SESSION['brainjogging']['eye_test']!=true){ ?>
   
   <!-- Eye movement Start-->
-  <div id="eye_moment" style="width:100%; margin:10%  auto; position:relative;display:none">
+ 
     <div id="em_letter" style="position:absolute;">
       <span id="em_move"> </span>
     </div>
@@ -14,6 +14,13 @@
       You will now be directed to the Eye Movement activity.
       <br/><br/>
       <center>
+         <div>
+        <span>Font Size :</span>
+        <input type="radio" name="wf_settings_fsize" value="small">Small
+        <input type="radio" name="wf_settings_fsize" checked="checked" value="medium">Medium
+        <input type="radio" name="wf_settings_fsize" value="large">large
+        <div id="wf_settings_font">Font Size</div>
+      </div>
       <?php if(!brainjogging_is_student() || $_SESSION['brainjogging']['eye_test']==true){ ?>
       <input type="button" value="Skip Eye Movement" id="em_main">
       <input type="button" value="Next" id="em_next">
@@ -38,7 +45,7 @@
       Click "Next" button below to begin exercise.<br>
       <center> <input type="button" value="next" id="em_start"></center>
     </div>
-  </div>
+ 
   <?php }
   else{
   ?>
@@ -80,7 +87,16 @@
           }
         }
         ?>
-       </select><br><br><br>
+       </select>
+       
+         <div>
+        <span>Font Size :</span>
+        <input type="radio" name="wf_settings_fsize" value="small">Small
+        <input type="radio" name="wf_settings_fsize" checked="checked" value="medium">Medium
+        <input type="radio" name="wf_settings_fsize" value="large">large
+        <div id="wf_settings_font">Font Size</div>
+      </div><br><br><br>
+      
        <input type="button" value="next" id="ses_wordfetch"></center>
     </div>
  

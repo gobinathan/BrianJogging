@@ -187,3 +187,6 @@ a.delete {
     border:2px solid grey !important
     
 }
+.teaser-button {
+display:none;
+}

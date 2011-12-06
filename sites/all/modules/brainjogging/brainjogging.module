@@ -13,7 +13,7 @@ function brainjogging_menu() {
   );
   
    $items['admin/brainjogging/tests'] = array(
-    'title' => 'Run Tests',
+    'title' => 'Brain Jogging Exercises',
     'description' => '',
     'page callback' => 'bj_show_dashboard',
     'access callback' => 'user_is_logged_in',
@@ -55,7 +55,7 @@ function brainjogging_menu() {
   );
   
   $items['admin/brainjogging/node'] = array(
-    'title' => 'Question bank',
+    'title' => 'Manage Word Lists',
     'description' => "View, edit, and delete your site's content.",
     'page callback' => 'drupal_get_form',
     'page arguments' => array('node_admin_content'),
@@ -132,7 +132,7 @@ function brainjogging_menu() {
   //learning disablity
   
   $items['admin/brainjogging/learning_disability'] = array(
-    'title' => 'User Learing Disability',
+    'title' => 'Manage Disabilities',
     'description' => 'List, add, and edit user learning disability.',
     'page callback' => 'bj_learning_disability_admin',
     'page arguments' => array('list'),
@@ -168,7 +168,7 @@ function brainjogging_menu() {
   //school
   
   $items['admin/brainjogging/school'] = array(
-    'title' => 'School',
+    'title' => 'Manage Schools',
     'description' => 'List, add, and edit user school.',
     'page callback' => 'bj_school_admin',
     'page arguments' => array('list'),

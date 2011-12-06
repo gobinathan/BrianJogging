@@ -84,6 +84,7 @@ function brainjogging_test_dashboard(){
 
 function brainjogging_test_eye_movement(){
   global $user;
+  
   //after 3 eye test complete
   if($_SESSION['brainjogging']['eye_test']==true){
     $eye_test = array();
