@@ -1,6 +1,7 @@
 div {
   padding:5px;
 }
+
 #container {
   margin: 0 auto;
   padding:10px;
@@ -66,10 +67,14 @@ font-size: medium;
   width:60px;
 }
 
-#lf_cp,#result_container{
+#result_container{
   margin-left: auto;
   margin-right: auto;
   width: 35%;
+}
+
+#lf_cp{
+ margin:auto;
 }
 
 #lf_description{
@@ -82,7 +87,32 @@ font-size: medium;
   border:1px solid;
 }
 
-##result_container table{
+#letter_flash_div #letter_set,#letter_res{
+  background-color:#736f6e;
+  color:#fff;
+}
+
+#letter_flash_div #lf_description{
+  color:#736f6e;
+  border:1px solid;
+}
+
+#letter_flash_div #test_table{
+  color:#736f6e; 
+}
+
+#letter_flash_div{
+  width:600px;
+  color:#ffffff;
+  margin:auto;
+}
+
+#lf_test_container table tbody{
+  width:100%;
+  border:none;
+}
+
+#result_container table{
   width:100%;
   text-align:center;
   border:1px solid;

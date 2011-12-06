@@ -304,7 +304,7 @@ BrianJogging.letter_flash = (function(pub) {
     $('span[id^=test_char_span_]').hide();
     
     //make chat <td> beckground to yellow
-    $('#chars > td').css("background-color","yellow");
+    $('#chars > td').css("border-bottom","1px,solid");
     
     //first hide the inputs
     $('#inputs').hide();
@@ -319,7 +319,7 @@ BrianJogging.letter_flash = (function(pub) {
   //Start the test
   pub.showTest = function(){
     //apply white backgrounf while show the chars
-    $('#chars > td').css("background-color","white");
+    $('#chars > td').css("background-color","#FCFCFC");
     
     //show the char appering places to the user
     $('span[id^=test_char_span_]').show();
@@ -340,25 +340,28 @@ BrianJogging.letter_flash = (function(pub) {
     properties.ans_array = new Array();
     $('input[name^=test_input_]').each(function(){
       $(this).keyup(function(){
-        test_ans_lettes = new Array();
-        var str = $(this).attr('id');
-        
-        if($(this).attr('id') != 'test_input_'+ (properties.type - 1)){
-          //move the focus to the next textbox
-          $('#test_input_'+ ((Number(str.substr(str.length-1)) + 1))).focus();
+        if($(this).attr('value')){
+          test_ans_lettes = new Array();
+          var str = $(this).attr('id');
           
-          //add the ans char into the array
-          properties.ans_array.push($(this).val());
-          //Disable the current textbox
-          $(this).attr('disabled','disabled');
-        }
-        else{
-          //add the ans char into the array
-          properties.ans_array.push($(this).val());
-          //Disable the current textbox
-          $(this).attr('disabled','disabled');
-          
-          pub.computeResults();
+          if($(this).attr('id') != 'test_input_'+ (properties.type - 1)){
+            //move the focus to the next textbox
+            $('#test_input_'+ ((Number(str.substr(str.length-1)) + 1))).focus();
+            
+            //add the ans char into the array
+            properties.ans_array.push($(this).val());
+            
+            //Disable the current textbox
+            $(this).attr('disabled','disabled');
+          }
+          else{
+            //add the ans char into the array
+            properties.ans_array.push($(this).val());
+            //Disable the current textbox
+            $(this).attr('disabled','disabled');
+            
+            pub.computeResults();
+          }
         }
       });
     });
