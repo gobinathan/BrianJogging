@@ -49,7 +49,8 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
      
       $form['age'] = array(
       '#type' => 'select', 
-      '#title' => t('Age group'), 
+      '#title' => t('Age group'),
+      '#weight' => 1,
       '#default_value' => brainjogging_wordlist_get_age($form['nid']['#value']),
       '#options' => array(
         '5-10' => t('5-10'), 
@@ -74,9 +75,19 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
       '#weight' => -2,
       '#default_value' => isset($form['nid']['#value']) ? brainjogging_wordlist_get_level($form['nid']['#value']) : 0, 
       '#options' => array(0=>t('Basic'), 1=>t('Phrases')),
-
     );
- 
+      $form['csv_upload'] = array(      
+      '#type' => 'file',
+      '#title' => t('Choose a file'),
+      '#title_display' => 'invisible',
+      '#size' => 22,
+      '#weight' => 0,
+      '#description' => t('Import words from excel or csv file.'),
+    );
+   $form['body_field']['body']['#required'] = FALSE;
+   $form['#attributes'] = array('enctype' => 'multipart/form-data');
+   $form['#submit'] = array('brainjogging_wordlist_form_submit');
+   $form['#validate'] = array('brainjogging_wordlist_form_validate');
  
   }
   if( $form_id == "word_list_category_node_form"){   
@@ -84,12 +95,56 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
   }
   
   if( $form_id == "image_node_form"){
-    //alter fields
     unset($form['attachments']);
     unset($form['image']['rebuild_images']);
     
     $form['options']=array('#type' => 'value', '#value' => $form['options']['status']['#default_value'] = 1);
   }  
+}
+
+function brainjogging_wordlist_form_validate($form, &$form_state){
+   if(empty($_FILES['files']['name']['csv_upload']) && empty($form_state['values']['body'])){
+    form_set_error('body', t('Please choose a file or enter the words'));
+   }
+}
+
+function brainjogging_wordlist_form_submit($form, &$form_state){
+   $words_array = array();
+   if(!empty($_FILES['files']['name']['csv_upload'])){
+      $info = pathinfo($_FILES['files']['name']['csv_upload']);
+      if($info['extension'] == 'xls'){
+         // Process the Excel file
+         set_time_limit(0);
+         require_once 'Excel/reader.php';
+         $data = new Spreadsheet_Excel_Reader();
+         $data->read($_FILES['files']['tmp_name']['csv_upload']);
+         for ($i = 1; $i <= $data->sheets[0]['numRows']; $i++) {
+          $words_array[] = trim($data->sheets[0]['cells'][$i][1]);  
+         }
+      }elseif($info['extension'] == 'csv'){
+         // Process the CSV file
+         if (($handle = fopen($_FILES['files']['tmp_name']['csv_upload'], "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+               $words_array[] = trim($data[0]);
+            }
+         }
+      }
+   }
+   // Process the words
+   if(!empty($words_array)){
+      $values = $form_state['values'];
+      $form_state['values']['body'] = implode(PHP_EOL, array_slice($words_array, 0, 25));
+      $form_state['values']['title'] .= " - " . 1;
+      $title_index = 2;
+      for($i = 25; $i <= count($words_array)-1; $i += 25){
+         $node = (object) $values;
+         $node->body =  implode(PHP_EOL, array_slice($words_array, $i, 25));
+         $node->title .= " - " . $title_index;
+         $title_index++;
+         node_save($node);
+         drupal_set_message(sprintf("Wordlist %s has been created.",$node->title));
+      }
+   }
 }
 
 function brainjogging_wordlist_get_wl_categories(){
