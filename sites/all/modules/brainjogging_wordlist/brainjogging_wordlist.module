@@ -38,7 +38,7 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
      $form['disability'] = array(
       '#type' => 'select', 
       '#title' => t('Disability'), 
-      '#default_value' => brainjogging_wordlist_get_update_disability($form['nid']['#value']),
+      '#default_value' =>brainjogging_wordlist_node_get_disability($form['nid']['#value']),
       '#required' => TRUE,
       '#weight' => -4,
       '#multiple' => true, 
@@ -168,10 +168,14 @@ function brainjogging_wordlist_get_instruction($nid){
   }
 }
 
-function brainjogging_wordlist_get_update_disability($nid){
+function brainjogging_wordlist_node_get_disability($nid){
  
   if($nid){
-    return db_result(db_query("SELECT disability FROM {bj_wordlist_relativity} WHERE wl_id = %d",$nid));    
+  $res=db_query("SELECT d_id FROM {bj_wordlist_disability} WHERE wl_id = %d",$nid);
+    while($obj = db_fetch_object($res)){
+  $disabities[] = $obj->d_id;
+ }
+ return $disabities;
   }
 }
 function brainjogging_wordlist_get_age($nid){
@@ -224,36 +228,31 @@ function brainjogging_wordlist_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       break;
     
     case 'insert':
-      if($node->type == 'word_list'){
-        
-        $count_d =count($node->disability);
-        
-        for($i=1;$i<=$count_d;$i++)
-        {
-        db_query("INSERT INTO {bj_wordlist_relativity} (c_id,wl_id,type,level,disability,age,instruction)
-                 VALUES(%d, %d, %d, %d, %d, '%s', '%s')",
+      if($node->type == 'word_list'){    
+        db_query("INSERT INTO {bj_wordlist_relativity} (c_id,wl_id,type,level,age,instruction)
+                 VALUES(%d, %d, %d, %d, '%s', '%s')",
                  $node->category_id,
                  $node->nid,
                  $node->wordlist_type,
                  $node->wordlist_level,                 
-                 $node->disability[$i],
                  $node->age,
                  $node->instruction);
-        }
+        brainjogging_wordlist_update_disability($node->nid, $node->disability);
+        
       }
       break;
     
     case 'update':
       if($node->type == 'word_list'){
-      db_query("UPDATE {bj_wordlist_relativity} SET c_id = %d, type = %d, level = %d, disability = %d, age = '%s',
+      db_query("UPDATE {bj_wordlist_relativity} SET c_id = %d, type = %d, level = %d, age = '%s',
                instruction = '%s' WHERE  wl_id = %d",
                $node->category_id,
                $node->wordlist_type,
                $node->wordlist_level,
-               $node->disability,
                $node->age,
                $node->instruction,
                $node->nid);
+        brainjogging_wordlist_update_disability($node->nid, $node->disability);
       }
       break;
     
@@ -272,7 +271,16 @@ function brainjogging_wordlist_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         }
       }elseif($node->type == 'word_list'){
         db_query("DELETE FROM {bj_wordlist_relativity} WHERE wl_id = %d", $node->nid);
+        db_query("DELETE FROM {bj_wordlist_disability} WHERE wl_id = %d", $node->nid);
       }
       break;
   }  
+}
+
+function brainjogging_wordlist_update_disability($wid,array $disability){
+  db_query("DELETE FROM {bj_wordlist_disability} WHERE wl_id = %d", $wid);
+  foreach($disability as $dis){
+    $str.= sprintf("(%d,%d),", $wid, $dis);
+  }
+  db_query("INSERT INTO {bj_wordlist_disability} values %s", substr($str,0,-1));
 }
