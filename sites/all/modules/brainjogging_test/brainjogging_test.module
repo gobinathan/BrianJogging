@@ -91,6 +91,16 @@ function brainjogging_test_eye_movement(){
     while($obj = db_fetch_object($eye_test_res)){
     $eye_test[$obj->nid]['title'] = ucfirst($obj->title);
     }
+    if(!brainjogging_is_student())
+  {
+    $res_cat = db_query("SELECT n.nid, n.title ,bwr.c_id FROM {node} n
+                      LEFT JOIN {node_revisions} nr ON n.nid = nr.nid
+                      LEFT JOIN {bj_wordlist_relativity} bwr ON n.nid = bwr.wl_id
+                      WHERE n.vid = nr.vid
+                      AND n.type = 'word_list'
+                      AND status = 1
+                      AND bwr.type = 1");
+  }else{
      $res_cat = db_query("SELECT n.nid, n.title ,bwr.c_id FROM {node} n
                       LEFT JOIN {node_revisions} nr ON n.nid = nr.nid
                       LEFT JOIN {bj_wordlist_relativity} bwr ON n.nid = bwr.wl_id
@@ -100,6 +110,7 @@ function brainjogging_test_eye_movement(){
                       AND status = 1
                       AND dis.d_id =%d
                       AND bwr.type = 1",$user->learning_disability);
+  }
   
   while($row = db_fetch_object($res_cat)){
    $eye_test[$row->c_id]['childs'][] = $row; 
@@ -111,6 +122,18 @@ function brainjogging_test_eye_movement(){
  else{
   //eye movement input  warm uparray generation
 
+  if(!brainjogging_is_student())
+  {
+     $res=db_query("SELECT n.nid, nr.body FROM {node} n
+                      LEFT JOIN {node_revisions} nr ON n.nid = nr.nid
+                      LEFT JOIN {bj_wordlist_relativity} bwr ON n.nid = bwr.wl_id
+                      WHERE n.vid = nr.vid
+                      AND n.type = 'word_list'
+                      AND status = 1
+                     AND bwr.level = 1");
+  }
+  else{
+ 
   $res=db_query("SELECT n.nid, nr.body FROM {node} n
                       LEFT JOIN {node_revisions} nr ON n.nid = nr.nid
                       LEFT JOIN {bj_wordlist_relativity} bwr ON n.nid = bwr.wl_id
@@ -120,6 +143,7 @@ function brainjogging_test_eye_movement(){
                       AND status = 1
                       AND dis.d_id =%d
                       AND bwr.level = 1",$user->learning_disability);
+  }
   $eyeinput=array();
   $i=0;
   while($row=mysql_fetch_array($res)){
