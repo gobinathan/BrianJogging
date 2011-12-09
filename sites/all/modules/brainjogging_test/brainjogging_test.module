@@ -150,14 +150,16 @@ function brainjogging_test_eye_movement(){
     $eyeinput['nid'][]  = $row['nid'];
     $eyeinput['input'][$i++] = $row['body'];
   }
-  $rand_keys = array_rand($eyeinput['input'], 3);
-  $eye_move  = explode("\n", $eyeinput['input'][$rand_keys[0]]);
-  $eye_move1 = explode("\n", $eyeinput['input'][$rand_keys[1]]);
-  $eye_move2 = explode("\n", $eyeinput['input'][$rand_keys[2]]);
-  drupal_add_js(array('input1'=> $eye_move, 'wordlist_id'  => $eyeinput['nid'][$rand_keys[0]]),'setting');
-  drupal_add_js(array('input2'=> $eye_move1,'wordlist_id1' => $eyeinput['nid'][$rand_keys[1]]),'setting');
-  drupal_add_js(array('input3'=> $eye_move2,'wordlist_id2' => $eyeinput['nid'][$rand_keys[2]]),'setting');
- //eye movement input  warm uparray generation end 
+  if(is_array($eyeinput['input'])){
+    $rand_keys = array_rand($eyeinput['input'], 3);
+    $eye_move  = explode("\n", $eyeinput['input'][$rand_keys[0]]);
+    $eye_move1 = explode("\n", $eyeinput['input'][$rand_keys[1]]);
+    $eye_move2 = explode("\n", $eyeinput['input'][$rand_keys[2]]);
+    drupal_add_js(array('input1'=> $eye_move, 'wordlist_id'  => $eyeinput['nid'][$rand_keys[0]]),'setting');
+    drupal_add_js(array('input2'=> $eye_move1,'wordlist_id1' => $eyeinput['nid'][$rand_keys[1]]),'setting');
+    drupal_add_js(array('input3'=> $eye_move2,'wordlist_id2' => $eyeinput['nid'][$rand_keys[2]]),'setting');
+    //eye movement input  warm uparray generation end 
+  }
  }
   bj_add_js();
   drupal_add_js("
