@@ -1,4 +1,71 @@
 <?php
+/**
+ * Implements hook_menu().
+ */
+function brainjogging_wordlist_menu() {
+ $items['admin/brainjogging_wordlist/spellcheck'] = array(
+   'page callback' => 'brainjogging_wordlist_spellcheck',
+   'access callback' => 'user_is_logged_in',
+  );
+   return $items;
+}
+
+function brainjogging_wordlist_spellcheck(){
+global $editablePersonalDict; //bool to set editability of personal dictionary
+global $pspell_link; //the global link to the pspell module
+require_once ("spell_checker/spell_checker.php");
+  // User-configurable list of allowed HTML tags and attributes.
+$allowed_html = '<strong><small><p><br><a><b><u><i><img><code><ul><ol><li>';
+
+// Set the max number of suggestions to return at a time.
+define('MAX_SUGGESTIONS', 10);
+
+// Set whether to use a personal dictionary.
+$usePersonalDict = false;
+
+//Set whether users are allowed to update the personal dictionary.
+$editablePersonalDict = false;
+
+// If using a personal dictionary, set the path to it.  Default is in the
+// personal_dictionary subdirectory of the location of spell_checker.php.
+$path_to_personal_dictionary = dirname(__FILE__) . "/personal_dictionary/personal_dictionary.txt";
+
+//If pspell doesn't exist, then include the pspell wrapper for aspell.
+if (!function_exists('pspell_suggest')) {
+	// Set the path to aspell if you need to use it.
+	define('ASPELL_BIN','/usr/bin/aspell');
+	require_once ("spell_checker/pspell_comp.php");
+}
+
+// Create and configure a link to the pspell module.
+$pspell_config = pspell_config_create("en");
+pspell_config_mode($pspell_config, PSPELL_FAST);
+
+if ($usePersonalDict) {
+	pspell_config_personal($pspell_config, $path_to_personal_dictionary);
+}
+
+$pspell_link = pspell_new_config($pspell_config);
+
+switch($_POST['action']) {
+	case 'spellcheck':
+		spellCheck($_POST['spellText']);
+		break;
+
+	case 'suggest':
+		getSuggestions($_POST['suggestionText']);
+		break;
+
+	case 'addToDictionary':
+	    addWord($_POST['wordToAdd']);
+        break;
+
+	default:
+		echo "Unknown Action";
+		break;
+}
+exit;
+}
 
 function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
    global $user;
@@ -84,7 +151,11 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
       '#weight' => 0,
       '#description' => t('Import words from excel or csv file.'),
     );
+   drupal_add_js(drupal_get_path('module', 'brainjogging_wordlist') .'/spell_checker/mootools-1.2-core-yc.js', 'module');
+   drupal_add_js(drupal_get_path('module', 'brainjogging_wordlist') .'/spell_checker/spell_checker.js', 'module');
+   drupal_add_css(drupal_get_path('module', 'brainjogging_wordlist') .'/spell_checker/styles.css');
    $form['body_field']['body']['#required'] = FALSE;
+   $form['body_field']['body']['#attributes'] = array('class' => 'spell_check');
    $form['#attributes'] = array('enctype' => 'multipart/form-data');
    $form['#submit'] = array('brainjogging_wordlist_form_submit');
    $form['#validate'] = array('brainjogging_wordlist_form_validate');
