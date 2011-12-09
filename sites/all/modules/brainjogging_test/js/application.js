@@ -665,12 +665,11 @@ BrianJogging.eyemomvent = (function(pub) {
           url: '/brainjogging/eye_movement/submit',
           data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
           success:function(){
-          window.location='/brainjogging/test/dashboard/emset';
-          return true;
-          }
+                    }
           });
                   
-           
+          window.location='/brainjogging/test/dashboard/emset';
+          return true;
           }
         
           em_loop++;
