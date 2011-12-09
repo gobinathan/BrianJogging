@@ -18,6 +18,10 @@ window.addEvent('domready', function() {
                                     url : "/admin/brainjogging_wordlist/spellcheck"
                                 }
                         )
+    $('node-form').addEvent('submit', function(){
+        sc_spellCheckers.resumeAll();
+        return true;
+    });
 });
 
 var SpellChecker = new Class({
