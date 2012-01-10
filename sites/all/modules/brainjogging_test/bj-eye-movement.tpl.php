@@ -16,9 +16,9 @@
       <center>
          <div>
         <span>Font Size :</span>
-        <input type="radio" name="wf_settings_fsize" value="small">Small
-        <input type="radio" name="wf_settings_fsize" checked="checked" value="medium">Medium
-        <input type="radio" name="wf_settings_fsize" value="large">large
+        <input type="radio" name="wf_settings_fsize" value="17px">Small
+        <input type="radio" name="wf_settings_fsize" checked="checked" value="20px">Medium
+        <input type="radio" name="wf_settings_fsize" value="23px">Large
         <div id="wf_settings_font">Font Size</div>
       </div>
       <?php if(!brainjogging_is_student() || $_SESSION['brainjogging']['eye_test']==true){ ?>
