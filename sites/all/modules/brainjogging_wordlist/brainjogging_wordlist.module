@@ -1,7 +1,76 @@
 <?php
+/**
+ * Implements hook_menu().
+ */
+function brainjogging_wordlist_menu() {
+ $items['admin/brainjogging_wordlist/spellcheck'] = array(
+   'page callback' => 'brainjogging_wordlist_spellcheck',
+   'access callback' => 'user_is_logged_in',
+  );
+   return $items;
+}
+
+function brainjogging_wordlist_spellcheck(){
+global $editablePersonalDict; //bool to set editability of personal dictionary
+global $pspell_link; //the global link to the pspell module
+require_once ("spell_checker/spell_checker.php");
+  // User-configurable list of allowed HTML tags and attributes.
+$allowed_html = '<strong><small><p><br><a><b><u><i><img><code><ul><ol><li>';
+
+// Set the max number of suggestions to return at a time.
+define('MAX_SUGGESTIONS', 10);
+
+// Set whether to use a personal dictionary.
+$usePersonalDict = false;
+
+//Set whether users are allowed to update the personal dictionary.
+$editablePersonalDict = false;
+
+// If using a personal dictionary, set the path to it.  Default is in the
+// personal_dictionary subdirectory of the location of spell_checker.php.
+$path_to_personal_dictionary = dirname(__FILE__) . "/personal_dictionary/personal_dictionary.txt";
+
+//If pspell doesn't exist, then include the pspell wrapper for aspell.
+if (!function_exists('pspell_suggest')) {
+	// Set the path to aspell if you need to use it.
+	define('ASPELL_BIN','/usr/bin/aspell');
+	require_once ("spell_checker/pspell_comp.php");
+}
+
+// Create and configure a link to the pspell module.
+$pspell_config = pspell_config_create("en");
+pspell_config_mode($pspell_config, PSPELL_FAST);
+
+if ($usePersonalDict) {
+	pspell_config_personal($pspell_config, $path_to_personal_dictionary);
+}
+
+$pspell_link = pspell_new_config($pspell_config);
+
+switch($_POST['action']) {
+	case 'spellcheck':
+		spellCheck($_POST['spellText']);
+		break;
+
+	case 'suggest':
+		getSuggestions($_POST['suggestionText']);
+		break;
+
+	case 'addToDictionary':
+	    addWord($_POST['wordToAdd']);
+        break;
+
+	default:
+		echo "Unknown Action";
+		break;
+}
+exit;
+}
 
 function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
    global $user;
+   
+  
    if( $form_id == "word_list_node_form" || $form_id == "word_list_category_node_form" || $form_id == "image_node_form" ){
     // Remove and alter fields
     $form['options']['#collapsible'] = FALSE;
@@ -15,6 +84,12 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
           $form['revision_information']
          );
     }
+    if($form_id == "image_node_form"){
+      //echo "<pre>";
+      //print_r($form);
+      //exit;
+        unset($form['body_field']['body'],$form['body_field']['teaser_include']);
+      }
    if( $form_id == "word_list_node_form"){
       // Add category filed
       $form['instruction'] = array(
@@ -38,7 +113,7 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
      $form['disability'] = array(
       '#type' => 'select', 
       '#title' => t('Disability'), 
-      '#default_value' => brainjogging_wordlist_get_update_disability($form['nid']['#value']),
+      '#default_value' =>brainjogging_wordlist_node_get_disability($form['nid']['#value']),
       '#required' => TRUE,
       '#weight' => -4,
       '#multiple' => true, 
@@ -49,7 +124,8 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
      
       $form['age'] = array(
       '#type' => 'select', 
-      '#title' => t('Age group'), 
+      '#title' => t('Age group'),
+      '#weight' => 1,
       '#default_value' => brainjogging_wordlist_get_age($form['nid']['#value']),
       '#options' => array(
         '5-10' => t('5-10'), 
@@ -74,9 +150,23 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
       '#weight' => -2,
       '#default_value' => isset($form['nid']['#value']) ? brainjogging_wordlist_get_level($form['nid']['#value']) : 0, 
       '#options' => array(0=>t('Basic'), 1=>t('Phrases')),
-
     );
- 
+      $form['csv_upload'] = array(      
+      '#type' => 'file',
+      '#title' => t('Choose a file'),
+      '#title_display' => 'invisible',
+      '#size' => 22,
+      '#weight' => 0,
+      '#description' => t('Import words from excel or csv file.'),
+    );
+   drupal_add_js(drupal_get_path('module', 'brainjogging_wordlist') .'/spell_checker/mootools-1.2-core-yc.js', 'module');
+   drupal_add_js(drupal_get_path('module', 'brainjogging_wordlist') .'/spell_checker/spell_checker.js', 'module');
+   drupal_add_css(drupal_get_path('module', 'brainjogging_wordlist') .'/spell_checker/styles.css');
+   $form['body_field']['body']['#required'] = FALSE;
+   $form['body_field']['body']['#attributes'] = array('class' => 'spell_check');
+   $form['#attributes'] = array('enctype' => 'multipart/form-data');
+   $form['#submit'] = array('brainjogging_wordlist_form_submit');
+   $form['#validate'] = array('brainjogging_wordlist_form_validate');
  
   }
   if( $form_id == "word_list_category_node_form"){   
@@ -84,12 +174,56 @@ function brainjogging_wordlist_form_alter(&$form, &$form_state, $form_id) {
   }
   
   if( $form_id == "image_node_form"){
-    //alter fields
     unset($form['attachments']);
     unset($form['image']['rebuild_images']);
     
     $form['options']=array('#type' => 'value', '#value' => $form['options']['status']['#default_value'] = 1);
   }  
+}
+
+function brainjogging_wordlist_form_validate($form, &$form_state){
+   if(empty($_FILES['files']['name']['csv_upload']) && empty($form_state['values']['body'])){
+    form_set_error('body', t('Please choose a file or enter the words'));
+   }
+}
+
+function brainjogging_wordlist_form_submit($form, &$form_state){
+   $words_array = array();
+   if(!empty($_FILES['files']['name']['csv_upload'])){
+      $info = pathinfo($_FILES['files']['name']['csv_upload']);
+      if($info['extension'] == 'xls'){
+         // Process the Excel file
+         set_time_limit(0);
+         require_once 'Excel/reader.php';
+         $data = new Spreadsheet_Excel_Reader();
+         $data->read($_FILES['files']['tmp_name']['csv_upload']);
+         for ($i = 1; $i <= $data->sheets[0]['numRows']; $i++) {
+          $words_array[] = trim($data->sheets[0]['cells'][$i][1]);  
+         }
+      }elseif($info['extension'] == 'csv'){
+         // Process the CSV file
+         if (($handle = fopen($_FILES['files']['tmp_name']['csv_upload'], "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+               $words_array[] = trim($data[0]);
+            }
+         }
+      }
+   }
+   // Process the words
+   if(!empty($words_array)){
+      $values = $form_state['values'];
+      $form_state['values']['body'] = implode(PHP_EOL, array_slice($words_array, 0, 25));
+      $form_state['values']['title'] .= " - " . 1;
+      $title_index = 2;
+      for($i = 25; $i <= count($words_array)-1; $i += 25){
+         $node = (object) $values;
+         $node->body =  implode(PHP_EOL, array_slice($words_array, $i, 25));
+         $node->title .= " - " . $title_index;
+         $title_index++;
+         node_save($node);
+         drupal_set_message(sprintf("Wordlist %s has been created.",$node->title));
+      }
+   }
 }
 
 function brainjogging_wordlist_get_wl_categories(){
@@ -113,10 +247,14 @@ function brainjogging_wordlist_get_instruction($nid){
   }
 }
 
-function brainjogging_wordlist_get_update_disability($nid){
+function brainjogging_wordlist_node_get_disability($nid){
  
   if($nid){
-    return db_result(db_query("SELECT disability FROM {bj_wordlist_relativity} WHERE wl_id = %d",$nid));    
+  $res=db_query("SELECT d_id FROM {bj_wordlist_disability} WHERE wl_id = %d",$nid);
+    while($obj = db_fetch_object($res)){
+  $disabities[] = $obj->d_id;
+ }
+ return $disabities;
   }
 }
 function brainjogging_wordlist_get_age($nid){
@@ -169,36 +307,31 @@ function brainjogging_wordlist_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       break;
     
     case 'insert':
-      if($node->type == 'word_list'){
-        
-        $count_d =count($node->disability);
-        
-        for($i=1;$i<=$count_d;$i++)
-        {
-        db_query("INSERT INTO {bj_wordlist_relativity} (c_id,wl_id,type,level,disability,age,instruction)
-                 VALUES(%d, %d, %d, %d, %d, '%s', '%s')",
+      if($node->type == 'word_list'){    
+        db_query("INSERT INTO {bj_wordlist_relativity} (c_id,wl_id,type,level,age,instruction)
+                 VALUES(%d, %d, %d, %d, '%s', '%s')",
                  $node->category_id,
                  $node->nid,
                  $node->wordlist_type,
                  $node->wordlist_level,                 
-                 $node->disability[$i],
                  $node->age,
                  $node->instruction);
-        }
+        brainjogging_wordlist_update_disability($node->nid, $node->disability);
+        
       }
       break;
     
     case 'update':
       if($node->type == 'word_list'){
-      db_query("UPDATE {bj_wordlist_relativity} SET c_id = %d, type = %d, level = %d, disability = %d, age = '%s',
+      db_query("UPDATE {bj_wordlist_relativity} SET c_id = %d, type = %d, level = %d, age = '%s',
                instruction = '%s' WHERE  wl_id = %d",
                $node->category_id,
                $node->wordlist_type,
                $node->wordlist_level,
-               $node->disability,
                $node->age,
                $node->instruction,
                $node->nid);
+        brainjogging_wordlist_update_disability($node->nid, $node->disability);
       }
       break;
     
@@ -217,7 +350,16 @@ function brainjogging_wordlist_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         }
       }elseif($node->type == 'word_list'){
         db_query("DELETE FROM {bj_wordlist_relativity} WHERE wl_id = %d", $node->nid);
+        db_query("DELETE FROM {bj_wordlist_disability} WHERE wl_id = %d", $node->nid);
       }
       break;
   }  
+}
+
+function brainjogging_wordlist_update_disability($wid,array $disability){
+  db_query("DELETE FROM {bj_wordlist_disability} WHERE wl_id = %d", $wid);
+  foreach($disability as $dis){
+    $str.= sprintf("(%d,%d),", $wid, $dis);
+  }
+  db_query("INSERT INTO {bj_wordlist_disability} values %s", substr($str,0,-1));
 }

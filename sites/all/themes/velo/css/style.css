@@ -170,7 +170,15 @@ a.delete {
     color:#ffffff;
 }
 
-#em_init ,#em_instuct,#ses_menu,#ses_wordlist{
+#letter_flash_div #lf_description{
+    color:#736f6e;
+    border:1px solid;
+}
+#letter_flash_div #test_table{
+    color:#736f6e;
+    
+}
+#em_init ,#em_instuct,#ses_menu,#ses_wordlist,#ses_image{
     background-color:#736f6e;
        color:#fff;
     

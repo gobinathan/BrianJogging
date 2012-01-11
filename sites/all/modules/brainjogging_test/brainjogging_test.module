@@ -7,7 +7,7 @@ function brainjogging_test_theme(){
       'template'  => 'bj-dashboard',
     ),
     'bj_eye_movement' => array(
-      'arguments' => array('vars' => NULL),
+      'arguments' => array('vars' => NULL,'im'=> NULL),
       'template'  => 'bj-eye-movement',
     ),
     'bj_letter_flash' => array(
@@ -51,6 +51,11 @@ function brainjogging_test_menu(){
     'page arguments' => array(3),
     'access callback' => 'user_is_logged_in',
   );
+  $items['brainjogging/ajax/eye_movement/image/%'] = array(
+    'page callback' => 'brainjogging_test_get_eyemove_imagelist',
+    'page arguments' => array(3),
+    'access callback' => 'user_is_logged_in',
+  );
   
   $items['brainjogging/letterflash/submit'] = array(
     'page callback' => 'letter_flash_submit',
@@ -72,7 +77,6 @@ function brainjogging_test_menu(){
   );
   return $items;
 }
-
 function brainjogging_test_dashboard(){
   if(arg(3)=='emset'){
     $_SESSION['brainjogging']['eye_test']=true;
@@ -92,17 +96,42 @@ function brainjogging_test_eye_movement(){
     while($obj = db_fetch_object($eye_test_res)){
     $eye_test[$obj->nid]['title'] = ucfirst($obj->title);
     }
-     $res_cat = db_query("SELECT n.nid, n.title ,bwr.c_id FROM {node} n
+    if(!brainjogging_is_student())
+  {
+    $res_cat = db_query("SELECT n.nid, n.title ,bwr.c_id FROM {node} n
                       LEFT JOIN {node_revisions} nr ON n.nid = nr.nid
                       LEFT JOIN {bj_wordlist_relativity} bwr ON n.nid = bwr.wl_id
                       WHERE n.vid = nr.vid
                       AND n.type = 'word_list'
                       AND status = 1
                       AND bwr.type = 1");
+  }else{
+     $res_cat = db_query("SELECT n.nid, n.title ,bwr.c_id FROM {node} n
+                      LEFT JOIN {node_revisions} nr ON n.nid = nr.nid
+                      LEFT JOIN {bj_wordlist_relativity} bwr ON n.nid = bwr.wl_id
+                      LEFT JOIN {bj_wordlist_disability} dis ON n.nid = dis.wl_id
+                      WHERE n.vid = nr.vid
+                      AND n.type = 'word_list'
+                      AND status = 1
+                      AND dis.d_id =%d
+                      AND bwr.type = 1",$user->learning_disability);
+  }
   
   while($row = db_fetch_object($res_cat)){
-   $eye_test[$row->c_id]['childs'][] = $row; 
+   $eye_test[$row->c_id]['childs'][] = $row;
+   
   }
+   
+    //for image movement
+    $res_im= db_query("SELECT t1.title,t3.filepath from node t1, image t2, files t3 where t1.nid = t2.nid and
+                      t2.image_size = 'thumbnail' and t2.fid = t3.fid");
+    $im_move = array();
+    while($row_im = db_fetch_array($res_im)){
+   $im_move[$row->c_id]['childs'][] = $row_im;
+  
+  }
+
+    //image movement end
     
     
   }
@@ -110,27 +139,44 @@ function brainjogging_test_eye_movement(){
  else{
   //eye movement input  warm uparray generation
 
-  $res=db_query("SELECT n.nid, nr.body FROM {node} n
+  if(!brainjogging_is_student())
+  {
+     $res=db_query("SELECT n.nid, nr.body FROM {node} n
                       LEFT JOIN {node_revisions} nr ON n.nid = nr.nid
                       LEFT JOIN {bj_wordlist_relativity} bwr ON n.nid = bwr.wl_id
                       WHERE n.vid = nr.vid
                       AND n.type = 'word_list'
                       AND status = 1
-                      AND bwr.level = 1");
+                     AND bwr.level = 1");
+  }
+  else{
+ 
+  $res=db_query("SELECT n.nid, nr.body FROM {node} n
+                      LEFT JOIN {node_revisions} nr ON n.nid = nr.nid
+                      LEFT JOIN {bj_wordlist_relativity} bwr ON n.nid = bwr.wl_id
+                      LEFT JOIN {bj_wordlist_disability} dis ON n.nid = dis.wl_id
+                      WHERE n.vid = nr.vid
+                      AND n.type = 'word_list'
+                      AND status = 1
+                      AND dis.d_id =%d
+                      AND bwr.level = 1",$user->learning_disability);
+  }
   $eyeinput=array();
   $i=0;
   while($row=mysql_fetch_array($res)){
     $eyeinput['nid'][]  = $row['nid'];
     $eyeinput['input'][$i++] = $row['body'];
   }
-  $rand_keys = array_rand($eyeinput['input'], 3);
-  $eye_move  = explode("\n", $eyeinput['input'][$rand_keys[0]]);
-  $eye_move1 = explode("\n", $eyeinput['input'][$rand_keys[1]]);
-  $eye_move2 = explode("\n", $eyeinput['input'][$rand_keys[2]]);
-  drupal_add_js(array('input1'=> $eye_move, 'wordlist_id'  => $eyeinput['nid'][$rand_keys[0]]),'setting');
-  drupal_add_js(array('input2'=> $eye_move1,'wordlist_id1' => $eyeinput['nid'][$rand_keys[1]]),'setting');
-  drupal_add_js(array('input3'=> $eye_move2,'wordlist_id2' => $eyeinput['nid'][$rand_keys[2]]),'setting');
- //eye movement input  warm uparray generation end 
+  if(is_array($eyeinput['input'])){
+    $rand_keys = array_rand($eyeinput['input'], 3);
+    $eye_move  = explode("\n", $eyeinput['input'][$rand_keys[0]]);
+    $eye_move1 = explode("\n", $eyeinput['input'][$rand_keys[1]]);
+    $eye_move2 = explode("\n", $eyeinput['input'][$rand_keys[2]]);
+    drupal_add_js(array('input1'=> $eye_move, 'wordlist_id'  => $eyeinput['nid'][$rand_keys[0]]),'setting');
+    drupal_add_js(array('input2'=> $eye_move1,'wordlist_id1' => $eyeinput['nid'][$rand_keys[1]]),'setting');
+    drupal_add_js(array('input3'=> $eye_move2,'wordlist_id2' => $eyeinput['nid'][$rand_keys[2]]),'setting');
+    //eye movement input  warm uparray generation end 
+  }
  }
   bj_add_js();
   drupal_add_js("
@@ -139,7 +185,7 @@ function brainjogging_test_eye_movement(){
     });",
     'inline'
   );
-  return theme('bj_eye_movement', $eye_test);
+  return theme('bj_eye_movement', $eye_test, $im_move);
   //return theme('bj_eye_movement',array('path'=>drupal_get_path('module', 'brainjogging_test')));
 }
 
@@ -233,6 +279,7 @@ function brainjogging_test_get_eyemove_wordlist($nid){
     $lines = array_filter(preg_split( '/\r\n|\r|\n/', $node->body ));
     $instruction = db_result(db_query("SELECT instruction FROM {bj_wordlist_relativity} WHERE wl_id = '%d'", $nid));    
     drupal_json(array('words' => $lines, 'instruction' => $instruction));
+    
     exit;
   }
 }

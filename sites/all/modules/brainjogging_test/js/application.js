@@ -18,7 +18,7 @@ BrianJogging.wordflash = (function(pub) {
     $('#wf_settings').slideDown('slow');
     $('input[name="wf_settings_fsize"]').each(function(index) {
       $(this).click(function() {
-        $('#wf_settings_font').css('font-size', $(this).val());
+      $('#wf_settings_font').css('font-size', $(this).val());
       });
     });
     $('#wf_settings_ok').click(function(){      
@@ -555,29 +555,33 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#header').hide();
         $('#admin-menu').hide();
         $('#eye_moment').show();
-         $('input[name="wf_settings_fsize"]').each(function(index) {
+        $('input[name="wf_settings_fsize"]').each(function(index) {
       $(this).click(function() {
         $('#wf_settings_font').css('font-size', $(this).val());
-         $('#em_letter').css('font-size', $(this).val());
+        $('#em_letter').css('font-size', $(this).val());
         
       });
     });
         
-        em_pos1 = 0;
-        em_max=500;
-        em_tip_top=0;
-        em_count=0;
-        em_sp=3000;
-        em_loop=1;
-        speed=0;
-        res=new Array();
-        bj_eye_move={};
+        em_pos1     = 0;
+        em_max      = 500;
+        em_tip_top  = 0;
+        em_count    = 0;
+        em_sp       = 3000;
+        em_loop     = 1;
+        speed       = 0;
+        res         = new Array();
+        em_option   = 0;
+        em_imcount  = 0;
+        bj_eye_move = {};
         
         
         bj_eye_move['res']=Drupal.settings.wordlist_id;
         em_input=Drupal.settings.input1;
         
         $('#ses_wordfetch').click(function(){
+          
+          
           var eye_list=$('#eye_wordlist').val();
          
           if(eye_list==0){
@@ -593,14 +597,45 @@ BrianJogging.eyemomvent = (function(pub) {
           }
           pub.eye_word_next();  
       return true;
+         
+          
+    });
+         $('#ses_imagefetch').click(function(){
+          
+          
+          var eye_imlist=$('#eye_imagelist').val();
+         
+          if(eye_imlist==0){
+            alert("select the Image lilst");
+            return false;
+          }
+          else{
+          bj_eye_move.wordlist = $('#eye_imagelist option:selected').val();
+         
+          
+        
+              em_input = "<img src='/"+bj_eye_move.wordlist+"'/>";
+              em_option = 1;
+          }
+          pub.eye_word_next();  
+      return true;
+         
+          
     });
         $('#em_main').click(function(){
           $('#eye_moment').hide();
           window.location = "/brainjogging/test/dashboard/emset";
         });
          $('#ses_next').click(function(){
+        var eye_option = $('#option_eyemove').val();
+        
          $('#ses_menu').hide();
+        if(eye_option == 'Eye Movement Activity'){
          $('#ses_wordlist').slideDown('slow');
+        }
+        else{
+          $('#ses_image').slideDown('slow');
+        }
          
         });
         $('#speed').keypress(function(evt){
@@ -636,6 +671,7 @@ BrianJogging.eyemomvent = (function(pub) {
     }
     
     pub.em_flash = function() {
+      
        $('#em_move').html(em_input[em_count]);
        var em_end =screen.width;
        em_pos1 += em_end-210;
@@ -690,12 +726,11 @@ BrianJogging.eyemomvent = (function(pub) {
           url: '/brainjogging/eye_movement/submit',
           data: 'res='+$.toJSON(bj_eye_move)+'&speed='+speed,
           success:function(){
-          window.location='/brainjogging/test/dashboard/emset';
-          return true;
-          }
+                    }
           });
                   
-           
+          window.location='/brainjogging/test/dashboard/emset';
+          return true;
           }
         
           em_loop++;
@@ -723,7 +758,13 @@ BrianJogging.eyemomvent = (function(pub) {
     }
     
   pub.em_flash1 = function() {
+    if(em_option == 0){
        $('#em_move').html(em_input[em_count]);
+    }
+    else{
+      em_max = 400;
+       $('#em_move').html(em_input);
+    }
        var em_end =screen.width;
        em_pos1 += em_end-210;
        if (em_count==0) {
@@ -740,7 +781,7 @@ BrianJogging.eyemomvent = (function(pub) {
           em_tip_top=20;
           }
         }
-       if(em_count==em_input.length) {
+       if(em_count==em_input.length || em_imcount == 25) {
          if(em_loop==1)
           {            
           xmlhttp=$.ajax({
@@ -774,6 +815,9 @@ BrianJogging.eyemomvent = (function(pub) {
         pub.em_flash1();
         });
        em_count++;
+       if(em_option == 1){
+       em_imcount++;
+       }
        return true;
     }
     
@@ -797,6 +841,7 @@ BrianJogging.eyemomvent = (function(pub) {
       pub.eye_word_next = function() {
         
         $('#ses_wordlist').css("display",'none');
+         $('#ses_image').css("display",'none');
         $('#em_speed').css("display","block");
         $('#em_speed').show();
         $('#em_speed').css("position",'relative');
@@ -830,7 +875,7 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#eyecount').text("Final");
         }
         $('#em_init').css("display",'none');
-       var em_spe=1;
+       var em_spe=9;
        if(em_spe.length==0) {
          alert("Enter the speed");
         }
