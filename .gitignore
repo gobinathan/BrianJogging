@@ -1,0 +1,13 @@
+# From Subversion #
+##################
+*.kpf
+*.cache
+.project
+.buildpath
+.settings
+_files*
+.svn
+*.swp
+/sites/*/settings.php
+/cache/*
+/sites/default/files/images/*
