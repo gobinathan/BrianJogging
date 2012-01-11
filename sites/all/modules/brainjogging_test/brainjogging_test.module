@@ -7,7 +7,7 @@ function brainjogging_test_theme(){
       'template'  => 'bj-dashboard',
     ),
     'bj_eye_movement' => array(
-      'arguments' => array('vars' => NULL),
+      'arguments' => array('vars' => NULL,'im'=> NULL),
       'template'  => 'bj-eye-movement',
     ),
     'bj_letter_flash' => array(
@@ -48,6 +48,11 @@ function brainjogging_test_menu(){
   );
   $items['brainjogging/ajax/eye_movement/%'] = array(
     'page callback' => 'brainjogging_test_get_eyemove_wordlist',
+    'page arguments' => array(3),
+    'access callback' => 'user_is_logged_in',
+  );
+  $items['brainjogging/ajax/eye_movement/image/%'] = array(
+    'page callback' => 'brainjogging_test_get_eyemove_imagelist',
     'page arguments' => array(3),
     'access callback' => 'user_is_logged_in',
   );
@@ -113,8 +118,20 @@ function brainjogging_test_eye_movement(){
   }
   
   while($row = db_fetch_object($res_cat)){
-   $eye_test[$row->c_id]['childs'][] = $row; 
+   $eye_test[$row->c_id]['childs'][] = $row;
+   
   }
+   
+    //for image movement
+    $res_im= db_query("SELECT t1.title,t3.filepath from node t1, image t2, files t3 where t1.nid = t2.nid and
+                      t2.image_size = 'thumbnail' and t2.fid = t3.fid");
+    $im_move = array();
+    while($row_im = db_fetch_array($res_im)){
+   $im_move[$row->c_id]['childs'][] = $row_im;
+  
+  }
+
+    //image movement end
     
     
   }
@@ -166,7 +183,7 @@ function brainjogging_test_eye_movement(){
     });",
     'inline'
   );
-  return theme('bj_eye_movement', $eye_test);
+  return theme('bj_eye_movement', $eye_test, $im_move);
   //return theme('bj_eye_movement',array('path'=>drupal_get_path('module', 'brainjogging_test')));
 }
 
@@ -260,6 +277,7 @@ function brainjogging_test_get_eyemove_wordlist($nid){
     $lines = array_filter(preg_split( '/\r\n|\r|\n/', $node->body ));
     $instruction = db_result(db_query("SELECT instruction FROM {bj_wordlist_relativity} WHERE wl_id = '%d'", $nid));    
     drupal_json(array('words' => $lines, 'instruction' => $instruction));
+    
     exit;
   }
 }
