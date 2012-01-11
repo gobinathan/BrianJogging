@@ -45,6 +45,11 @@
             <input type="radio" name="f_size" value="large" checked="checked" /> Large<br>
           </td>
         </tr>
+        <tr style="height:120px">
+          <td colspan="2" align="center">
+            <div id="sample_letter" style="text-align:center" ></div> 
+          </td>
+        </tr>
         <tr>
           <td colspan="2" align="center">
             <input type="button" id="start_lf" name="start_lf" value="Click to start test" /> 

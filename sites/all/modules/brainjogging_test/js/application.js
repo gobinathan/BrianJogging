@@ -214,7 +214,26 @@ BrianJogging.letter_flash = (function(pub) {
     this.showSetting()
   };
   
+  showSamples = function(){
+    var a = "";
+    sample_letters = ['a','b','c','d'];
+    
+    for(i=0; i < properties.type; i++){
+      a += "<span class='"+properties.f_size+"'> ";
+      if(properties.Case == 0){
+        a += sample_letters[i];
+      }
+      else{
+        a += sample_letters[i].toUpperCase();
+      }
+      a += " </span>";
+    }
+    
+    $('#sample_letter').html(a);
+  }
+  
   pub.showSetting = function(){
+    showSamples();
     if(!init.change_case){
       $('#lf_case').remove();
     }
@@ -247,16 +266,19 @@ BrianJogging.letter_flash = (function(pub) {
     //add event to the case selection radios
     $("input:radio[name=case]").click(function() {
       properties.Case = $(this).val();
+      showSamples();
     });
     
     //add event to the test type selection radios
     $("input:radio[name=type]").click(function() {
       properties.type = $(this).val();
+      showSamples();
     });
     
     //add event to the font size selection radios
     $("input:radio[name=f_size]").click(function() {
       properties.f_size = $(this).val();
+      showSamples();
     });
     
     //add events to the control panel div button
