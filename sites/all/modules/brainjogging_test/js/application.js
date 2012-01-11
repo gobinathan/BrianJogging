@@ -18,7 +18,7 @@ BrianJogging.wordflash = (function(pub) {
     $('#wf_settings').slideDown('slow');
     $('input[name="wf_settings_fsize"]').each(function(index) {
       $(this).click(function() {
-        $('#wf_settings_font').css('font-size', $(this).val());
+      $('#wf_settings_font').css('font-size', $(this).val());
       });
     });
     $('#wf_settings_ok').click(function(){      
@@ -530,10 +530,10 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#header').hide();
         $('#admin-menu').hide();
         $('#eye_moment').show();
-         $('input[name="wf_settings_fsize"]').each(function(index) {
+        $('input[name="wf_settings_fsize"]').each(function(index) {
       $(this).click(function() {
         $('#wf_settings_font').css('font-size', $(this).val());
-         $('#em_letter').css('font-size', $(this).val());
+        $('#em_letter').css('font-size', $(this).val());
         
       });
     });
