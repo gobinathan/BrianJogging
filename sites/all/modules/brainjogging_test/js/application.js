@@ -555,10 +555,7 @@ BrianJogging.eyemomvent = (function(pub) {
         em_input=Drupal.settings.input1;
         
         $('#ses_wordfetch').click(function(){
-          
-          
           var eye_list=$('#eye_wordlist').val();
-         
           if(eye_list==0){
             alert("select the word lilst");
             return false;
@@ -567,35 +564,25 @@ BrianJogging.eyemomvent = (function(pub) {
           bj_eye_move.wordlist = $('#eye_wordlist option:selected').val();
           $.getJSON('/brainjogging/ajax/eye_movement/' + bj_eye_move.wordlist, function(data) {
           em_input = data.words;
-         
-        });
+          });
           }
           pub.eye_word_next();  
       return true;
-         
-          
-    });
+     });
          $('#ses_imagefetch').click(function(){
-          
-          
           var eye_imlist=$('#eye_imagelist').val();
-         
-          if(eye_imlist==0){
+          var eye_imtitle = $("#eye_imagelist option:selected").text();
+         if(eye_imlist==0){
             alert("select the Image lilst");
             return false;
           }
           else{
           bj_eye_move.wordlist = $('#eye_imagelist option:selected').val();
-         
-          
-        
-              em_input = "<img src='/"+bj_eye_move.wordlist+"'/>";
+              em_input = "<img src='/"+bj_eye_move.wordlist+"'/><br>&nbsp;"+eye_imtitle;
               em_option = 1;
           }
           pub.eye_word_next();  
       return true;
-         
-          
     });
         $('#em_main').click(function(){
           $('#eye_moment').hide();
@@ -850,7 +837,7 @@ BrianJogging.eyemomvent = (function(pub) {
         $('#eyecount').text("Final");
         }
         $('#em_init').css("display",'none');
-       var em_spe=9;
+       var em_spe=1;
        if(em_spe.length==0) {
          alert("Enter the speed");
         }
