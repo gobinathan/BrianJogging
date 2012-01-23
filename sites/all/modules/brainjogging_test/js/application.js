@@ -350,7 +350,7 @@ BrianJogging.letter_flash = (function(pub) {
     var context = {
       letter : letters
     };
-    
+    //console.log(context);
     //create the html for the test
     var source   = $("#template-letter-flash").html();
     var template = Handlebars.compile(source);
@@ -455,11 +455,11 @@ BrianJogging.letter_flash = (function(pub) {
         if(i==3){var pos=2}
         }
         
-       properties.lev[properties.r_size]  = properties.level;
-       properties.subl[properties.r_size] = properties.sublevel;
-       properties.qn[properties.r_size]   = properties.qn_array[i];
-       properties.ans[properties.r_size]  = properties.ans_array[i];
-       properties.pos[properties.r_size]  = pos;
+        properties.lev[properties.r_size]  = properties.level;
+        properties.subl[properties.r_size] = properties.sublevel;
+        properties.qn[properties.r_size]   = properties.qn_array[i];
+        properties.ans[properties.r_size]  = properties.ans_array[i];
+        properties.pos[properties.r_size]  = pos;
       
         properties.r_size++;
         level_flag = false;
@@ -477,14 +477,38 @@ BrianJogging.letter_flash = (function(pub) {
           alert("Congrats... Achived the highest Level");
         }
         else{
-          alert("Congrats.. You successfully complete Level - " + properties.level);
+          //alert("Congrats.. You successfully complete Level - " + properties.level);
+          
+          var context = {
+            leval:properties.level,
+            qn:properties.qn_array,
+            ans:properties.ans_array
+          };
+          
+          //create the html for the wrong result
+          var source   = $("#template-letter-flash-result-success").html();
+          var template = Handlebars.compile(source);
+          var html = template(context);
+          
+          $('#chars').remove();
+          $('#inputs').remove();
+          $('#lf_test_container > table > tbody > tr:first > td').attr('colspan',properties.type);
+          $('#lf_test_container > table > tbody > tr:first > td').text("Error");
+          $('#lf_test_container > table > tbody > tr:first').after(html);
+          $('.chars > span').attr('class',properties.f_size);
+          $('#res_error > td').attr('colspan',properties.type);
         }
-        properties.sublevel = 1;                         //initiate the sublevel to 1 for the next level test
-        properties.time = properties.time - 250;         //Decrease the time level 250 ms for the next level test
-        properties.correct_attempts++;                   //Increase the correct attempts
-        properties.level++;                              //Increase the level of the exam
-        properties.bj_lf_test[properties.level] = {};    //Declare object for the next level
-        pub.launchLetterFlash();                           //Start the next level exam
+        $.after(3, "second", function() {
+          $('#res_error').remove();
+          $('#input_chars').remove();
+          $('#ans_chars').remove();
+          properties.sublevel = 1;                         //initiate the sublevel to 1 for the next level test
+          properties.time = properties.time - 250;         //Decrease the time level 250 ms for the next level test
+          properties.correct_attempts++;                   //Increase the correct attempts
+          properties.level++;                              //Increase the level of the exam
+          properties.bj_lf_test[properties.level] = {};    //Declare object for the next level
+          pub.launchLetterFlash();                           //Start the next level exam
+        });
       }
     }
     else{ //if the answer is not correct
@@ -495,28 +519,31 @@ BrianJogging.letter_flash = (function(pub) {
       else{
         //alert("InCorrect.... Try again");
         var context = {
-          size:properties.f_size,
           qn:properties.qn_array,
           ans:properties.ans_array
         };
-        console.log(context.size);
-        //create the html for the test
-        var source   = $("#template-letter-flash-result").html();
+        
+        //create the html for the wrong result
+        var source   = $("#template-letter-flash-result-failure").html();
         var template = Handlebars.compile(source);
         var html = template(context);
+        
         $('#chars').remove();
         $('#inputs').remove();
         $('#lf_test_container > table > tbody > tr:first > td').attr('colspan',properties.type);
         $('#lf_test_container > table > tbody > tr:first > td').text("Error");
         $('#lf_test_container > table > tbody > tr:first').after(html);
+        $('.chars > span').attr('class',properties.f_size);
+        $('#res_error > td').attr('colspan',properties.qn_array.length);
         
-        $.after(1, "second", function() {
-          /*$('#input_chars').remove();
+        $.after(3, "second", function() {
+          $('#res_error').remove();
+          $('#input_chars').remove();
           $('#ans_chars').remove();
           properties.wrong_attempts++;                                       //increase the wrong attempts
           properties.sublevel++;                                             //increase the sublevel
           properties.bj_lf_test[properties.level][properties.sublevel] = {}; //Declare object for the empty level
-          pub.launchLetterFlash(); */                                            //Start the new test
+          pub.launchLetterFlash();                                            //Start the new test
         });
       }
     }
@@ -561,8 +588,9 @@ BrianJogging.letter_flash = (function(pub) {
           });
           
     $('#lf_rl').click(function(){
-      init.repet_same_session = true;
-      pub.initialize(init);
+      //init.repet_same_session = true;
+      //pub.initialize(init);
+      window.location = "/brainjogging/test/letter_flash";
     });
     
     $('#lf_mm').click(function(){

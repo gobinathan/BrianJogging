@@ -133,7 +133,26 @@
   </tr>
 </script>
 
-<script id="template-letter-flash-result" type="text/x-handlebars-template">
+<script id="template-letter-flash-result-failure" type="text/x-handlebars-template">
+  <tr id="res_error" align="center"><td>Answer Wrong!!</td></td>
+  <tr id="input_chars">
+    {{#each qn}}
+    <td align="center">
+      <div class="chars"><span class="{{size}}">{{this}}</span></div>
+    </td>
+    {{/each}}
+  </tr>
+  <tr id="ans_chars">
+    {{#each ans}}
+    <td align="center">
+      <div class="chars"><span class="{{size}}">{{this}}</span></div>
+    </td>
+    {{/each}}
+  </tr>
+</script>
+
+<script id="template-letter-flash-result-success" type="text/x-handlebars-template">
+  <tr id="res_error" align="center"><td>Rite Answer.. You have successfully completed {{leval}}</td></td>
   <tr id="input_chars">
     {{#each qn}}
     <td align="center">
