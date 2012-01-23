@@ -64,7 +64,6 @@ font-size: medium;
 
 #lf_test_main_container #lf_begin{
   margin:0 auto;
-  width:60px;
 }
 
 #result_container{
@@ -103,11 +102,15 @@ font-size: medium;
 
 #letter_flash_div{
   width:600px;
-  color:#ffffff;
   margin:auto;
 }
 
 #lf_test_container table tbody{
+  width:100%;
+  border:none;
+}
+
+#lf_begin table tbody{
   width:100%;
   border:none;
 }
@@ -129,7 +132,8 @@ p{
 
 .chars{
   height:100px;
-  width:100px; 
+  width:100px;
+  vertical-align: bottom;
 }
 
 .chars span{

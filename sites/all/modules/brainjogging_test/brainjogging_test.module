@@ -193,12 +193,12 @@ function brainjogging_test_letter_flash(){
   global $user;
   bj_add_js();
   if(brainjogging_is_student()){
-  $lf_two_highgrade   =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='2' and stud_id='".$user -> uid."'"));
-  $lf_three_highgrade =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='3' and stud_id='".$user -> uid."'"));
-  $lf_four_highgrade =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='4'  and stud_id='".$user -> uid."'"));
-  drupal_add_js(array('lf_two'=> $lf_two_highgrade),'setting');
-  drupal_add_js(array('lf_three'=> $lf_three_highgrade),'setting');
-  drupal_add_js(array('lf_four'=> $lf_four_highgrade),'setting');
+    $lf_two_highgrade   =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='2' and stud_id='".$user -> uid."'"));
+    $lf_three_highgrade =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='3' and stud_id='".$user -> uid."'"));
+    $lf_four_highgrade =db_result(db_query("SELECT MAX(percentage) high_grade FROM bj_letterflash_test where  test_type='4'  and stud_id='".$user -> uid."'"));
+    drupal_add_js(array('lf_two'=> $lf_two_highgrade),'setting');
+    drupal_add_js(array('lf_three'=> $lf_three_highgrade),'setting');
+    drupal_add_js(array('lf_four'=> $lf_four_highgrade),'setting');
   }
   
   drupal_add_js("

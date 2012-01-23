@@ -68,11 +68,11 @@
     
     <!-- Letter Flash Control Panel -->
     <div id="lf_test_main_container">
-      <div id="lf_begin">
-        <input type="button" id="lf_begin_test_btn" name="lf_begin_test_btn" value="Click to begin test" /> 
-      </div>
       <div id="lf_test_container">
-        
+        <table id="test_table" align="center">
+          <tr><td align="center" id="head">Camp Acadamia's Letter Flash</td></tr>
+          <tr><td id="but" align="center"><input type="button" id="lf_begin_test_btn" name="lf_begin_test_btn" value="Next" /> </td></tr>
+        </table>
       </div>
     </div>
   </div>
@@ -106,28 +106,58 @@
       </tr>
     </table>
   </div>
+  <div id="lf_result">
+    <table id="test_table_result" align="center">
+      <tr><td align="center" id="head">Error</td></tr>
+    </table>
+  </div>
   <div id="congrats" style="display:none;width:400px; margin:0 auto">
     <img src="/<?php echo $vars['path']; ?>/img/gold.gif">
   </div>
   <!-- Letter flash ends -->
 </div>
- <script id="template-letter-flash" type="text/x-handlebars-template">
-  <table id="test_table" align="center" width="40%">
-    <tr id="chars">
-      {{#each letter}}
-      <td align="center">
-        <div class="chars" id="test_char_{{id}}"><span id="test_char_span_{{id}}" class="{{size}}">{{charecter}}</span></div>
-      </td>
-      {{/each}}
-    </tr>
-    <tr id="inputs">
-      {{#each letter}}
-      <td align="center">
-        <div id="test_text_{{id}}" class="chars"><input type="text" name="test_input_{{id}}" id="test_input_{{id}}" size="5" maxlength="1" tabindex="{{tabindex}}"></div>
-      </td>
-      {{/each}}
-    </tr>
-  </table>
+<script id="template-letter-flash" type="text/x-handlebars-template">
+  <tr id="chars">
+    {{#each letter}}
+    <td align="center">
+      <div class="chars" id="test_char_{{id}}" style="border-bottom:1px solid"><span id="test_char_span_{{id}}" class="{{size}}">{{charecter}}</span></div>
+    </td>
+    {{/each}}
+  </tr>
+  <tr id="inputs">
+    {{#each letter}}
+    <td align="center">
+      <div id="test_text_{{id}}" class="chars"><input type="text" name="test_input_{{id}}" id="test_input_{{id}}" size="5" maxlength="1" tabindex="{{tabindex}}"></div>
+    </td>
+    {{/each}}
+  </tr>
+</script>
+
+<script id="template-letter-flash-result" type="text/x-handlebars-template">
+  <tr id="input_chars">
+    {{#each qn}}
+    <td align="center">
+      <div class="chars"><span class="{{size}}">{{this}}</span></div>
+    </td>
+    {{/each}}
+  </tr>
+  <tr id="ans_chars">
+    {{#each ans}}
+    <td align="center">
+      <div class="chars"><span class="{{size}}">{{this}}</span></div>
+    </td>
+    {{/each}}
+  </tr>
+</script>
+
+<script id="template-letter-flash-start" type="text/x-handlebars-template">
+  <tr>
+    {{#each letter}}
+    <td align="center">
+      <div class="chars" style="border-bottom:1px solid"><span class="{{size}}">{{charecter}}</span></div>
+    </td>
+    {{/each}}
+  </tr>
 </script>
 
 
