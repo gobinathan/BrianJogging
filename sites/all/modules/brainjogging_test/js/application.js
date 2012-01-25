@@ -186,7 +186,7 @@ BrianJogging.wordflash = (function(pub) {
 BrianJogging.letter_flash = (function(pub) {
   pub.init = {};
   pub.initialize = function(args){
-    console.log(args);
+   // console.log(args);
     pub.init = args;
     properties = {
       letter_bank : new Array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'),
@@ -506,6 +506,8 @@ BrianJogging.letter_flash = (function(pub) {
           properties.time = properties.time - 250;         //Decrease the time level 250 ms for the next level test
           properties.correct_attempts++;                   //Increase the correct attempts
           properties.level++;                              //Increase the level of the exam
+          
+         
           properties.bj_lf_test[properties.level] = {};    //Declare object for the next level
           pub.launchLetterFlash();                           //Start the next level exam
         });
@@ -535,6 +537,7 @@ BrianJogging.letter_flash = (function(pub) {
         $('#lf_test_container > table > tbody > tr:first').after(html);
         $('.chars > span').attr('class',properties.f_size);
         $('#res_error > td').attr('colspan',properties.qn_array.length);
+        $('#res_error > td > #lf_level').text(properties.level);
         
         $.after(3, "second", function() {
           $('#res_error').remove();
