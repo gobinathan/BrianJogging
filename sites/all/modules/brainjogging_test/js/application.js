@@ -186,6 +186,7 @@ BrianJogging.wordflash = (function(pub) {
 BrianJogging.letter_flash = (function(pub) {
   pub.init = {};
   pub.initialize = function(args){
+   // console.log(args);
     pub.init = args;
     properties = {
       letter_bank : new Array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'),
@@ -210,11 +211,44 @@ BrianJogging.letter_flash = (function(pub) {
       r_size    :1,
       bj_lf_test : {},
       ttype  :0
-    },
-    this.showSetting()
+    };
+    //alert(init.repet_same_session);
+    //if(init.repet_same_session == true){
+    //  $('#lf_description').hide();    //hide the description div
+    //  $('#lf_test_main_container').hide();           //hide the test div
+    //  $('#lf_begin').hide();          //Hide the begun button container
+    //  $('#lf_test_container').hide();  //hide the test(chat table) div
+    //  $('#lf_cp').show();             //hide the control panel div
+    //  $('#result_container').hide();            //hide the result_container div
+    //  $('#lf_rll_span').hide();   //Initially hide the result table repeat from the same level
+    //  $('#lf_test_main_container').show();
+    //  this.launchLetterFlash();
+    //}
+    //else{
+      this.showSetting();
+    //}
   };
   
+  showSamples = function(){
+    var a = "";
+    sample_letters = ['a','b','c','d'];
+    
+    for(i=0; i < properties.type; i++){
+      a += "<span class='"+properties.f_size+"'> ";
+      if(properties.Case == 0){
+        a += sample_letters[i];
+      }
+      else{
+        a += sample_letters[i].toUpperCase();
+      }
+      a += " </span>";
+    }
+    
+    $('#sample_letter').html(a);
+  }
+  
   pub.showSetting = function(){
+    showSamples();
     if(!init.change_case){
       $('#lf_case').remove();
     }
@@ -222,22 +256,41 @@ BrianJogging.letter_flash = (function(pub) {
     $('#lf_description').hide();    //hide the description div
     $('#lf_test_main_container').hide();           //hide the test div
     $('#lf_begin').hide();          //Hide the begun button container
-    $('lf_test_container').hide();  //hide the test(chat table) div
+    $('#lf_test_container').hide();  //hide the test(chat table) div
     $('#lf_cp').show();             //hide the control panel div
     $('#result_container').hide();            //hide the result_container div
-    $('lf_rll_span').hide;   //Initially hide the result table repeat from the same level
+    $('#lf_rll_span').hide();   //Initially hide the result table repeat from the same level
+    $('#lf_result').hide();   //Initially hide the result table repeat from the same level
     
     //add event to description div button
     $('#desc').click(function(){
       $('#lf_description').hide(); //hide the description div
       $('#lf_test_main_container').show();        //Show the main test div
-      $('#lf_begin').show();       //Show the start to begin button
+      
+      lets = new Array();
+      for(i=0; i < properties.type; i++){
+        lets[i] = {charecter:" "};
+      }
+      
+      var context = {
+        letter : lets,
+        colspan : properties.type
+      };
+      
+      //create the html for the test
+      var source   = $("#template-letter-flash-start").html();
+      var template = Handlebars.compile(source);
+      var html = template(context);
+      
+      $('#lf_test_container > table > tbody > tr:first').after(html);
+      $('#lf_test_container > table > tbody > tr:first > td').attr('colspan',properties.type);
+      $('#lf_test_container > table > tbody > tr:last > td').attr('colspan',properties.type);
+      $('#lf_test_container').show();       //Show the start to begin button
     });
     
     //add event to the begin test button
     $('#lf_begin_test_btn').click(function(){
-      $('#lf_begin').hide();         //hide begun test div
-      $('lf_test_container').show(); //show test div
+      $('#lf_test_container > table > tbody > tr:eq(1)').remove(); //show test div
       pub.launchLetterFlash();         //start the test
     });
     
@@ -247,16 +300,19 @@ BrianJogging.letter_flash = (function(pub) {
     //add event to the case selection radios
     $("input:radio[name=case]").click(function() {
       properties.Case = $(this).val();
+      showSamples();
     });
     
     //add event to the test type selection radios
     $("input:radio[name=type]").click(function() {
       properties.type = $(this).val();
+      showSamples();
     });
     
     //add event to the font size selection radios
     $("input:radio[name=f_size]").click(function() {
       properties.f_size = $(this).val();
+      showSamples();
     });
     
     //add events to the control panel div button
@@ -276,8 +332,9 @@ BrianJogging.letter_flash = (function(pub) {
     
     //remove the previos test if there.
     //Technically remove the previous
-    //test table element
-    $('#test_table').remove();
+    //test tr's for chars and inputs element
+    $('#chars').remove();
+    $('#inputs').remove();
     
     //Prepare the charecters to be shown for test
     properties.qn_array = new Array();
@@ -289,37 +346,41 @@ BrianJogging.letter_flash = (function(pub) {
         properties.qn_array.push(l);
       }
     }
+    
     var context = {
       letter : letters
     };
-    
+    //console.log(context);
     //create the html for the test
     var source   = $("#template-letter-flash").html();
     var template = Handlebars.compile(source);
     var html = template(context);
     
-    $('#lf_test_container').append(html);
-    
+    //$('#lf_test_container').append(html);
+    $('#lf_test_container > table > tbody > tr:first').after(html);
+    $('#lf_test_container > table > tbody > tr:first').css('opacity',0);
+    $('#lf_test_container > table > tbody > tr:last').css('opacity',0);
     //first hide the char <span> for a while
     $('span[id^=test_char_span_]').hide();
     
     //make chat <td> beckground to yellow
-    $('#chars > td').css("background-color","yellow");
+    $('#chars > td > div').css("border-bottom","1px,solid");
     
     //first hide the inputs
     $('#inputs').hide();
     
     //show yelow background to the user for 2 seconds
     //after show the test
-    $.after(0.5, "second", function() {
+    $.after(1, "second", function() {
       pub.showTest();
     });
   }
   
   //Start the test
   pub.showTest = function(){
+    
     //apply white backgrounf while show the chars
-    $('#chars > td').css("background-color","white");
+    $('#chars > td > div').css("border-bottom","0px");
     
     //show the char appering places to the user
     $('span[id^=test_char_span_]').show();
@@ -340,25 +401,28 @@ BrianJogging.letter_flash = (function(pub) {
     properties.ans_array = new Array();
     $('input[name^=test_input_]').each(function(){
       $(this).keyup(function(){
-        test_ans_lettes = new Array();
-        var str = $(this).attr('id');
-        
-        if($(this).attr('id') != 'test_input_'+ (properties.type - 1)){
-          //move the focus to the next textbox
-          $('#test_input_'+ ((Number(str.substr(str.length-1)) + 1))).focus();
+        if($(this).attr('value')){
+          test_ans_lettes = new Array();
+          var str = $(this).attr('id');
           
-          //add the ans char into the array
-          properties.ans_array.push($(this).val());
-          //Disable the current textbox
-          $(this).attr('disabled','disabled');
-        }
-        else{
-          //add the ans char into the array
-          properties.ans_array.push($(this).val());
-          //Disable the current textbox
-          $(this).attr('disabled','disabled');
-          
-          pub.computeResults();
+          if($(this).attr('id') != 'test_input_'+ (properties.type - 1)){
+            //move the focus to the next textbox
+            $('#test_input_'+ ((Number(str.substr(str.length-1)) + 1))).focus();
+            
+            //add the ans char into the array
+            properties.ans_array.push($(this).val());
+            
+            //Disable the current textbox
+            $(this).attr('disabled','disabled');
+          }
+          else{
+            //add the ans char into the array
+            properties.ans_array.push($(this).val());
+            //Disable the current textbox
+            $(this).attr('disabled','disabled');
+            
+            pub.computeResults();
+          }
         }
       });
     });
@@ -391,11 +455,11 @@ BrianJogging.letter_flash = (function(pub) {
         if(i==3){var pos=2}
         }
         
-       properties.lev[properties.r_size]  = properties.level;
-       properties.subl[properties.r_size] = properties.sublevel;
-       properties.qn[properties.r_size]   = properties.qn_array[i];
-       properties.ans[properties.r_size]  = properties.ans_array[i];
-       properties.pos[properties.r_size]  = pos;
+        properties.lev[properties.r_size]  = properties.level;
+        properties.subl[properties.r_size] = properties.sublevel;
+        properties.qn[properties.r_size]   = properties.qn_array[i];
+        properties.ans[properties.r_size]  = properties.ans_array[i];
+        properties.pos[properties.r_size]  = pos;
       
         properties.r_size++;
         level_flag = false;
@@ -413,31 +477,77 @@ BrianJogging.letter_flash = (function(pub) {
           alert("Congrats... Achived the highest Level");
         }
         else{
-          alert("Congrats.. You successfully complete Level - " + properties.level);
+          //alert("Congrats.. You successfully complete Level - " + properties.level);
+          
+          var context = {
+            leval:properties.level,
+            qn:properties.qn_array,
+            ans:properties.ans_array
+          };
+          
+          //create the html for the wrong result
+          var source   = $("#template-letter-flash-result-success").html();
+          var template = Handlebars.compile(source);
+          var html = template(context);
+          
+          $('#chars').remove();
+          $('#inputs').remove();
+          $('#lf_test_container > table > tbody > tr:first > td').attr('colspan',properties.type);
+          $('#lf_test_container > table > tbody > tr:first > td').text("Error");
+          $('#lf_test_container > table > tbody > tr:first').after(html);
+          $('.chars > span').attr('class',properties.f_size);
+          $('#res_error > td').attr('colspan',properties.type);
         }
-        properties.sublevel = 1;                         //initiate the sublevel to 1 for the next level test
-        properties.time = properties.time - 250;         //Decrease the time level 250 ms for the next level test
-        properties.correct_attempts++;                   //Increase the correct attempts
-        properties.level++;                              //Increase the level of the exam
-        properties.bj_lf_test[properties.level] = {};    //Declare object for the next level
-        pub.launchLetterFlash();                           //Start the next level exam
+        $.after(3, "second", function() {
+          $('#res_error').remove();
+          $('#input_chars').remove();
+          $('#ans_chars').remove();
+          properties.sublevel = 1;                         //initiate the sublevel to 1 for the next level test
+          properties.time = properties.time - 250;         //Decrease the time level 250 ms for the next level test
+          properties.correct_attempts++;                   //Increase the correct attempts
+          properties.level++;                              //Increase the level of the exam
+          
+         
+          properties.bj_lf_test[properties.level] = {};    //Declare object for the next level
+          pub.launchLetterFlash();                           //Start the next level exam
+        });
       }
     }
     else{ //if the answer is not correct
       if(properties.sublevel == 3){
-        
         properties.bj_lf_test['result']={lev:properties.lev,subl:properties.subl,qn:properties.qn,ans:properties.ans,pos:properties.pos};
-        pub.quitAndShowResult();
-        //quit and show the result
-          
-          
+        pub.quitAndShowResult(); //quit and show the result  
       }
       else{
-        alert("InCorrect.... Try again");
-        properties.wrong_attempts++;                                       //increase the wrong attempts
-        properties.sublevel++;                                             //increase the sublevel
-        properties.bj_lf_test[properties.level][properties.sublevel] = {}; //Declare object for the empty level
-        pub.launchLetterFlash();                                             //Start the new test
+        //alert("InCorrect.... Try again");
+        var context = {
+          qn:properties.qn_array,
+          ans:properties.ans_array
+        };
+        
+        //create the html for the wrong result
+        var source   = $("#template-letter-flash-result-failure").html();
+        var template = Handlebars.compile(source);
+        var html = template(context);
+        
+        $('#chars').remove();
+        $('#inputs').remove();
+        $('#lf_test_container > table > tbody > tr:first > td').attr('colspan',properties.type);
+        $('#lf_test_container > table > tbody > tr:first > td').text("Error");
+        $('#lf_test_container > table > tbody > tr:first').after(html);
+        $('.chars > span').attr('class',properties.f_size);
+        $('#res_error > td').attr('colspan',properties.qn_array.length);
+        $('#res_error > td > #lf_level').text(properties.level);
+        
+        $.after(3, "second", function() {
+          $('#res_error').remove();
+          $('#input_chars').remove();
+          $('#ans_chars').remove();
+          properties.wrong_attempts++;                                       //increase the wrong attempts
+          properties.sublevel++;                                             //increase the sublevel
+          properties.bj_lf_test[properties.level][properties.sublevel] = {}; //Declare object for the empty level
+          pub.launchLetterFlash();                                            //Start the new test
+        });
       }
     }
   }
@@ -450,6 +560,7 @@ BrianJogging.letter_flash = (function(pub) {
     $('#test_table').remove();
     
     show_same_level = Math.ceil(20 * (init.show_start_from_same_level/100));
+    
     if(show_same_level < (properties.level)){
       init.level = properties.level - 1;
       $('lf_rll_span').show();
@@ -479,8 +590,10 @@ BrianJogging.letter_flash = (function(pub) {
           success: function(msg){}
           });
           
-     $('#lf_rl').click(function(){
-     pub.initialize(init);
+    $('#lf_rl').click(function(){
+      //init.repet_same_session = true;
+      //pub.initialize(init);
+      window.location = "/brainjogging/test/letter_flash";
     });
     
     $('#lf_mm').click(function(){
@@ -491,26 +604,25 @@ BrianJogging.letter_flash = (function(pub) {
     if(type == 2){
      lf_grade_compare = Drupal.settings.lf_two;
     }
-     if(type == 3){
+    if(type == 3){
      lf_grade_compare = Drupal.settings.lf_three;
     }
-     if(type == 4){
+    if(type == 4){
      lf_grade_compare = Drupal.settings.lf_three;
     }
      
-  $('#result_container').show();
-   if(lf_grade_compare =="" && grade > 50)
-   {
-    var r=4+parseInt(Math.random()*16);for(var i=r; i--;){setTimeout('createFirework(30,75,6,7,null,null,null,null,Math.random()>0.5,true)',(i+1)*(1+parseInt(Math.random()*1000)));}
-    $("#congrats").fadeIn('slow');
-    setTimeout(function(){ $("#congrats").fadeOut() }, 5000);
-   }
-   
-  if(grade > 50 && grade > lf_grade_compare ){
-    var r=4+parseInt(Math.random()*16);for(var i=r; i--;){setTimeout('createFirework(30,75,6,7,null,null,null,null,Math.random()>0.5,true)',(i+1)*(1+parseInt(Math.random()*1000)));}
-    $("#congrats").fadeIn('slow');
-    setTimeout(function(){ $("#congrats").fadeOut() }, 5000);
-   }
+    $('#result_container').show();
+    if(lf_grade_compare =="" && grade > 50){
+      var r=4+parseInt(Math.random()*16);for(var i=r; i--;){setTimeout('createFirework(30,75,6,7,null,null,null,null,Math.random()>0.5,true)',(i+1)*(1+parseInt(Math.random()*1000)));}
+      $("#congrats").fadeIn('slow');
+      setTimeout(function(){ $("#congrats").fadeOut() }, 5000);
+    }
+     
+    if(grade > 50 && grade > lf_grade_compare ){
+      var r=4+parseInt(Math.random()*16);for(var i=r; i--;){setTimeout('createFirework(30,75,6,7,null,null,null,null,Math.random()>0.5,true)',(i+1)*(1+parseInt(Math.random()*1000)));}
+      $("#congrats").fadeIn('slow');
+      setTimeout(function(){ $("#congrats").fadeOut() }, 5000);
+    }
     
     
     //show the results

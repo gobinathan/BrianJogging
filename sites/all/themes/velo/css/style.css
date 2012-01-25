@@ -162,30 +162,27 @@ a.delete {
     width:auto;
     text-align:center;
 }
+
 #words_flash_div{
     color:#ffffff;
 }
 #words_flash_div .wrong, .msg{
     color:#ffffff;
 }
-#letter_flash_div{
-    
-    color:#ffffff;
-}
-#letter_flash_div #letter_set,#letter_res{
-    background-color:#736f6e;
-       color:#fff;
-}
 
-#letter_flash_div #lf_description{
-    color:#736f6e;
-    border:1px solid;
+ #lf_description{
+    width:500px;
+    height:320px;
+    line-height:200%;
+    padding:10px;
+    text-align:justify;
 }
+/*
 #letter_flash_div #test_table{
     color:#736f6e;
     
-}
-#em_init ,#em_instuct,#ses_menu,#ses_wordlist,#ses_image{
+}*/
+#em_init ,#em_instuct,#ses_menu,#ses_wordlist,#ses_image,#lf_description{
     background-color:#736f6e;
        color:#fff;
     
