@@ -16,6 +16,27 @@ div {
   position:relative;
   padding-left:10px;
 }
+#words_flash_div #wf_heading {
+  margin: 0 auto;
+  padding:10px;
+  color:#000;
+  font-size:18px;
+  width:260px;
+}
+
+#wf_begin, #wf_container{
+  color:#000;
+  background:none repeat scroll 0% 0% rgb(252, 252, 252);
+  border:none;
+}
+#wf_begin div{
+  text-align:center;
+  font-size:22px;
+}
+#wf_words {
+  margin: 0 auto;
+  padding:10px;
+}
 
 #main_menu ul, #wf_settings div ul {
  list-style-type: none;
@@ -33,16 +54,13 @@ img{
   border:none;
   padding-right:2px;
 }
-span{
+#wf_container .wrong, #wf_container .msg {
   font-weight : bold;
+  font-size:18px;
+  text-align:center;
 }
-.wrong {
-  color:#7E2217;
-}
-
-.msg {
-  color:#347C17;
-}
+.wrong { color:#7E2217;}
+.msg { color:#347C17; }
 
 input.wf_answer{
 border : 1px solid Black;

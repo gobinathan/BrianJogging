@@ -48,13 +48,14 @@ BrianJogging.wordflash = (function(pub) {
     });
     
     $('#wf_begin_ok').click(function(){
+      $('#wf_heading').hide();
       beginExercise();
     });
     
   };
   
   beginExercise = function(){
-    $('#wf_container').html('<div style="margin:0 auto;text-align:center;color:#fff;font-weight:bold;">Level '+ wf.level +'</div><div id="wf_words"></div><br><div id="wf_ans_div"><input type="text" class="wf_answer" size="50" id="wf_answer"></div>');
+    $('#wf_container').html('<div id="wf_words"></div><br><div id="wf_ans_div"><input type="text" class="wf_answer" size="50" id="wf_answer"></div>');
     $('#wf_words').text(words.slice(((wf.level - 1) * wf.ftype), (wf.level * wf.ftype)).join(" "));
     $('#wf_words').css('font-size', wf.fsize);
     $('#wf_ans_div').hide();
@@ -84,7 +85,7 @@ BrianJogging.wordflash = (function(pub) {
   
   submitResult = function(){
     if($('#wf_words').text().toLowerCase() == $('#wf_answer').val().toLowerCase()){
-    $('#wf_container').html('<span class="msg">Anwer Correct..</span>');    
+    $('#wf_container').html('<div style="margin:0 auto;text-align:center;color:#000;font-weight:bold;">Level '+ wf.level +'</div><div class="msg">Answer Correct</div>');    
     results.status.correct += 1; 
     if(wf.level < 20){
      $.after(2000,function(){      
@@ -98,7 +99,7 @@ BrianJogging.wordflash = (function(pub) {
     results.levels[wf.attempts].answer = $('#wf_answer').val();
     results.levels[wf.attempts].result = 0;
     results.levels[wf.attempts].level = wf.level;
-    $('#wf_container').html('<span class="wrong">Anwer Incorret !!!</span><br><span class="wrong">Try Again...</span>');
+    $('#wf_container').html('<div style="margin:0 auto;text-align:center;color:#000;font-weight:bold;">Level '+ wf.level +'</div><div class="wrong">Incorrect. Try Again</div>');
     results.status.wrong += 1;
     if(results.status.wrong < 4){
      $.after(2000,function(){
@@ -111,16 +112,13 @@ BrianJogging.wordflash = (function(pub) {
    if(results.status.wrong == 4  || wf.level == 20){
     $.after(2000,function(){
       showResult();
-     
-     
     });
    }else{
     wf.attempts++; 
    }
   };
   
-  showResult = function(){
-    
+  showResult = function(){    
     var tot_atm=results.status.wrong+results.status.correct;
     results["res"]={res:wf};
     results["pers"]={perecent:Math.ceil((results.status.correct/wf.attempts) * 100 )};
@@ -142,6 +140,7 @@ BrianJogging.wordflash = (function(pub) {
   res += '<tr><td align="center"><input type="button" value="Print" onclick="window.print()"></td>';
   res += '<td align="center"><input id="wf_rl" type="button" value="Repeat Lesson"></td>';
   res += '<td align="center"><input id="wf_mm" type="button" value="Main Menu"></td></tr></table>';
+  $('#wf_heading').show();
   $('#wf_container').html(res);
   
   $('#wf_rl').click(function(){
