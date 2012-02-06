@@ -8,6 +8,7 @@
 <div id="fireContainer"></div>
 
   <div id="words_flash_div" style="display:none">
+    <div id="wf_heading">Camp Acadamia's Word Flash </div>
     <div id="wf_settings" style="display:none">
       <div>
         <span style="display:block;margin:0 auto;text-align:center;color:#fff"> Word Flash Settings </span>
