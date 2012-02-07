@@ -281,15 +281,15 @@ BrianJogging.letter_flash = (function(pub) {
       var template = Handlebars.compile(source);
       var html = template(context);
       
-      $('#lf_test_container > table > tbody > tr:first').after(html);
-      $('#lf_test_container > table > tbody > tr:first > td').attr('colspan',properties.type);
-      $('#lf_test_container > table > tbody > tr:last > td').attr('colspan',properties.type);
+      $('#lf_test_first').after(html);
+      $('#lf_test_head').attr('colspan',properties.type);
+      $('#lf_test_head').attr('colspan',properties.type);
       $('#lf_test_container').show();       //Show the start to begin button
     });
     
     //add event to the begin test button
     $('#lf_begin_test_btn').click(function(){
-      $('#lf_test_container > table > tbody > tr:eq(1)').remove(); //show test div
+      $('#lf_test_tbody tr:eq(1)').remove(); //show test div
       pub.launchLetterFlash();         //start the test
     });
     
@@ -338,27 +338,31 @@ BrianJogging.letter_flash = (function(pub) {
     //Prepare the charecters to be shown for test
     properties.qn_array = new Array();
     reinforcement_time = Math.ceil(20 *(init.missed_letter_reinforcement/100));
-    for(i=0; i < properties.type; i++){
+    for(i=0; i < properties.letter_bank.length; i++){
       l = properties.letter_bank[Math.ceil(Math.random()*25)];
       if($.inArray(l,properties.qn_array) == -1){
         letters[i] = {id:i,charecter:properties.Case? l.toUpperCase() : l,size : properties.f_size,tabindex:i+1};
         properties.qn_array.push(l);
+      }
+      if(letters.length == properties.type){
+        break;
       }
     }
     
     var context = {
       letter : letters
     };
-    //console.log(context);
+    console.log(context);
+    
     //create the html for the test
     var source   = $("#template-letter-flash").html();
     var template = Handlebars.compile(source);
     var html = template(context);
     
     //$('#lf_test_container').append(html);
-    $('#lf_test_container > table > tbody > tr:first').after(html);
-    $('#lf_test_container > table > tbody > tr:first').css('opacity',0);
-    $('#lf_test_container > table > tbody > tr:last').css('opacity',0);
+    $('#lf_test_first').after(html);
+    $('#lf_test_first').css('opacity',0);
+    $('#lf_test_second').css('opacity',0);
     //first hide the char <span> for a while
     $('span[id^=test_char_span_]').hide();
     
@@ -491,9 +495,9 @@ BrianJogging.letter_flash = (function(pub) {
           
           $('#chars').remove();
           $('#inputs').remove();
-          $('#lf_test_container > table > tbody > tr:first > td').attr('colspan',properties.type);
-          $('#lf_test_container > table > tbody > tr:first > td').text("Error");
-          $('#lf_test_container > table > tbody > tr:first').after(html);
+          $('#lf_test_head').attr('colspan',properties.type);
+          $('#f_test_head').text("Error");
+          $('#lf_test_first').after(html);
           $('.chars > span').attr('class',properties.f_size);
           $('#res_error > td').attr('colspan',properties.type);
         }
@@ -531,9 +535,9 @@ BrianJogging.letter_flash = (function(pub) {
         
         $('#chars').remove();
         $('#inputs').remove();
-        $('#lf_test_container > table > tbody > tr:first > td').attr('colspan',properties.type);
-        $('#lf_test_container > table > tbody > tr:first > td').text("Error");
-        $('#lf_test_container > table > tbody > tr:first').after(html);
+        $('#lf_test_head').attr('colspan',properties.type);
+        $('#lf_test_head').text("Error");
+        $('#lf_test_first').after(html);
         $('.chars > span').attr('class',properties.f_size);
         $('#res_error > td').attr('colspan',properties.qn_array.length);
         $('#res_error > td > #lf_level').text(properties.level);

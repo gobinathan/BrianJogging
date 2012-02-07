@@ -141,6 +141,7 @@ function brainjogging_test_eye_movement(){
 
   if(!brainjogging_is_student())
   {
+  
      $res=db_query("SELECT n.nid, nr.body FROM {node} n
                       LEFT JOIN {node_revisions} nr ON n.nid = nr.nid
                       LEFT JOIN {bj_wordlist_relativity} bwr ON n.nid = bwr.wl_id
@@ -150,6 +151,7 @@ function brainjogging_test_eye_movement(){
                      AND bwr.level = 1");
   }
   else{
+    
  
   $res=db_query("SELECT n.nid, nr.body FROM {node} n
                       LEFT JOIN {node_revisions} nr ON n.nid = nr.nid
@@ -168,6 +170,9 @@ function brainjogging_test_eye_movement(){
     $eyeinput['input'][$i++] = $row['body'];
   }
   if(is_array($eyeinput['input'])){
+    //echo "<pre>";
+    //print_r($eyeinput);
+    //exit;
     $rand_keys = array_rand($eyeinput['input'], 3);
     $eye_move  = explode("\n", $eyeinput['input'][$rand_keys[0]]);
     $eye_move1 = explode("\n", $eyeinput['input'][$rand_keys[1]]);

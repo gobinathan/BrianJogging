@@ -152,15 +152,17 @@ p{
 .chars{
   height:100px;
   width:100px;
-  
-  vertical-align:bottom;
+  vertical-align:bootom;
+ 
 }
 
 .chars span{
+ margin-top:50px;
+ height:65px;
+ display:block;
  
-  height:50px;
-  width:100px;
-  vertical-align:baseline;
+  
+  
 }
 
 .large{

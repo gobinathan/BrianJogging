@@ -79,8 +79,10 @@
     <div id="lf_test_main_container">
       <div id="lf_test_container">
         <table id="test_table" align="center">
-          <tr><td align="center" id="head" ><span style="font-size:15px;letter-spacing:2px;">Camp Acadamia's Letter Flash</span><br><br><span style="font-size:16px; letter-spacing:2px; font-weight:bold;">Click Next to begin</span></td></tr>
-          <tr><td id="but" align="center"><input type="button" id="lf_begin_test_btn" name="lf_begin_test_btn" value="Next" /> </td></tr>
+         <tbody id="lf_test_tbody">
+          <tr id="lf_test_first"><td align="center" id="lf_test_head" ><span style="font-size:15px;letter-spacing:2px;">Camp Acadamia's Letter Flash</span><br><br><span style="font-size:16px; letter-spacing:2px; font-weight:bold;">Click Next to begin</span><br><br><br><br></td></tr>
+          <tr id="lf_test_second"><td id="but" align="center"><input type="button" id="lf_begin_test_btn" name="lf_begin_test_btn" value="Next" /> </td></tr>
+         </tbody>
         </table>
       </div>
     </div>
@@ -143,7 +145,7 @@
 </script>
 
 <script id="template-letter-flash-result-failure" type="text/x-handlebars-template">
-  <tr id="res_error" align="center"><td>Level &nbsp;<span id='lf_level'> </span><br><b>Answer Incorrect!</b></td></td>
+  <tr id="res_error" align="center"><td>Level &nbsp;<span id='lf_level'> </span><br><b>Answer Incorrect!</b> <br><br><br><br></td></td>
   <tr>
   <tr id="input_chars">
     {{#each qn}}
