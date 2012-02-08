@@ -81,7 +81,7 @@
         <table id="test_table" align="center">
          <tbody id="lf_test_tbody">
           <tr id="lf_test_first"><td align="center" id="lf_test_head" ><span style="font-size:15px;letter-spacing:2px;">Camp Acadamia's Letter Flash</span><br><br><span style="font-size:16px; letter-spacing:2px; font-weight:bold;">Click Next to begin</span><br><br><br><br></td></tr>
-          <tr id="lf_test_second"><td id="but" align="center"><input type="button" id="lf_begin_test_btn" name="lf_begin_test_btn" value="Next" /> </td></tr>
+          <tr id="lf_test_second"><td id="lf_test_but" align="center"><input type="button" id="lf_begin_test_btn" name="lf_begin_test_btn" value="Next" /> </td></tr>
          </tbody>
         </table>
       </div>

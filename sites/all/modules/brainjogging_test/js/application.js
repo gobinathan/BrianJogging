@@ -84,6 +84,8 @@ BrianJogging.wordflash = (function(pub) {
   };
   
   submitResult = function(){
+    
+    
     if($('#wf_words').text().toLowerCase() == $('#wf_answer').val().toLowerCase()){
     $('#wf_container').html('<div style="margin:0 auto;text-align:center;color:#000;font-weight:bold;">Level '+ wf.level +'</div><div class="msg">Answer Correct</div>');    
     results.status.correct += 1; 
@@ -283,7 +285,7 @@ BrianJogging.letter_flash = (function(pub) {
       
       $('#lf_test_first').after(html);
       $('#lf_test_head').attr('colspan',properties.type);
-      $('#lf_test_head').attr('colspan',properties.type);
+      $('#lf_test_but').attr('colspan',properties.type);
       $('#lf_test_container').show();       //Show the start to begin button
     });
     
@@ -342,7 +344,14 @@ BrianJogging.letter_flash = (function(pub) {
       l = properties.letter_bank[Math.ceil(Math.random()*25)];
       if($.inArray(l,properties.qn_array) == -1){
         letters[i] = {id:i,charecter:properties.Case? l.toUpperCase() : l,size : properties.f_size,tabindex:i+1};
+        //case check for lower or upper
+       if(properties.Case == 1)
+       {
+         properties.qn_array.push(l.toUpperCase());
+       }
+       else{
         properties.qn_array.push(l);
+       }
       }
       if(letters.length == properties.type){
         break;
@@ -352,7 +361,7 @@ BrianJogging.letter_flash = (function(pub) {
     var context = {
       letter : letters
     };
-    console.log(context);
+    
     
     //create the html for the test
     var source   = $("#template-letter-flash").html();
@@ -413,14 +422,26 @@ BrianJogging.letter_flash = (function(pub) {
             $('#test_input_'+ ((Number(str.substr(str.length-1)) + 1))).focus();
             
             //add the ans char into the array
-            properties.ans_array.push($(this).val());
-            
+            //case check for lower or upper
+            if(properties.Case == 1){
+            properties.ans_array.push(($(this).val()).toUpperCase());
+            }
+            else{
+              properties.ans_array.push($(this).val());
+            }
             //Disable the current textbox
             $(this).attr('disabled','disabled');
           }
           else{
             //add the ans char into the array
-            properties.ans_array.push($(this).val());
+            //case check for lower or upper
+           if(properties.Case == 1){
+            properties.ans_array.push(($(this).val()).toUpperCase());
+            }
+            else{
+              properties.ans_array.push($(this).val());
+            }
+            
             //Disable the current textbox
             $(this).attr('disabled','disabled');
             
@@ -487,7 +508,7 @@ BrianJogging.letter_flash = (function(pub) {
             qn:properties.qn_array,
             ans:properties.ans_array
           };
-          
+          console.log(context);
           //create the html for the wrong result
           var source   = $("#template-letter-flash-result-success").html();
           var template = Handlebars.compile(source);
